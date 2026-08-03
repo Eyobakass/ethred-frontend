@@ -3,6 +3,7 @@
 
 import React, { useEffect, useState, use, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { DoorOpen, Info } from 'lucide-react';
 import { PannellumViewer } from '@/components/3d-tour/PannellumViewer';
 import { HotspotOverlay } from '@/components/3d-tour/HotspotOverlay';
 import { SceneSelectorToolbar } from '@/components/3d-tour/SceneSelectorToolbar';
@@ -253,6 +254,7 @@ export default function TourEditorPage({
           type: data.type === 'NAVIGATION' ? 'scene' : 'info',
           text: data.label ?? (data.type === 'NAVIGATION' ? 'Go to ' + (data.targetSceneId ?? '') : 'Info'),
           sceneId: data.targetSceneId,
+          cssClass: data.type === 'NAVIGATION' ? 'tour-nav-hotspot' : 'tour-info-hotspot',
         };
 
         // Optimistically update local config
@@ -339,13 +341,13 @@ export default function TourEditorPage({
       {/* Instructions */}
       <div className="bg-white dark:bg-neutral-900/60 border border-neutral-200 dark:border-neutral-800 p-4 rounded-2xl text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed space-y-2">
         <p>
-          💡 <span className="text-red-600 dark:text-red-400 font-semibold">Adding Hotspots:</span>{' '}
+          <span className="text-red-600 dark:text-red-400 font-semibold">Adding Hotspots:</span>{' '}
           Double-click anywhere inside the 360° viewer to drop a pin.
           Choose between a <em>Room Doorway</em> (navigates to another scene) or an <em>Info Tag</em> (shows a label).
         </p>
         <p>
-          🗑️ <span className="text-red-600 dark:text-red-400 font-semibold">Removing Elements:</span>{' '}
-          Click on any existing pin to delete it. Use the 🗑️ and 🔄 buttons in the scene toolbar (at the top) to delete or replace the active scene entirely.
+          <span className="text-red-600 dark:text-red-400 font-semibold">Removing Elements:</span>{' '}
+          Click on any existing pin to delete it. Use the delete and replace buttons in the scene toolbar (at the top) to delete or replace the active scene entirely.
         </p>
       </div>
 
@@ -408,7 +410,11 @@ export default function TourEditorPage({
                       key={i}
                       className="flex items-center gap-3 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300"
                     >
-                      <span>{hs.type === 'scene' ? '🚪' : 'ℹ️'}</span>
+                      {hs.type === 'scene' ? (
+                        <DoorOpen className="w-4 h-4 text-emerald-500" />
+                      ) : (
+                        <Info className="w-4 h-4 text-blue-500" />
+                      )}
                       <span className="font-medium">{hs.text ?? 'Pin'}</span>
                       <span className="text-neutral-500 font-mono ml-auto">
                         P:{hs.pitch.toFixed(1)}° Y:{hs.yaw.toFixed(1)}°

@@ -93,3 +93,46 @@ html {
 .animate-in {
   animation: fade-in 0.2s ease-out;
 }
+/* Custom Hotspot Styles */
+.tour-nav-hotspot, .tour-info-hotspot {
+  width: 28px;
+  height: 28px;
+  background-color: rgba(220, 38, 38, 0.9); /* Red-600 */
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.tour-nav-hotspot:hover, .tour-info-hotspot:hover {
+  transform: scale(1.2);
+  background-color: rgba(220, 38, 38, 1);
+  z-index: 10;
+}
+
+/* Arrow for navigation hotspot */
+.tour-nav-hotspot::after {
+  content: "";
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-top: 2.5px solid white;
+  border-right: 2.5px solid white;
+  transform: rotate(45deg);
+  margin-right: 2px;
+}
+
+/* 'i' icon for info hotspot */
+.tour-info-hotspot::after {
+  content: "i";
+  color: white;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+}
