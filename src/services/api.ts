@@ -25,7 +25,11 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const { useAuthStore } = require('@/store/useAuthStore');
     const token: string | null = useAuthStore.getState().token;
     if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+      if (typeof config.headers.set === 'function') {
+        config.headers.set('Authorization', `Bearer ${token}`);
+      } else {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
   }
   return config;
