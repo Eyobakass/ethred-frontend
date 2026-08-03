@@ -7,6 +7,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
+import { ChangePasswordModal } from './ChangePasswordModal';
+import { DeleteAccountModal } from './DeleteAccountModal';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
@@ -16,6 +18,8 @@ export const Header: React.FC = () => {
   const { user, isAuthenticated, validateSession, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Validate token once on header mount (runs client-side only)
   useEffect(() => {
@@ -132,13 +136,24 @@ export const Header: React.FC = () => {
                       <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
                         Settings
                       </p>
-                      <Link
-                        href={`/${lang}/account/settings`}
-                        onClick={() => setMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      <button
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setShowPasswordModal(true);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
                       >
-                        Account settings
-                      </Link>
+                        Change password
+                      </button>
+                      <button
+                        onClick={() => {
+                          setMenuOpen(false);
+                          setShowDeleteModal(true);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+                      >
+                        Delete account
+                      </button>
                       <button
                         onClick={() => {
                           setMenuOpen(false);
@@ -254,6 +269,19 @@ export const Header: React.FC = () => {
         </div>
       </div>
     )}
+
+    {/* Change Password Modal */}
+    <ChangePasswordModal 
+      isOpen={showPasswordModal} 
+      onClose={() => setShowPasswordModal(false)} 
+    />
+
+    {/* Delete Account Modal */}
+    <DeleteAccountModal 
+      isOpen={showDeleteModal} 
+      onClose={() => setShowDeleteModal(false)} 
+      lang={lang}
+    />
     </>
   );
 };
