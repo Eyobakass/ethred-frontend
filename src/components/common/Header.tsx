@@ -3,17 +3,19 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   // Derive lang from pathname — default 'en' if no [lang] segment
   const lang = pathname?.split('/')[1] === 'am' ? 'am' : 'en';
   const { user, isAuthenticated, validateSession, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Validate token once on header mount (runs client-side only)
   useEffect(() => {
@@ -41,6 +43,7 @@ export const Header: React.FC = () => {
       : 'My Account';
 
   return (
+    <>
     <header className="sticky top-0 z-40 w-full bg-white dark:bg-neutral-950/90 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
@@ -137,13 +140,9 @@ export const Header: React.FC = () => {
                         Account settings
                       </Link>
                       <button
-                        onClick={async () => {
+                        onClick={() => {
                           setMenuOpen(false);
-                          try {
-                            const { authService } = await import('@/services/auth.service');
-                            await authService.logout();
-                          } catch (e) { console.error(e); }
-                          logout();
+                          setShowLogoutConfirm(true);
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
                       >
@@ -219,5 +218,42 @@ export const Header: React.FC = () => {
         </div>
       )}
     </header>
+
+    {/* Custom Logout Confirmation Modal */}
+    {showLogoutConfirm && (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-neutral-200 dark:border-neutral-800 transform transition-all">
+          <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">
+            Sign Out
+          </h3>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
+            Are you sure you want to sign out of your account?
+          </p>
+          <div className="flex items-center gap-3 justify-end">
+            <button
+              onClick={() => setShowLogoutConfirm(false)}
+              className="px-5 py-2.5 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                setShowLogoutConfirm(false);
+                try {
+                  const { authService } = await import('@/services/auth.service');
+                  await authService.logout();
+                } catch (e) { console.error(e); }
+                logout();
+                router.push(`/${lang}`);
+              }}
+              className="px-5 py-2.5 rounded-xl font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition"
+            >
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 };
