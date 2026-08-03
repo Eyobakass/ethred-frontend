@@ -13,6 +13,8 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isSubmitting, setIsSubmitting] = useState<string | null>(null);
+
   useEffect(() => {
     propertyService
       .getMyListings()
@@ -26,6 +28,21 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
         setIsLoading(false);
       });
   }, []);
+
+  const handleSubmit = async (id: string) => {
+    setIsSubmitting(id);
+    try {
+      await propertyService.submitForReview(id);
+      setProperties((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, status: 'PENDING' } : p))
+      );
+    } catch (error) {
+      console.error('Failed to submit for review', error);
+      alert('Failed to submit property for review. Please try again.');
+    } finally {
+      setIsSubmitting(null);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
@@ -78,29 +95,55 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
             properties.map((prop) => (
               <div key={prop.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
                 <div>
-                  <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                  <h3 className="text-lg font-bold text-neutral-900 dark:text-white">
                     {lang === 'am' && prop.title_am ? prop.title_am : prop.title_en}
                   </h3>
-                  <div className="flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                    <span>📍 {prop.sub_city}, {prop.city}</span>
-                    <span>💰 {formatCurrency(Number(prop.price_etb), 'ETB', lang)}</span>
-                    <span className="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400 text-[10px] font-bold">
+                  <div className="flex flex-wrap items-center gap-3 text-xs text-neutral-600 dark:text-neutral-400 mt-2">
+                    <span className="flex items-center gap-1 font-medium bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded">
+                      <span>🏷️</span> {prop.category?.replace('_', ' ')}
+                    </span>
+                    <span className="flex items-center gap-1">📍 {prop.sub_city}, {prop.city}</span>
+                    <span className="flex items-center gap-1 font-bold text-neutral-900 dark:text-neutral-200">
+                      💰 {formatCurrency(Number(prop.price_etb), 'ETB', lang)}
+                    </span>
+                    <span className="flex items-center gap-1">🛏️ {prop.bedrooms} Bed</span>
+                    <span className="flex items-center gap-1">🛁 {prop.bathrooms} Bath</span>
+                    <span className="flex items-center gap-1">📐 {prop.area_sqm} m²</span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      prop.status === 'DRAFT' ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300' :
+                      prop.status === 'PENDING' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
+                      'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400'
+                    }`}>
                       {prop.status}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 mt-4 sm:mt-0">
+                  {prop.status === 'DRAFT' && (
+                    <button
+                      onClick={() => handleSubmit(prop.id)}
+                      disabled={isSubmitting === prop.id}
+                      className="px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-semibold border border-blue-200 dark:border-blue-800/50 transition disabled:opacity-50"
+                    >
+                      {isSubmitting === prop.id ? 'Submitting...' : '✅ Submit for Review'}
+                    </button>
+                  )}
+                  <Link
+                    href={`/${lang}/seller/listings/${prop.id}/media`}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-700 transition flex items-center gap-1"
+                  >
+                    <span>🖼️</span> Manage Photos
+                  </Link>
                   <Link
                     href={`/${lang}/seller/listings/${prop.id}/tour-editor`}
-                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-600 dark:border-red-600/30 transition flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-200 dark:border-red-900/50 transition flex items-center gap-1"
                   >
-                    <span>🥽</span>
-                    <span>Edit 3D Tour</span>
+                    <span>🥽</span> Edit 3D Tour
                   </Link>
                   <Link
                     href={`/${lang}/seller/promotions`}
-                    className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition"
+                    className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 dark:text-amber-400 text-xs font-semibold border border-amber-500/30 transition"
                   >
                     ⭐ Promote
                   </Link>

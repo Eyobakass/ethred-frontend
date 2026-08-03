@@ -31,11 +31,37 @@ export const propertyService = {
     return apiClient.delete(`/properties/${id}`);
   },
 
+  async submitForReview(id: string): Promise<Property> {
+    const res = await apiClient.post<any, any>(`/properties/${id}/submit`);
+    return res.data;
+  },
+
   async toggleFavorite(property_id: string): Promise<{ favorited: boolean }> {
     return apiClient.post(`/favorites/toggle`, { property_id });
   },
 
   async getFavorites(): Promise<Property[]> {
     return apiClient.get('/favorites');
+  },
+
+  async uploadImages(id: string, formData: FormData): Promise<any> {
+    const token = localStorage.getItem('auth_token');
+    if (!token) throw new Error('No auth token');
+
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api/v1';
+    const res = await fetch(`${baseUrl}/properties/${id}/media/images`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'Failed to upload images');
+    }
+    return res.json();
+  },
+
+  async deleteMedia(propertyId: string, mediaId: string): Promise<any> {
+    return apiClient.delete(`/properties/${propertyId}/media/${mediaId}`);
   },
 };
