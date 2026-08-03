@@ -31,11 +31,16 @@ export const tourService = {
     return apiClient.delete(`/properties/${propertyId}/media/${sceneId}`);
   },
 
-  async uploadPanorama(propertyId: string, formData: FormData) {
-    return apiClient.post(`/properties/${propertyId}/media/tour-scene`, formData, {
+  async uploadPanorama(propertyId: string, formData: FormData, sceneName?: string) {
+    const url = `/properties/${propertyId}/media/tour-scene` + (sceneName ? `?scene_name=${encodeURIComponent(sceneName)}` : '');
+    return apiClient.post(url, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000, // 2 minutes timeout for large 360 photo uploads
     });
+  },
+
+  async updateScene(propertyId: string, sceneId: string, data: { scene_name?: string }): Promise<{ success: boolean }> {
+    return apiClient.patch(`/properties/${propertyId}/media/${sceneId}`, data);
   },
 
   async pollRepairStatus(mediaId: string): Promise<{ needs_repair: boolean; file_url: string }> {

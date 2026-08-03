@@ -157,6 +157,17 @@ export default function TourEditorPage({
       const file = e.target.files?.[0];
       if (!file) return;
 
+      const newSceneName = prompt(
+        replacingSceneId ? 'Enter the new room name:' : 'Enter a name for this room (e.g., Living Room):',
+        tourConfig?.scenes[replacingSceneId ?? '']?.title ?? 'Room'
+      );
+      
+      if (newSceneName === null) {
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        setReplacingSceneId(null);
+        return; // User cancelled
+      }
+
       setIsSaving(true);
       setSaveMsg(null);
       try {
@@ -164,7 +175,7 @@ export default function TourEditorPage({
         formData.append('file', file);
         
         // 1. Upload new scene
-        await tourService.uploadPanorama(propertyId, formData);
+        await tourService.uploadPanorama(propertyId, formData, newSceneName.trim() || 'Room');
         
         if (replacingSceneId) {
           // 2. Delete all hotspots inside the old scene to prevent FK constraint issues
@@ -195,6 +206,24 @@ export default function TourEditorPage({
       }
     },
     [propertyId, replacingSceneId, fetchTourConfig, tourConfig]
+  );
+
+  const handleRenameScene = useCallback(
+    async (sceneId: string, newName: string) => {
+      setIsSaving(true);
+      setSaveMsg(null);
+      try {
+        await tourService.updateScene(propertyId, sceneId, { scene_name: newName });
+        setSaveMsg({ type: 'success', text: 'Scene renamed successfully.' });
+        fetchTourConfig();
+      } catch (err) {
+        console.error('Rename scene error:', err);
+        setSaveMsg({ type: 'error', text: 'Failed to rename scene.' });
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [propertyId, fetchTourConfig]
   );
 
   const handleSaveHotspot = useCallback(
@@ -355,6 +384,7 @@ export default function TourEditorPage({
                 isEditMode={true}
                 onDeleteScene={handleDeleteScene}
                 onReplaceScene={handleReplaceSceneClick}
+                onRenameScene={handleRenameScene}
               />
 
               <PannellumViewer
