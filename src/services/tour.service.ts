@@ -33,6 +33,7 @@ export const tourService = {
 
   async uploadPanorama(propertyId: string, formData: FormData) {
     return apiClient.post(`/properties/${propertyId}/media/tour-scene`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000, // 2 minutes timeout for large 360 photo uploads
     });
   },
