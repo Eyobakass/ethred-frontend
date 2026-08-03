@@ -3,6 +3,7 @@ import React from 'react';
 import '@/app/globals.css';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
+import { ThemeProvider } from '@/components/common/ThemeProvider';
 import type { Metadata } from 'next';
 
 export async function generateMetadata({
@@ -46,11 +47,13 @@ export default async function RootLangLayout({
   const lang = resolvedParams.lang === 'am' ? 'am' : 'en';
 
   return (
-    <html lang={lang} className="dark" suppressHydrationWarning>
-      <body className="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col font-sans antialiased">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang={lang} suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col font-sans antialiased">
+        <ThemeProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

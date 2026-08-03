@@ -27,8 +27,12 @@ export const tourService = {
     return apiClient.delete(`/hotspots/${id}`);
   },
 
+  async deleteScene(propertyId: string, sceneId: string): Promise<{ success: boolean }> {
+    return apiClient.delete(`/properties/${propertyId}/media/${sceneId}`);
+  },
+
   async uploadPanorama(propertyId: string, formData: FormData) {
-    return apiClient.post(`/media/upload-panorama/${propertyId}`, formData, {
+    return apiClient.post(`/properties/${propertyId}/media/tour-scene`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
   },

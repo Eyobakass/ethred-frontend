@@ -66,14 +66,14 @@ export default function ComparePropertiesPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="border-b border-neutral-800 pb-6">
-        <div className="text-xs font-bold text-gold-400 uppercase tracking-widest mb-1">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
+        <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
           ⚖️ Side-by-Side Comparison
         </div>
-        <h1 className="text-3xl font-extrabold text-white">
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'ቤቶችን ያወዳድሩ' : 'Compare Properties'}
         </h1>
-        <p className="text-xs text-neutral-400 mt-1">
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
           {lang === 'am'
             ? 'እስከ 3 ቤቶች ምርጫቸውን ለማወዳደር'
             : 'Select up to 3 properties to compare side-by-side.'}
@@ -87,10 +87,10 @@ export default function ComparePropertiesPage({
             key={i}
             className={`rounded-2xl border p-4 min-h-[120px] flex flex-col items-center justify-center gap-2 transition cursor-pointer ${
               prop
-                ? 'bg-neutral-900 border-gold-500/40'
+                ? 'bg-white dark:bg-neutral-900 border-red-600 dark:border-red-600/40'
                 : activeSlot === i
-                ? 'bg-gold-500/10 border-gold-500 border-dashed'
-                : 'bg-neutral-900/50 border-neutral-800 border-dashed hover:border-neutral-600'
+                ? 'bg-red-600 dark:bg-red-600/10 border-red-600 dark:border-red-600 border-dashed'
+                : 'bg-white dark:bg-neutral-900/50 border-neutral-200 dark:border-neutral-800 border-dashed hover:border-neutral-600'
             }`}
             onClick={() => !prop && setActiveSlot(i)}
           >
@@ -101,7 +101,7 @@ export default function ComparePropertiesPage({
                   alt={prop.title_en}
                   className="w-full h-24 object-cover rounded-lg"
                 />
-                <p className="text-xs font-bold text-white text-center line-clamp-1">{prop.title_en}</p>
+                <p className="text-xs font-bold text-neutral-900 dark:text-white text-center line-clamp-1">{prop.title_en}</p>
                 <button
                   onClick={(e) => { e.stopPropagation(); clearSlot(i); }}
                   className="text-[10px] text-red-400 hover:text-red-300"
@@ -123,7 +123,7 @@ export default function ComparePropertiesPage({
 
       {/* Search panel (shown when a slot is active) */}
       {activeSlot !== null && (
-        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 space-y-3">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 space-y-3">
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -131,18 +131,18 @@ export default function ComparePropertiesPage({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={lang === 'am' ? 'ቤት ፈልግ...' : 'Search for a property...'}
-              className="flex-1 bg-neutral-800 border border-neutral-700 rounded-xl px-3 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-gold-500"
+              className="flex-1 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
             />
             <button
               onClick={handleSearch}
               disabled={searching}
-              className="px-4 py-2 rounded-xl bg-gold-500 text-black text-xs font-bold"
+              className="px-4 py-2 rounded-xl bg-red-600 dark:bg-red-600 text-white text-xs font-bold"
             >
               {searching ? '...' : 'Search'}
             </button>
             <button
               onClick={() => { setActiveSlot(null); setSearchResults([]); }}
-              className="px-3 py-2 rounded-xl bg-neutral-800 text-neutral-400 text-xs"
+              className="px-3 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs"
             >
               Cancel
             </button>
@@ -153,12 +153,12 @@ export default function ComparePropertiesPage({
                 <button
                   key={p.id}
                   onClick={() => assignToSlot(p)}
-                  className="w-full flex items-center gap-3 p-3 text-left hover:bg-neutral-800 transition rounded-lg"
+                  className="w-full flex items-center gap-3 p-3 text-left hover:bg-neutral-50 dark:bg-neutral-800 transition rounded-lg"
                 >
                   <img src={p.media?.[0]?.file_url ?? ''} alt="" className="w-12 h-10 object-cover rounded-lg" />
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-white truncate">{p.title_en}</p>
-                    <p className="text-[10px] text-neutral-400">{p.sub_city} · {formatCurrency(Number(p.price_etb), 'ETB', lang)}</p>
+                    <p className="text-xs font-bold text-neutral-900 dark:text-white truncate">{p.title_en}</p>
+                    <p className="text-[10px] text-neutral-600 dark:text-neutral-400">{p.sub_city} · {formatCurrency(Number(p.price_etb), 'ETB', lang)}</p>
                   </div>
                 </button>
               ))}
@@ -169,16 +169,16 @@ export default function ComparePropertiesPage({
 
       {/* Comparison table */}
       {filledSlots.length >= 2 && (
-        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl overflow-x-auto">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-x-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="border-b border-neutral-800">
-                <th className="text-left p-4 text-neutral-400 font-semibold w-1/4">Feature</th>
+              <tr className="border-b border-neutral-200 dark:border-neutral-800">
+                <th className="text-left p-4 text-neutral-600 dark:text-neutral-400 font-semibold w-1/4">Feature</th>
                 {compareSlots.map((prop, i) => prop ? (
                   <th key={i} className="p-4 text-center">
                     <Link
                       href={`/${lang}/properties/${prop.id}`}
-                      className="text-white font-bold hover:text-gold-400 transition text-xs line-clamp-2 block"
+                      className="text-neutral-900 dark:text-white font-bold hover:text-red-600 dark:text-red-400 transition text-xs line-clamp-2 block"
                     >
                       {lang === 'am' && prop.title_am ? prop.title_am : prop.title_en}
                     </Link>
@@ -190,10 +190,10 @@ export default function ComparePropertiesPage({
             </thead>
             <tbody>
               {rowDef.map((row) => (
-                <tr key={row.label} className="border-b border-neutral-800/50 hover:bg-neutral-800/30 transition">
-                  <td className="p-4 text-neutral-400 font-semibold">{row.label}</td>
+                <tr key={row.label} className="border-b border-neutral-200 dark:border-neutral-800/50 hover:bg-neutral-50 dark:bg-neutral-800/30 transition">
+                  <td className="p-4 text-neutral-600 dark:text-neutral-400 font-semibold">{row.label}</td>
                   {compareSlots.map((prop, i) => (
-                    <td key={i} className="p-4 text-center text-white font-medium">
+                    <td key={i} className="p-4 text-center text-neutral-900 dark:text-white font-medium">
                       {prop ? row.render(prop) : '—'}
                     </td>
                   ))}
@@ -206,7 +206,7 @@ export default function ComparePropertiesPage({
                     {prop && (
                       <Link
                         href={`/${lang}/properties/${prop.id}/tour`}
-                        className="inline-flex px-3 py-1.5 rounded-lg bg-gold-500 text-black text-xs font-bold"
+                        className="inline-flex px-3 py-1.5 rounded-lg bg-red-600 dark:bg-red-600 text-white text-xs font-bold"
                       >
                         🥽 3D Tour
                       </Link>

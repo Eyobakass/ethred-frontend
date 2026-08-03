@@ -5,13 +5,14 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
   // Derive lang from pathname — default 'en' if no [lang] segment
   const lang = pathname?.split('/')[1] === 'am' ? 'am' : 'en';
-  const { user, isAuthenticated, validateSession } = useAuth();
+  const { user, isAuthenticated, validateSession, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Validate token once on header mount (runs client-side only)
@@ -40,38 +41,38 @@ export const Header: React.FC = () => {
       : 'My Account';
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800/60">
+    <header className="sticky top-0 z-40 w-full bg-white dark:bg-neutral-950/90 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href={`/${lang}`} className="flex items-center gap-2.5 shrink-0">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-gold-700 to-gold-400 flex items-center justify-center shadow-lg shadow-gold-500/20">
-            <span className="text-black font-extrabold text-lg leading-none">E</span>
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-red-700 to-red-500 flex items-center justify-center shadow-lg shadow-red-600 dark:shadow-red-600/20">
+            <span className="text-white font-extrabold text-lg leading-none">E</span>
           </div>
-          <span className="text-xl font-extrabold tracking-tight text-white">
+          <span className="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
             ETHRED
-            <span className="text-gold-400 text-[10px] ml-1.5 font-semibold tracking-widest uppercase">
+            <span className="text-red-600 dark:text-red-400 text-[10px] ml-1.5 font-semibold tracking-widest uppercase">
               Real Estate
             </span>
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-neutral-400">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-neutral-600 dark:text-neutral-400">
           <Link
             href={`/${lang}/properties`}
-            className="hover:text-white hover:text-gold-400 transition-colors"
+            className="hover:text-neutral-900 dark:text-white hover:text-red-600 dark:text-red-400 transition-colors"
           >
             {lang === 'am' ? 'ቤቶች' : 'Properties'}
           </Link>
           <Link
             href={`/${lang}/agencies`}
-            className="hover:text-gold-400 transition-colors"
+            className="hover:text-red-600 dark:text-red-400 transition-colors"
           >
             {lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}
           </Link>
           <Link
             href={`/${lang}/properties/compare`}
-            className="hover:text-gold-400 transition-colors"
+            className="hover:text-red-600 dark:text-red-400 transition-colors"
           >
             {lang === 'am' ? 'ማወዳደሪያ' : 'Compare'}
           </Link>
@@ -79,20 +80,85 @@ export const Header: React.FC = () => {
 
         {/* Right controls */}
         <div className="flex items-center gap-3">
+          <ThemeToggle lang={lang} />
           <LanguageSwitcher />
 
           {isAuthenticated ? (
-            <Link
-              href={dashboardHref}
-              className="px-4 py-2 rounded-lg bg-gold-500 hover:bg-gold-400 text-black text-xs font-bold transition shadow-lg shadow-gold-500/20"
-            >
-              {dashboardLabel}
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="flex items-center justify-center w-9 h-9 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition focus:outline-none"
+              >
+                <span className="text-sm font-bold text-neutral-700 dark:text-neutral-300">
+                  {user?.email?.charAt(0).toUpperCase() || 'U'}
+                </span>
+              </button>
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl overflow-hidden py-2 z-50">
+                  <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
+                    <p className="text-sm font-bold text-neutral-900 dark:text-white truncate">
+                      {user?.email}
+                    </p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400 capitalize">
+                      {user?.role.replace('_', ' ').toLowerCase()}
+                    </p>
+                  </div>
+                  
+                  <div className="flex">
+                    <div className="flex-1 py-2">
+                      <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
+                        My Ethred
+                      </p>
+                      <Link
+                        href={dashboardHref}
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      >
+                        {dashboardLabel}
+                      </Link>
+                      <Link
+                        href={`/${lang}/buyer/favorites`}
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      >
+                        {lang === 'am' ? 'ተወዳጆች' : 'Favorites'}
+                      </Link>
+                    </div>
+                    <div className="flex-1 py-2 border-l border-neutral-100 dark:border-neutral-800">
+                      <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
+                        Settings
+                      </p>
+                      <Link
+                        href={`/${lang}/account/settings`}
+                        onClick={() => setMenuOpen(false)}
+                        className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      >
+                        Account settings
+                      </Link>
+                      <button
+                        onClick={async () => {
+                          setMenuOpen(false);
+                          try {
+                            const { authService } = await import('@/services/auth.service');
+                            await authService.logout();
+                          } catch (e) { console.error(e); }
+                          logout();
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
+                      >
+                        Sign out
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="hidden sm:flex items-center gap-2">
               <Link
                 href={`/${lang}/auth/login`}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-400 hover:text-white transition"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white transition"
               >
                 {lang === 'am' ? 'ግባ' : 'Sign In'}
               </Link>
@@ -107,7 +173,7 @@ export const Header: React.FC = () => {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800 transition"
+            className="md:hidden p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white hover:bg-neutral-50 dark:bg-neutral-800 transition"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -126,19 +192,19 @@ export const Header: React.FC = () => {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="md:hidden bg-neutral-950 border-t border-neutral-800 px-4 py-4 flex flex-col gap-3 text-sm font-medium">
-          <Link href={`/${lang}/properties`} onClick={() => setMenuOpen(false)} className="text-neutral-300 hover:text-gold-400">
+        <div className="md:hidden bg-neutral-50 dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 px-4 py-4 flex flex-col gap-3 text-sm font-medium">
+          <Link href={`/${lang}/properties`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">
             {lang === 'am' ? 'ቤቶች' : 'Properties'}
           </Link>
-          <Link href={`/${lang}/agencies`} onClick={() => setMenuOpen(false)} className="text-neutral-300 hover:text-gold-400">
+          <Link href={`/${lang}/agencies`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">
             {lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}
           </Link>
-          <Link href={`/${lang}/properties/compare`} onClick={() => setMenuOpen(false)} className="text-neutral-300 hover:text-gold-400">
+          <Link href={`/${lang}/properties/compare`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">
             {lang === 'am' ? 'ማወዳደሪያ' : 'Compare'}
           </Link>
           {!isAuthenticated && (
             <>
-              <Link href={`/${lang}/auth/login`} onClick={() => setMenuOpen(false)} className="text-neutral-300 hover:text-white">
+              <Link href={`/${lang}/auth/login`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:text-white">
                 {lang === 'am' ? 'ግባ' : 'Sign In'}
               </Link>
               <Link

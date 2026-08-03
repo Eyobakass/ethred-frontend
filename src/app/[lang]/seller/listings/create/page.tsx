@@ -79,19 +79,19 @@ export default function CreateListingPage({
   const selectedRegion = ETHIOPIAN_LOCATIONS[form.region];
 
   const inputClass =
-    'w-full bg-neutral-800 border border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-gold-500 transition';
-  const labelClass = 'block text-xs font-semibold text-neutral-300 mb-1.5';
+    'w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600 transition';
+  const labelClass = 'block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5';
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="border-b border-neutral-800 pb-6">
-        <div className="text-xs font-bold text-gold-400 uppercase tracking-widest mb-1">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
+        <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
           ➕ New Property Listing
         </div>
-        <h1 className="text-2xl font-extrabold text-white">
+        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'አዲስ ቤት ይዝግቡ' : 'Create New Listing'}
         </h1>
-        <p className="text-xs text-neutral-400 mt-1">
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
           {lang === 'am'
             ? 'ሁሉንም ዝርዝሮች ያስገቡ። ቤቱ ከፀደቀ በኋላ ለሁሉም ይታያል።'
             : 'Fill in all details. Your listing will go live after admin approval.'}
@@ -106,8 +106,8 @@ export default function CreateListingPage({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
-        <section className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-white">📝 Basic Information</h2>
+        <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📝 Basic Information</h2>
           <div>
             <label className={labelClass}>Title (English) *</label>
             <input type="text" className={inputClass} value={form.title_en}
@@ -135,8 +135,8 @@ export default function CreateListingPage({
         </section>
 
         {/* Pricing & Type */}
-        <section className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-white">💰 Pricing & Listing Type</h2>
+        <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">💰 Pricing & Listing Type</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Price (ETB) *</label>
@@ -152,8 +152,8 @@ export default function CreateListingPage({
                     onClick={() => handleChange('transaction_mode', t)}
                     className={`py-2.5 rounded-xl border text-xs font-bold transition ${
                       form.transaction_mode === t
-                        ? 'bg-gold-500 text-black border-gold-500'
-                        : 'bg-neutral-800 text-neutral-300 border-neutral-700'
+                        ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600'
+                        : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700'
                     }`}>
                     {t === 'SALE' ? '🏷️ For Sale' : '🔑 For Rent'}
                   </button>
@@ -169,8 +169,8 @@ export default function CreateListingPage({
                   onClick={() => handleChange('category', c.value)}
                   className={`py-2 rounded-xl border text-xs font-semibold transition ${
                     form.category === c.value
-                      ? 'bg-gold-500 text-black border-gold-500'
-                      : 'bg-neutral-800 text-neutral-300 border-neutral-700'
+                      ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600'
+                      : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700'
                   }`}>
                   {lang === 'am' ? c.labelAm : c.labelEn}
                 </button>
@@ -180,8 +180,8 @@ export default function CreateListingPage({
         </section>
 
         {/* Location */}
-        <section className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-white">📍 Location Details</h2>
+        <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📍 Location Details</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Region / City</label>
@@ -223,8 +223,8 @@ export default function CreateListingPage({
         </section>
 
         {/* Specifications */}
-        <section className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-white">📐 Property Specifications</h2>
+        <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📐 Property Specifications</h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className={labelClass}>Bedrooms</label>
@@ -251,11 +251,11 @@ export default function CreateListingPage({
 
         <div className="flex items-center justify-between pt-2">
           <button type="button" onClick={() => router.back()}
-            className="px-5 py-2.5 rounded-xl bg-neutral-800 text-neutral-300 text-xs font-semibold hover:bg-neutral-700 transition">
+            className="px-5 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-semibold hover:bg-neutral-100 dark:bg-neutral-700 transition">
             Cancel
           </button>
           <button type="submit" disabled={loading}
-            className="px-8 py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-black font-extrabold text-sm shadow-lg shadow-gold-500/20 transition disabled:opacity-50">
+            className="px-8 py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-extrabold text-sm shadow-lg shadow-red-600 dark:shadow-red-600/20 transition disabled:opacity-50">
             {loading
               ? 'Creating...'
               : lang === 'am'

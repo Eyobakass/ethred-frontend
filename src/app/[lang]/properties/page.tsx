@@ -102,8 +102,8 @@ function PropertiesSearchContent({ lang }: { lang: 'en' | 'am' }) {
 
       <div className="lg:col-span-3">
         {loading ? (
-          <div className="py-20 text-center text-neutral-400">
-            <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="py-20 text-center text-neutral-600 dark:text-neutral-400">
+            <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <span className="text-sm">Searching listings...</span>
           </div>
         ) : (
@@ -125,11 +125,11 @@ export default function PropertiesSearchPage({ params }: { params: Promise<{ lan
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="border-b border-neutral-800 pb-4">
-        <h1 className="text-3xl font-extrabold text-white">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 pb-4">
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'የሚሸጡ እና የሚከራዩ ቤቶች' : 'Property Discovery & Search'}
         </h1>
-        <p className="text-xs text-neutral-400 mt-1">
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
           {lang === 'am'
             ? 'በክፍለ ከተማ፣ በዋጋ እና በ 3D ቨርቹዋል ጉብኝት አጣርተው ይፈልጉ'
             : 'Filter by location, price range, bedrooms, and 3D virtual tour availability.'}
@@ -137,8 +137,8 @@ export default function PropertiesSearchPage({ params }: { params: Promise<{ lan
       </div>
 
       <Suspense fallback={
-        <div className="py-20 text-center text-neutral-400">
-          <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+        <div className="py-20 text-center text-neutral-600 dark:text-neutral-400">
+          <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
           <span className="text-sm">Loading search...</span>
         </div>
       }>

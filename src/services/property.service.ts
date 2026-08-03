@@ -8,15 +8,18 @@ export const propertyService = {
   },
 
   async getPropertyById(id: string): Promise<Property> {
-    return apiClient.get(`/properties/${id}`);
+    const res = await apiClient.get<any, any>(`/properties/${id}`);
+    return res.data;
   },
 
   async createProperty(data: Partial<Property>): Promise<Property> {
-    return apiClient.post('/properties', data);
+    const res = await apiClient.post<any, any>('/properties', data);
+    return res.data;
   },
 
   async updateProperty(id: string, data: Partial<Property>): Promise<Property> {
-    return apiClient.put(`/properties/${id}`, data);
+    const res = await apiClient.put<any, any>(`/properties/${id}`, data);
+    return res.data;
   },
 
   async deleteProperty(id: string): Promise<{ success: boolean }> {

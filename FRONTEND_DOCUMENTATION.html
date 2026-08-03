@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ethred Frontend Documentation</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #fafafa;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #171717;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #404040;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #525252;
+        }
+        .prose a {
+            color: #d4af37;
+            text-decoration: none;
+        }
+        .prose a:hover {
+            text-decoration: underline;
+        }
+        .prose strong {
+            color: #ffffff;
+            font-weight: 600;
+        }
+        .prose code {
+            background-color: #262626;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            color: #d4af37;
+        }
+        .prose table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .prose th, .prose td {
+            border: 1px solid #404040;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .prose th {
+            background-color: #171717;
+            color: #d4af37;
+            font-weight: 600;
+        }
+        .prose td {
+            background-color: #0f0f0f;
+        }
+        .prose ul, .prose ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+        .prose h1, .prose h2, .prose h3 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .prose h1 {
+            font-size: 2.25rem;
+            line-height: 2.5rem;
+            background: linear-gradient(to right, #d4af37, #fde047);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding-bottom: 0.5rem;
+        }
+        .prose h2 {
+            font-size: 1.5rem;
+            line-height: 2rem;
+            border-bottom: 1px solid #262626;
+            padding-bottom: 0.5rem;
+        }
+        .prose h3 {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            color: #d4af37;
+        }
+        .prose hr {
+            border-color: #262626;
+            margin: 2rem 0;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-yellow-600/30">
+
+    <div class="max-w-4xl mx-auto px-6 py-12 sm:py-20">
+        <!-- Document Container -->
+        <article class="prose prose-invert max-w-none text-neutral-300 leading-relaxed">
+            
+            <h1>Ethred Frontend Architecture & Feature Documentation</h1>
+            
+            <p class="text-lg text-neutral-400 mb-8">
+                This document provides a comprehensive overview of the Ethred Real Estate platform's frontend ecosystem. Designed for scale, performance, and immersive user experiences, the frontend leverages modern web technologies to deliver a robust bilingual (English/Amharic) application with deeply integrated 3D virtual tours.
+            </p>
+
+            <h2>🏗️ Architectural Overview</h2>
+            <p>The frontend is built as a highly modular, server-side rendered (SSR) application, prioritizing both search engine optimization (SEO) and dynamic client-side interactivity.</p>
+
+            <h3>Tech Stack</h3>
+            <ul class="list-disc">
+                <li><strong>Framework:</strong> Next.js 15 (App Router)</li>
+                <li><strong>Language:</strong> TypeScript (Strict Mode)</li>
+                <li><strong>Styling:</strong> Tailwind CSS v4 (with custom <code>@theme</code> configuration for a bespoke Gold palette)</li>
+                <li><strong>State Management:</strong> Zustand (with persist middleware for SSR-safe local storage)</li>
+                <li><strong>3D Engine:</strong> Pannellum (WebGL-based panoramic viewer)</li>
+                <li><strong>Routing Strategy:</strong> Path-based localization (<code>/[lang]/...</code>)</li>
+            </ul>
+
+            <h3>Core Design Principles</h3>
+            <ol class="list-decimal">
+                <li><strong>Bilingual First:</strong> All UI components, route structures, and API payloads seamlessly support English (<code>en</code>) and Amharic (<code>am</code>). Language context is derived entirely from the URL path, making pages infinitely linkable and shareable.</li>
+                <li><strong>SSR Resilience:</strong> Global state (like authentication tokens and UI filters) is carefully decoupled from the initial server render to prevent hydration mismatches and module initialization crashes.</li>
+                <li><strong>Immersive 3D Experience:</strong> The property viewer isn't just an iframe; it's a deeply integrated React component that manages WebGL contexts cleanly, avoiding memory leaks when navigating between scenes or properties.</li>
+            </ol>
+
+            <hr>
+
+            <h2>🗺️ Page Structure & Navigation</h2>
+            <p>The application is organized into distinct domains serving different user roles: Buyers, Sellers, Agencies, and Administrators.</p>
+
+            <h3>Public Discovery</h3>
+            <ul class="list-disc">
+                <li><strong><code>/</code> (Home):</strong> A dynamic landing page featuring a hero search, platform statistics, a curated grid of featured properties, and clear calls-to-action for both buyers and sellers.</li>
+                <li><strong><code>/properties</code> (Search & Filter):</strong> The primary discovery engine. Features a sticky sidebar for complex filtering (location, price, bedrooms, 3D tour availability) and updates results instantly via URL query parameters.</li>
+                <li><strong><code>/properties/[id]</code> (Property Details):</strong> A comprehensive listing page showcasing high-quality media, property specifications, agent details, and a seamless entry point into the virtual tour.</li>
+                <li><strong><code>/properties/compare</code>:</strong> A side-by-side comparison tool allowing users to evaluate up to three properties simultaneously across various metrics.</li>
+                <li><strong><code>/agencies</code>:</strong> A directory of verified real estate agencies operating on the platform.</li>
+            </ul>
+
+            <h3>Immersive 3D Tours</h3>
+            <ul class="list-disc">
+                <li><strong><code>/properties/[id]/tour</code>:</strong> The flagship feature. A full-screen immersive experience powered by Pannellum. It includes an interactive floor plan overlay (<code>FloorPlanOverlay</code>) and a scene navigation toolbar (<code>SceneSelectorToolbar</code>), allowing users to visually walk through a property.</li>
+            </ul>
+
+            <h3>Authentication Flow</h3>
+            <ul class="list-disc">
+                <li><strong><code>/auth/login</code>:</strong> Secure entry point supporting role-based redirection.</li>
+                <li><strong><code>/auth/register</code>:</strong> Multi-step onboarding for new users.</li>
+                <li><strong><code>/auth/verify-otp</code>:</strong> A highly polished 6-digit SMS verification interface featuring auto-focus, backspace navigation, and clipboard paste support.</li>
+            </ul>
+
+            <h3>Buyer Domain</h3>
+            <ul class="list-disc">
+                <li><strong><code>/buyer/favorites</code>:</strong> A personalized dashboard where users can save, manage, and quickly access properties they are interested in.</li>
+            </ul>
+
+            <h3>Seller/Agency Domain</h3>
+            <ul class="list-disc">
+                <li><strong><code>/seller/dashboard</code>:</strong> An analytics and management hub for property owners and agents to track listing performance.</li>
+                <li><strong><code>/seller/listings/create</code>:</strong> A robust, multi-step creation wizard. It handles detailed property metadata, dynamic Ethiopian location hierarchies (Region -> Sub-city -> Woreda), and transitions directly into the media upload phase.</li>
+                <li><strong><code>/seller/listings/[id]/tour-editor</code>:</strong> The Hotspot Authoring tool. Sellers can upload panoramic images, place interactive navigational pins (hotspots), link them to other rooms (scenes), and visually construct a complete 3D scene graph.</li>
+                <li><strong><code>/seller/promotions</code>:</strong> A monetization gateway allowing sellers to purchase visibility boosts (Basic, Premium, Elite) using localized payment methods (Telebirr, CBE Birr, Chapa).</li>
+            </ul>
+
+            <h3>Admin Domain</h3>
+            <ul class="list-disc">
+                <li><strong><code>/admin/dashboard</code>:</strong> A centralized control panel for platform administrators to review listings, manage users, and oversee transactions.</li>
+            </ul>
+
+            <hr>
+
+            <h2>✨ Key Features & Capabilities</h2>
+
+            <h3>1. 3D Virtual Tour Integration (The "Pivot" Feature)</h3>
+            <p>The application handles 3D panoramic imagery natively. Rather than relying on expensive third-party embeds (like Matterport), Ethred provides its own authoring and viewing tools.</p>
+            <ul class="list-disc">
+                <li><strong>Scene Graph Navigation:</strong> Users navigate between linked rooms seamlessly.</li>
+                <li><strong>Floor Plan Mapping:</strong> 2D floor plans are dynamically overlaid with interactive pins representing available 3D scenes.</li>
+                <li><strong>Optimistic Authoring UI:</strong> When sellers create hotspots, the UI updates instantly while syncing with the backend in the background, ensuring a fluid editing experience.</li>
+            </ul>
+
+            <h3>2. Robust State Management</h3>
+            <ul class="list-disc">
+                <li><strong>SSR-Safe Authentication:</strong> The <code>useAuthStore</code> utilizes Zustand's persist middleware, ensuring that token retrieval does not block or crash the Next.js server-side rendering pipeline.</li>
+                <li><strong>Lazy API Interceptors:</strong> The Axios instance accesses the authentication token dynamically at request time, avoiding circular dependency issues during module initialization.</li>
+            </ul>
+
+            <h3>3. Dynamic Search & Filtering</h3>
+            <ul class="list-disc">
+                <li><strong>Hydrated State:</strong> The property search page intelligently hydrates its filter state directly from the URL parameters upon mounting, making specific search queries highly shareable.</li>
+            </ul>
+
+            <h3>4. Advanced UI/UX Details</h3>
+            <ul class="list-disc">
+                <li><strong>Tailwind Custom Theme:</strong> A bespoke "Gold" color palette is injected directly into the Tailwind v4 configuration, ensuring brand consistency across gradients, focus rings, and hover states.</li>
+                <li><strong>Suspense Boundaries:</strong> Complex client-side hooks (<code>useSearchParams</code>) are properly wrapped in React <code>&lt;Suspense&gt;</code> boundaries to satisfy Next.js static generation requirements.</li>
+            </ul>
+
+            <hr>
+
+            <h2>📊 Feature Readiness & Ratings</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature Category</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th class="text-center">Rating (1-10)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Authentication</strong></td>
+                        <td>Login, Registration, OTP Verification, Role-based routing</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Production Ready</span></td>
+                        <td class="text-center text-white font-bold">9/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Localization</strong></td>
+                        <td>Path-based routing, Dynamic content translation (EN/AM)</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Production Ready</span></td>
+                        <td class="text-center text-white font-bold">9/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Property Discovery</strong></td>
+                        <td>Search, Advanced Filtering, Pagination, Grid/List views</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Production Ready</span></td>
+                        <td class="text-center text-white font-bold">8/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3D Tour Engine</strong></td>
+                        <td>WebGL Panorama rendering, Scene linking, Hotspot interactions</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Production Ready</span></td>
+                        <td class="text-center text-white font-bold">9/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tour Authoring</strong></td>
+                        <td>Drag-and-drop hotspot creation, Pitch/Yaw capture, Scene graph building</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Production Ready</span></td>
+                        <td class="text-center text-white font-bold">8/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Property Management</strong></td>
+                        <td>Create listing workflow, Media uploads, Draft/Publish states</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Production Ready</span></td>
+                        <td class="text-center text-white font-bold">8/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Promotions & Payments</strong></td>
+                        <td>Tier selection, Integration with local gateways</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">UI Complete</span></td>
+                        <td class="text-center text-white font-bold">7/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance (SSR/SEO)</strong></td>
+                        <td>Next.js App Router utilization, Image optimization, Suspense boundaries</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Highly Optimized</span></td>
+                        <td class="text-center text-white font-bold">9/10</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Design System</strong></td>
+                        <td>Custom theming, Responsive layouts, Micro-interactions</td>
+                        <td><span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Polished</span></td>
+                        <td class="text-center text-white font-bold">9/10</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>🛠️ Developer Commands</h2>
+            <p>To work with this frontend architecture locally:</p>
+            <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 font-mono text-sm mb-4">
+                <div class="text-neutral-500 mb-1"># Start the development server</div>
+                <div class="text-gold-400 mb-3">npm run dev</div>
+                
+                <div class="text-neutral-500 mb-1"># Create a production build</div>
+                <div class="text-gold-400 mb-3">npm run build</div>
+                
+                <div class="text-neutral-500 mb-1"># Start the production server</div>
+                <div class="text-gold-400">npm run start</div>
+            </div>
+            <p class="text-sm text-neutral-400">
+                Ensure that the backend API is running and that the <code>NEXT_PUBLIC_API_URL</code> environment variable is correctly set in your <code>.env.local</code> file.
+            </p>
+
+        </article>
+    </div>
+
+</body>
+</html>

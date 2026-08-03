@@ -24,8 +24,8 @@ export const FloorPlanOverlay: React.FC<FloorPlanOverlayProps> = ({
 
   return (
     // This component must be rendered inside a `relative`-positioned parent
-    <div className="absolute bottom-5 left-5 z-20 bg-neutral-950/90 backdrop-blur-md p-3 rounded-xl border border-gold-500/30 w-[240px] shadow-2xl">
-      <div className="text-[10px] font-bold text-gold-400 uppercase tracking-widest mb-2 flex items-center justify-between">
+    <div className="absolute bottom-5 left-5 z-20 bg-neutral-50 dark:bg-neutral-950/90 backdrop-blur-md p-3 rounded-xl border border-red-600 dark:border-red-600/30 w-[240px] shadow-2xl">
+      <div className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-2 flex items-center justify-between">
         <span>🗺️ Floor Plan</span>
         {sceneWithCoords.length > 0 && (
           <span className="text-neutral-500 normal-case font-normal">
@@ -34,7 +34,7 @@ export const FloorPlanOverlay: React.FC<FloorPlanOverlayProps> = ({
         )}
       </div>
 
-      <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-neutral-700 bg-neutral-800">
+      <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
         <img
           src={floorPlanUrl}
           alt="2D Floor Plan Layout"
@@ -63,7 +63,7 @@ export const FloorPlanOverlay: React.FC<FloorPlanOverlayProps> = ({
               <div
                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shadow-lg ${
                   isActive
-                    ? 'bg-gold-500 border-gold-300 shadow-gold-500/50'
+                    ? 'bg-red-600 dark:bg-red-600 border-red-300 shadow-red-600 dark:shadow-red-600/50'
                     : 'bg-emerald-600 border-emerald-400 shadow-emerald-500/30 hover:bg-emerald-500'
                 }`}
               >
@@ -71,7 +71,7 @@ export const FloorPlanOverlay: React.FC<FloorPlanOverlayProps> = ({
               </div>
               {/* Active scene label */}
               {isActive && scene.scene_name && (
-                <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 whitespace-nowrap bg-neutral-900 text-gold-400 text-[9px] font-bold px-1.5 py-0.5 rounded shadow border border-gold-500/30">
+                <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 whitespace-nowrap bg-white dark:bg-neutral-900 text-red-600 dark:text-red-400 text-[9px] font-bold px-1.5 py-0.5 rounded shadow border border-red-600 dark:border-red-600/30">
                   {scene.scene_name}
                 </div>
               )}

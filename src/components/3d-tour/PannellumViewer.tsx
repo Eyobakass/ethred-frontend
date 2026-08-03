@@ -64,6 +64,7 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
   onSceneChange,
   isEditMode = false,
   onAddHotspot,
+  onDeleteHotspot,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<PannellumViewerInstance | null>(null);
@@ -73,8 +74,10 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
   // Stable callback refs so they never cause viewer re-init
   const onSceneChangeRef = useRef(onSceneChange);
   const onAddHotspotRef = useRef(onAddHotspot);
+  const onDeleteHotspotRef = useRef(onDeleteHotspot);
   useEffect(() => { onSceneChangeRef.current = onSceneChange; }, [onSceneChange]);
   useEffect(() => { onAddHotspotRef.current = onAddHotspot; }, [onAddHotspot]);
+  useEffect(() => { onDeleteHotspotRef.current = onDeleteHotspot; }, [onDeleteHotspot]);
 
   // Load Pannellum script once
   useEffect(() => {
@@ -85,6 +88,10 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
 
   // Stable click handler for edit mode
   const handleClick = useCallback((event: MouseEvent) => {
+    // If they clicked on a hotspot (a div with class pnlm-hotspot-base), don't trigger add hotspot
+    if ((event.target as HTMLElement).closest('.pnlm-hotspot-base')) {
+      return;
+    }
     if (!viewerRef.current || !onAddHotspotRef.current) return;
     const coords = viewerRef.current.mouseEventToCoords(event);
     if (coords && Array.isArray(coords)) {
@@ -113,6 +120,27 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
     }
 
     try {
+      // Pre-process scenes to attach delete handlers to hotspots if in edit mode
+      const processedScenes = Object.fromEntries(
+        Object.entries(tourConfig.scenes).map(([sceneId, scene]) => [
+          sceneId,
+          {
+            ...scene,
+            hotSpots: scene.hotSpots?.map((hs: any) => ({
+              ...hs,
+              clickHandlerFunc: (event: any, args: any) => {
+                if (isEditMode && onDeleteHotspotRef.current) {
+                  onDeleteHotspotRef.current(args.id);
+                } else if (hs.type === 'scene' && hs.sceneId && !isEditMode) {
+                  viewerRef.current?.loadScene(hs.sceneId);
+                }
+              },
+              clickHandlerArgs: { id: hs.id },
+            })),
+          },
+        ])
+      );
+
       const viewer = window.pannellum.viewer(containerRef.current, {
         default: {
           firstScene: tourConfig.default.firstScene,
@@ -123,7 +151,7 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
           showFullscreenCtrl: true,
           keyboardZoom: true,
         },
-        scenes: tourConfig.scenes,
+        scenes: processedScenes,
       });
 
       viewer.on('scenechange', handleSceneChange);
@@ -153,14 +181,14 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
     if (!container || !isLoaded) return;
 
     if (isEditMode) {
-      container.addEventListener('click', handleClick);
-      return () => container.removeEventListener('click', handleClick);
+      container.addEventListener('dblclick', handleClick);
+      return () => container.removeEventListener('dblclick', handleClick);
     }
   }, [isLoaded, isEditMode, handleClick]);
 
   if (error) {
     return (
-      <div className="w-full h-[550px] md:h-[650px] rounded-2xl border border-red-800 bg-red-950/30 flex items-center justify-center">
+      <div className="w-full h-[400px] md:h-[500px] rounded-2xl border border-red-800 bg-red-950/30 flex items-center justify-center">
         <div className="text-center text-red-400 space-y-2">
           <span className="text-3xl block">⚠️</span>
           <p className="text-sm font-semibold">3D Tour Unavailable</p>
@@ -171,11 +199,11 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
   }
 
   return (
-    <div className="relative w-full h-[550px] md:h-[650px] rounded-2xl overflow-hidden bg-black shadow-2xl border border-gold-500/20">
+    <div className="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden bg-black shadow-2xl border border-red-600 dark:border-red-600/20">
       {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-neutral-950 z-10">
-          <div className="flex flex-col items-center gap-3 text-gold-400">
-            <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center bg-neutral-50 dark:bg-neutral-950 z-10">
+          <div className="flex flex-col items-center gap-3 text-red-600 dark:text-red-400">
+            <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin" />
             <span className="text-sm font-semibold">Loading 3D Virtual Tour...</span>
             <span className="text-xs text-neutral-500">Initializing WebGL renderer</span>
           </div>
@@ -184,7 +212,7 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
 
       {isEditMode && isLoaded && (
         <div className="absolute top-3 right-3 z-20 bg-amber-500/20 border border-amber-500/40 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-3 py-1.5 rounded-lg pointer-events-none">
-          🛠️ EDIT MODE — Click to drop a hotspot pin
+          🛠️ EDIT MODE — Double-click to drop pin • Click pin to delete
         </div>
       )}
 

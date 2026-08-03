@@ -50,14 +50,14 @@ export default function BuyerFavoritesPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      <div className="border-b border-neutral-800 pb-6">
-        <div className="text-xs font-bold text-gold-400 uppercase tracking-widest mb-1">
+      <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
+        <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
           ❤️ Saved Properties
         </div>
-        <h1 className="text-3xl font-extrabold text-white">
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'የተቀመጡ ቤቶቼ' : 'My Favorite Properties'}
         </h1>
-        <p className="text-xs text-neutral-400 mt-1">
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
           {lang === 'am'
             ? 'ያዳኗቸውን ቤቶች ዝርዝር'
             : 'Properties you have saved for later review.'}
@@ -66,17 +66,17 @@ export default function BuyerFavoritesPage({
 
       {loading ? (
         <div className="py-20 text-center">
-          <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-neutral-400 text-sm">Loading your saved properties...</p>
+          <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-neutral-600 dark:text-neutral-400 text-sm">Loading your saved properties...</p>
         </div>
       ) : !isAuthenticated ? (
         <div className="py-20 text-center space-y-4">
           <span className="text-5xl block">🔐</span>
-          <h2 className="text-xl font-bold text-white">Sign In Required</h2>
-          <p className="text-sm text-neutral-400">You need to be logged in to view saved favorites.</p>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Sign In Required</h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">You need to be logged in to view saved favorites.</p>
           <Link
             href={`/${lang}/auth/login`}
-            className="inline-flex px-6 py-3 rounded-xl bg-gold-500 text-black font-bold text-sm"
+            className="inline-flex px-6 py-3 rounded-xl bg-red-600 dark:bg-red-600 text-white font-bold text-sm"
           >
             Sign In
           </Link>
@@ -84,17 +84,17 @@ export default function BuyerFavoritesPage({
       ) : favorites.length === 0 ? (
         <div className="py-20 text-center space-y-4">
           <span className="text-5xl block">💔</span>
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
             {lang === 'am' ? 'ምንም ቤቶች አልተቀመጡም' : 'No Saved Properties Yet'}
           </h2>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {lang === 'am'
               ? 'ቤቶችን ሲያስሱ ❤️ ቁልፍ ተጫኑ'
               : 'Click the ❤️ heart button on any property to save it here.'}
           </p>
           <Link
             href={`/${lang}/properties`}
-            className="inline-flex px-6 py-3 rounded-xl bg-gold-500 text-black font-bold text-sm"
+            className="inline-flex px-6 py-3 rounded-xl bg-red-600 dark:bg-red-600 text-white font-bold text-sm"
           >
             {lang === 'am' ? 'ቤቶችን ይፈልጉ' : 'Browse Properties'}
           </Link>

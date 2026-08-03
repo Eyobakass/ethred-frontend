@@ -21,14 +21,14 @@ export const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center bg-neutral-900 p-1 rounded-lg border border-neutral-700/60">
+    <div className="flex items-center bg-white dark:bg-neutral-900 p-1 rounded-lg border border-neutral-300 dark:border-neutral-700/60">
       <button
         onClick={() => toggleLanguage('en')}
         aria-label="Switch to English"
         className={`px-2.5 py-1 rounded text-xs font-semibold transition-all duration-200 ${
           currentLang === 'en'
-            ? 'bg-gold-500 text-black shadow-sm'
-            : 'text-neutral-400 hover:text-white'
+            ? 'bg-red-600 dark:bg-red-600 text-white shadow-sm'
+            : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white'
         }`}
       >
         EN
@@ -38,8 +38,8 @@ export const LanguageSwitcher: React.FC = () => {
         aria-label="Switch to Amharic"
         className={`px-2.5 py-1 rounded text-xs font-semibold transition-all duration-200 ${
           currentLang === 'am'
-            ? 'bg-gold-500 text-black shadow-sm'
-            : 'text-neutral-400 hover:text-white'
+            ? 'bg-red-600 dark:bg-red-600 text-white shadow-sm'
+            : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white'
         }`}
       >
         አማ

@@ -1,12 +1,18 @@
 // src/services/auth.service.ts
 import { apiClient } from './api';
+import { RegisterPayload, LoginPayload } from '@/types/auth.types';
 
 export const authService = {
-  async registerPhone(phone_number: string, preferred_language = 'en') {
-    return apiClient.post('/auth/register-phone', {
-      phone_number,
-      preferred_language,
-    });
+  async register(data: RegisterPayload) {
+    return apiClient.post('/auth/register', data);
+  },
+
+  async login(data: LoginPayload) {
+    return apiClient.post('/auth/login', data);
+  },
+
+  async sendOtp(email: string) {
+    return apiClient.post('/auth/send-otp', { email });
   },
 
   async verifyOtp(session_token: string, verification_code: string) {
@@ -16,14 +22,19 @@ export const authService = {
     });
   },
 
-  async loginWithPassword(phone_number: string, password_hash: string) {
-    return apiClient.post('/auth/login', {
-      phone_number,
-      password: password_hash,
-    });
-  },
-
   async getMe() {
     return apiClient.get('/auth/me');
   },
+
+  async logout() {
+    return apiClient.post('/auth/logout');
+  },
+
+  async changePassword(data: any) {
+    return apiClient.put('/auth/change-password', data);
+  },
+
+  async deleteAccount() {
+    return apiClient.delete('/users/me');
+  }
 };

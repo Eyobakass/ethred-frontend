@@ -127,13 +127,13 @@ export default function VirtualTourPage({
   const sceneCount = tourConfig ? Object.keys(tourConfig.scenes).length : 0;
 
   return (
-    <div className="relative min-h-screen bg-neutral-950 flex flex-col overflow-hidden">
+    <div className="relative min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col overflow-hidden">
       {/* ── Top bar ─────────────────────────────────────────────────────────── */}
-      <div className="sticky top-0 inset-x-0 z-30 bg-neutral-950/90 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-neutral-800 flex items-center justify-between gap-4">
+      <div className="sticky top-0 inset-x-0 z-30 bg-neutral-50 dark:bg-neutral-950/90 backdrop-blur-md px-4 sm:px-6 py-3 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             href={`/${lang}/properties/${propertyId}`}
-            className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-xs font-semibold text-neutral-300 transition flex items-center gap-1.5"
+            className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:bg-neutral-700 text-xs font-semibold text-neutral-700 dark:text-neutral-300 transition flex items-center gap-1.5"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -141,8 +141,8 @@ export default function VirtualTourPage({
             {lang === 'am' ? 'ወደ ዝርዝር' : 'Exit Tour'}
           </Link>
           <div className="min-w-0">
-            <h1 className="text-sm font-bold text-white leading-none truncate">{propertyTitle}</h1>
-            <p className="text-[10px] text-gold-400 font-medium mt-0.5">
+            <h1 className="text-sm font-bold text-neutral-900 dark:text-white leading-none truncate">{propertyTitle}</h1>
+            <p className="text-[10px] text-red-600 dark:text-red-400 font-medium mt-0.5">
               {sceneCount} {lang === 'am' ? 'ክፍሎች' : 'Rooms'} · Navigable 3D Scene Graph
             </p>
           </div>
@@ -153,8 +153,8 @@ export default function VirtualTourPage({
           onClick={() => setShowFloorPlan(!showFloorPlan)}
           className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
             showFloorPlan
-              ? 'bg-gold-500/20 text-gold-400 border border-gold-500/30'
-              : 'bg-neutral-800 text-neutral-400 hover:text-white'
+              ? 'bg-red-600 dark:bg-red-600/20 text-red-600 dark:text-red-400 border border-red-600 dark:border-red-600/30'
+              : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white'
           }`}
         >
           🗺️ {lang === 'am' ? 'ፎቅ ካርታ' : 'Floor Plan'}
@@ -198,8 +198,8 @@ export default function VirtualTourPage({
         ) : (
           <div className="flex items-center justify-center h-[550px]">
             <div className="text-center space-y-3">
-              <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-gold-400 text-sm font-semibold">Loading 3D Scene Graph...</p>
+              <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-red-600 dark:text-red-400 text-sm font-semibold">Loading 3D Scene Graph...</p>
             </div>
           </div>
         )}
