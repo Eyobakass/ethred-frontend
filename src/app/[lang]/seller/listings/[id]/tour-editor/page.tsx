@@ -56,12 +56,14 @@ export default function TourEditorPage({
              setActiveSceneId(config.default?.firstScene ?? Object.keys(config.scenes)[0]);
           }
         } else {
-          setTourConfig(null);
+          setTourConfig({ default: { firstScene: '', sceneFadeDuration: 1000 }, scenes: {} });
+          setActiveSceneId('');
         }
       })
       .catch(() => {
-        setTourConfig(DEMO_CONFIG);
-        setActiveSceneId('living-room');
+        // Backend returns 404 if no scenes exist. Set empty state.
+        setTourConfig({ default: { firstScene: '', sceneFadeDuration: 1000 }, scenes: {} });
+        setActiveSceneId('');
       });
   }, [propertyId, activeSceneId]);
 
@@ -271,12 +273,23 @@ export default function TourEditorPage({
             {' '} · {hotspotCount} hotspot{hotspotCount !== 1 ? 's' : ''} placed
           </p>
         </div>
-        <Link
-          href={`/${lang}/seller/dashboard`}
-          className="px-4 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:bg-neutral-700 transition self-start sm:self-auto"
-        >
-          ← Return to Dashboard
-        </Link>
+        <div className="flex flex-col sm:flex-row items-center gap-3 self-start sm:self-auto">
+          <button
+            onClick={() => {
+              setReplacingSceneId(null);
+              fileInputRef.current?.click();
+            }}
+            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg shadow-red-600/20 transition flex items-center gap-2"
+          >
+            <span>➕</span> Upload New Scene
+          </button>
+          <Link
+            href={`/${lang}/seller/dashboard`}
+            className="px-4 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-xs font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:bg-neutral-700 transition"
+          >
+            ← Return to Dashboard
+          </Link>
+        </div>
       </div>
 
       {/* Status message */}
@@ -306,54 +319,75 @@ export default function TourEditorPage({
       </div>
 
       {tourConfig ? (
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
-          {/* Scene selector toolbar */}
-          <div className="relative">
-            <SceneSelectorToolbar
-              scenes={Object.entries(tourConfig.scenes).map(([id, scene]) => ({
-                id,
-                name: scene.title ?? id,
-                thumbnailUrl: scene.panorama,
-              }))}
-              activeSceneId={activeSceneId}
-              onSelectScene={handleSceneSelect}
-              isEditMode={true}
-              onDeleteScene={handleDeleteScene}
-              onReplaceScene={handleReplaceSceneClick}
-            />
-
-            <PannellumViewer
-              tourConfig={tourConfig}
-              isEditMode={true}
-              onAddHotspot={handleAddHotspotClick}
-              onSceneChange={(sceneId) => setActiveSceneId(sceneId)}
-              onDeleteHotspot={handleDeleteHotspot}
-            />
-          </div>
-
-          {/* Hotspot list */}
-          {hotspotCount > 0 && (
-            <div className="p-4 border-t border-neutral-200 dark:border-neutral-800">
-              <h3 className="text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-2">
-                Hotspots in this scene:
-              </h3>
-              <div className="space-y-1.5">
-                {currentScene?.hotSpots.map((hs, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300"
-                  >
-                    <span>{hs.type === 'scene' ? '🚪' : 'ℹ️'}</span>
-                    <span className="font-medium">{hs.text ?? 'Pin'}</span>
-                    <span className="text-neutral-500 font-mono ml-auto">
-                      P:{hs.pitch.toFixed(1)}° Y:{hs.yaw.toFixed(1)}°
-                    </span>
-                  </div>
-                ))}
-              </div>
+        Object.keys(tourConfig.scenes).length === 0 ? (
+          <div className="py-20 flex flex-col items-center justify-center text-center bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl border-dashed">
+            <div className="w-16 h-16 bg-red-50 dark:bg-red-950/30 rounded-full flex items-center justify-center mb-4 text-3xl">
+              📸
             </div>
-          )}
-        </div>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">No Scenes Uploaded Yet</h3>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mb-6">
+              Start building your 3D virtual tour by uploading your first 360° panorama image.
+            </p>
+            <button
+              onClick={() => {
+                setReplacingSceneId(null);
+                fileInputRef.current?.click();
+              }}
+              className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm shadow-lg shadow-red-600/20 transition"
+            >
+              Upload First Scene
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden">
+            {/* Scene selector toolbar */}
+            <div className="relative">
+              <SceneSelectorToolbar
+                scenes={Object.entries(tourConfig.scenes).map(([id, scene]) => ({
+                  id,
+                  name: scene.title ?? id,
+                  thumbnailUrl: scene.panorama,
+                }))}
+                activeSceneId={activeSceneId}
+                onSelectScene={handleSceneSelect}
+                isEditMode={true}
+                onDeleteScene={handleDeleteScene}
+                onReplaceScene={handleReplaceSceneClick}
+              />
+
+              <PannellumViewer
+                tourConfig={tourConfig}
+                isEditMode={true}
+                onAddHotspot={handleAddHotspotClick}
+                onSceneChange={(sceneId) => setActiveSceneId(sceneId)}
+                onDeleteHotspot={handleDeleteHotspot}
+              />
+            </div>
+
+            {/* Hotspot list */}
+            {hotspotCount > 0 && (
+              <div className="p-4 border-t border-neutral-200 dark:border-neutral-800">
+                <h3 className="text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-2">
+                  Hotspots in this scene:
+                </h3>
+                <div className="space-y-1.5">
+                  {currentScene?.hotSpots.map((hs, i) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300"
+                    >
+                      <span>{hs.type === 'scene' ? '🚪' : 'ℹ️'}</span>
+                      <span className="font-medium">{hs.text ?? 'Pin'}</span>
+                      <span className="text-neutral-500 font-mono ml-auto">
+                        P:{hs.pitch.toFixed(1)}° Y:{hs.yaw.toFixed(1)}°
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )
       ) : (
         <div className="py-20 text-center text-neutral-600 dark:text-neutral-400">
           <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />

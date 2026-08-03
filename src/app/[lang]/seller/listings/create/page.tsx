@@ -62,6 +62,7 @@ export default function CreateListingPage({
     try {
       const created = await propertyService.createProperty({
         ...form,
+        city: form.region, // City is required by backend schema
         price_etb: Number(form.price_etb),
         bedrooms: Number(form.bedrooms),
         bathrooms: Number(form.bathrooms),
@@ -70,7 +71,16 @@ export default function CreateListingPage({
       // After creation, redirect to tour editor for this new listing
       router.push(`/${lang}/seller/listings/${created.id}/tour-editor`);
     } catch (err: any) {
-      setError(err?.message ?? 'Failed to create listing. Please try again.');
+      // Better error unwrapping for Axios/Zod errors
+      const backendMessage = err?.response?.data?.message;
+      const validationErrors = err?.response?.data?.errors;
+      let errorMsg = backendMessage || err?.message || 'Failed to create listing. Please try again.';
+      
+      if (validationErrors && Array.isArray(validationErrors)) {
+        errorMsg += ': ' + validationErrors.map((v: any) => `${v.field || v.path}: ${v.message}`).join(', ');
+      }
+      
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }

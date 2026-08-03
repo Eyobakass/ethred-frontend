@@ -9,7 +9,7 @@ export const propertyService = {
 
   async getMyListings(): Promise<Property[]> {
     const res = await apiClient.get<any, any>('/properties');
-    return res.data;
+    return res.data.results || [];
   },
 
   async getPropertyById(id: string): Promise<Property> {
