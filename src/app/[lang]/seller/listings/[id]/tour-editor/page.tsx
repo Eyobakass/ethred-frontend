@@ -155,37 +155,39 @@ export default function TourEditorPage({
   const handleFileSelect = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file || !replacingSceneId) return;
+      if (!file) return;
 
       setIsSaving(true);
       setSaveMsg(null);
       try {
         const formData = new FormData();
         formData.append('file', file);
-        // Add current scene name if possible, backend ignores it mostly
-        const currentTitle = tourConfig?.scenes[replacingSceneId]?.title ?? 'Room';
         
         // 1. Upload new scene
         await tourService.uploadPanorama(propertyId, formData);
         
-        // 2. Delete all hotspots inside the old scene to prevent FK constraint issues
-        const scene = tourConfig?.scenes[replacingSceneId];
-        if (scene && scene.hotSpots && scene.hotSpots.length > 0) {
-          const deletePromises = scene.hotSpots.map((hs: any) => {
-            if (hs.id) return tourService.deleteHotspot(hs.id).catch(() => {});
-            return Promise.resolve();
-          });
-          await Promise.all(deletePromises);
+        if (replacingSceneId) {
+          // 2. Delete all hotspots inside the old scene to prevent FK constraint issues
+          const scene = tourConfig?.scenes[replacingSceneId];
+          if (scene && scene.hotSpots && scene.hotSpots.length > 0) {
+            const deletePromises = scene.hotSpots.map((hs: any) => {
+              if (hs.id) return tourService.deleteHotspot(hs.id).catch(() => {});
+              return Promise.resolve();
+            });
+            await Promise.all(deletePromises);
+          }
+
+          // 3. Delete old scene
+          await tourService.deleteScene(propertyId, replacingSceneId);
+          setSaveMsg({ type: 'success', text: 'Scene replaced successfully.' });
+        } else {
+          setSaveMsg({ type: 'success', text: 'New scene uploaded successfully.' });
         }
 
-        // 3. Delete old scene
-        await tourService.deleteScene(propertyId, replacingSceneId);
-
-        setSaveMsg({ type: 'success', text: 'Scene replaced successfully.' });
         fetchTourConfig();
       } catch (err) {
-        console.error('Replace scene error:', err);
-        setSaveMsg({ type: 'error', text: 'Failed to replace scene.' });
+        console.error('Upload scene error:', err);
+        setSaveMsg({ type: 'error', text: 'Failed to upload scene.' });
       } finally {
         setIsSaving(false);
         if (fileInputRef.current) fileInputRef.current.value = '';
