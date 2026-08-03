@@ -1,0 +1,52 @@
+{
+  "brand_name": "Ethred",
+  "tagline": "Modern Ethiopian Real Estate Ecosystem",
+  "nav": {
+    "home": "Home",
+    "properties": "Properties",
+    "agencies": "Agencies",
+    "compare": "Compare",
+    "saved_favorites": "Favorites",
+    "inquiries": "Inquiries & Chat",
+    "login": "Sign In",
+    "register": "Register",
+    "seller_dashboard": "Seller Portal",
+    "agency_portal": "Agency Portal",
+    "admin_portal": "Admin Portal"
+  },
+  "search": {
+    "hero_title": "Find Your Dream Property in Ethiopia",
+    "hero_subtitle": "Explore verified apartments, houses, and commercial listings with 3D virtual tours",
+    "search_placeholder": "Search by neighborhood, sub-city, or landmark...",
+    "category": "Category",
+    "region": "Region",
+    "sub_city": "Sub-City",
+    "price_range": "Price Range (ETB)",
+    "bedrooms": "Bedrooms",
+    "virtual_tour_only": "3D Virtual Tour Only",
+    "search_button": "Search Listings",
+    "filter_results": "Filter Results"
+  },
+  "tour": {
+    "virtual_tour": "3D Virtual Tour",
+    "walkthrough": "Matterport-Style Walkthrough",
+    "floor_plan": "2D Floor Plan",
+    "switch_scene": "Switch Room",
+    "add_hotspot": "Add 3D Doorway Pin",
+    "target_scene": "Target Room Scene",
+    "info_label": "Information Label",
+    "hotspot_added": "Doorway hotspot created successfully!"
+  },
+  "common": {
+    "price": "Price",
+    "area": "Area",
+    "sqm": "m²",
+    "bedrooms": "Beds",
+    "bathrooms": "Baths",
+    "verified": "Verified",
+    "featured": "Featured",
+    "contact_seller": "Contact Seller",
+    "send_inquiry": "Send Inquiry",
+    "view_3d_tour": "Explore in 3D"
+  }
+}

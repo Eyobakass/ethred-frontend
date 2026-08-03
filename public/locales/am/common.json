@@ -1,0 +1,52 @@
+{
+  "brand_name": "ኢትሬድ (Ethred)",
+  "tagline": "ዘመናዊ የኢትዮጵያ ሪል እስቴት ሥርዓት",
+  "nav": {
+    "home": "መነሻ ገጽ",
+    "properties": "ቤት እና መሬት",
+    "agencies": "ኤጀንሲዎች",
+    "compare": "አወዳድር",
+    "saved_favorites": "የተወደዱ",
+    "inquiries": "መልእክት እና ውይይት",
+    "login": "ግባ",
+    "register": "ተመዝገብ",
+    "seller_dashboard": "የሻጭ ገጽ",
+    "agency_portal": "የኤጀንሲ ገጽ",
+    "admin_portal": "የአስተዳዳሪ ገጽ"
+  },
+  "search": {
+    "hero_title": "የህልምዎን ቤት በኢትዮጵያ ያግኙ",
+    "hero_subtitle": "የተረጋገጡ አፓርታማዎችን፣ ቪላዎችን እና የንግድ ቦታዎችን በ 3D ቨርቹዋል ጉብኝት ይመልከቱ",
+    "search_placeholder": "በሰፈር፣ በክፍለ ከተማ ወይም በታዋቂ ቦታ ይፈልጉ...",
+    "category": "ዓይነት",
+    "region": "ክልል / ከተማ",
+    "sub_city": "ክፍለ ከተማ",
+    "price_range": "የዋጋ መጠን (ብር)",
+    "bedrooms": "የመኝታ ክፍል",
+    "virtual_tour_only": "3D ቨርቹዋል ጉብኝት ያላቸው ብቻ",
+    "search_button": "ፈልግ",
+    "filter_results": "አጣራ"
+  },
+  "tour": {
+    "virtual_tour": "3D ቨርቹዋል ጉብኝት",
+    "walkthrough": "ቤት ውስጥ የመዘዋወር ጉብኝት",
+    "floor_plan": "የቤት ፕላን (2D Floor Plan)",
+    "switch_scene": "ክፍል ቀይር",
+    "add_hotspot": "የ 3D በር / መንገድ ምልክት ጨምር",
+    "target_scene": "የሚወስደው ክፍል",
+    "info_label": "የመረጃ ጽሁፍ",
+    "hotspot_added": "የመተላለፊያ ምልክት በተሳካ ሁኔታ ተፈጥሯል!"
+  },
+  "common": {
+    "price": "ዋጋ",
+    "area": "ስፋት",
+    "sqm": "ካሬ ሜትር",
+    "bedrooms": "መኝታ",
+    "bathrooms": "ባለ",
+    "verified": "የተረጋገጠ",
+    "featured": "የተመረጠ",
+    "contact_seller": "ሻጩን አነጋግር",
+    "send_inquiry": "መልእክት ላክ",
+    "view_3d_tour": "በ 3D ጎብኝ"
+  }
+}
