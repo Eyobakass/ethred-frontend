@@ -9,12 +9,12 @@ export const propertyService = {
 
   async getMyListings(): Promise<Property[]> {
     const res = await apiClient.get<any, any>('/properties');
-    return res.data.results || [];
+    return res.results || [];
   },
 
   async getPropertyById(id: string): Promise<Property> {
     const res = await apiClient.get<any, any>(`/properties/${id}`);
-    return res.data;
+    return res;
   },
 
   async createProperty(data: Partial<Property>): Promise<Property> {
