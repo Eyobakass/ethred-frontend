@@ -5,7 +5,7 @@ import { Hotspot } from '@/types/property.types';
 
 export const tourService = {
   async getTourConfig(propertyId: string): Promise<TourConfig> {
-    return apiClient.get(`/properties/${propertyId}/tour`);
+    return apiClient.get(`/properties/${propertyId}/tour?t=${Date.now()}`);
   },
 
   async addHotspot(data: {
