@@ -11,37 +11,19 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
   const resolvedParams = use(params);
   const lang = resolvedParams.lang === 'am' ? 'am' : 'en';
   const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     propertyService
-      .searchProperties({ limit: 10 })
+      .getMyListings()
       .then((res) => {
-        if (res && res.results) setProperties(res.results);
+        setProperties(res || []);
       })
       .catch(() => {
-        setProperties([
-          {
-            id: 'sample-1',
-            owner_id: 'user-1',
-            title_en: 'Luxury 3-Bedroom Apartment in Bole Edna Mall',
-            title_am: 'በቦሌ ኤድና ሞል አቅራቢያ የሚገኝ የቅንጦት ባለ 3 መኝታ አፓርታማ',
-            description_en: 'Modern high-rise apartment.',
-            price_etb: 14500000,
-            transaction_mode: 'SALE',
-            category: 'APARTMENT',
-            region: 'Addis Ababa',
-            city: 'Addis Ababa',
-            sub_city: 'Bole',
-            woreda: 'Woreda 03',
-            bedrooms: 3,
-            bathrooms: 2,
-            area_sqm: 165,
-            status: 'APPROVED',
-            is_featured: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          },
-        ]);
+        setProperties([]);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -70,38 +52,62 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
           My Listed Properties ({properties.length})
         </div>
         <div className="divide-y divide-neutral-800">
-          {properties.map((prop) => (
-            <div key={prop.id} className="p-4 flex items-center justify-between gap-4 hover:bg-neutral-50 dark:bg-neutral-800/50 transition">
-              <div>
-                <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                  {lang === 'am' && prop.title_am ? prop.title_am : prop.title_en}
-                </h3>
-                <div className="flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-                  <span>📍 {prop.sub_city}, {prop.city}</span>
-                  <span>💰 {formatCurrency(Number(prop.price_etb), 'ETB', lang)}</span>
-                  <span className="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400 text-[10px] font-bold">
-                    {prop.status}
-                  </span>
+          {isLoading ? (
+            <div className="p-8 text-center text-neutral-500">Loading...</div>
+          ) : properties.length === 0 ? (
+            <div className="p-12 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-800 rounded-full flex items-center justify-center mb-4 text-3xl">
+                🏠
+              </div>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">
+                {lang === 'am' ? 'ምንም ቤቶች የሉም' : 'No Properties Yet'}
+              </h3>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400 max-w-sm mb-6">
+                {lang === 'am' 
+                  ? 'እስካሁን ምንም አይነት ቤት አልመዘገቡም። አዲስ ቤት በመመዝገብ ይጀምሩ!'
+                  : "You haven't listed any properties yet. Get started by adding your first listing!"}
+              </p>
+              <Link
+                href={`/${lang}/seller/listings/create`}
+                className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm shadow-lg shadow-red-600/20 transition"
+              >
+                {lang === 'am' ? 'አዲስ ቤት መዝግብ' : 'Add New Listing'}
+              </Link>
+            </div>
+          ) : (
+            properties.map((prop) => (
+              <div key={prop.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
+                <div>
+                  <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
+                    {lang === 'am' && prop.title_am ? prop.title_am : prop.title_en}
+                  </h3>
+                  <div className="flex items-center gap-3 text-xs text-neutral-600 dark:text-neutral-400 mt-1">
+                    <span>📍 {prop.sub_city}, {prop.city}</span>
+                    <span>💰 {formatCurrency(Number(prop.price_etb), 'ETB', lang)}</span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-950 border border-emerald-800 text-emerald-400 text-[10px] font-bold">
+                      {prop.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/${lang}/seller/listings/${prop.id}/tour-editor`}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-600 dark:border-red-600/30 transition flex items-center gap-1"
+                  >
+                    <span>🥽</span>
+                    <span>Edit 3D Tour</span>
+                  </Link>
+                  <Link
+                    href={`/${lang}/seller/promotions`}
+                    className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition"
+                  >
+                    ⭐ Promote
+                  </Link>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/${lang}/seller/listings/${prop.id}/tour-editor`}
-                  className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:bg-neutral-700 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-600 dark:border-red-600/30 transition flex items-center gap-1"
-                >
-                  <span>🥽</span>
-                  <span>Edit 3D Tour</span>
-                </Link>
-                <Link
-                  href={`/${lang}/seller/promotions`}
-                  className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/30 transition"
-                >
-                  ⭐ Promote
-                </Link>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

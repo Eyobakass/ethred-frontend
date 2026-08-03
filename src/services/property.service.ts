@@ -7,6 +7,11 @@ export const propertyService = {
     return apiClient.get('/properties/search', { params });
   },
 
+  async getMyListings(): Promise<Property[]> {
+    const res = await apiClient.get<any, any>('/properties');
+    return res.data;
+  },
+
   async getPropertyById(id: string): Promise<Property> {
     const res = await apiClient.get<any, any>(`/properties/${id}`);
     return res.data;
