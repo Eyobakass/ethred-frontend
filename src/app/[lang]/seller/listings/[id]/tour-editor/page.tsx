@@ -414,7 +414,7 @@ export default function TourEditorPage({
       {isSaving && (
         <div className="fixed bottom-6 right-6 z-50 bg-white dark:bg-neutral-900 border border-red-600 dark:border-red-600/40 px-4 py-3 rounded-xl flex items-center gap-3 shadow-2xl text-xs font-semibold text-red-600 dark:text-red-400">
           <div className="w-4 h-4 border-2 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin" />
-          Saving hotspot...
+          Saving changes...
         </div>
       )}
     </div>
