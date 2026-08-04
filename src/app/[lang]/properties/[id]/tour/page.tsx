@@ -62,7 +62,7 @@ export default function VirtualTourPage({
   const [property, setProperty] = useState<Property | null>(null);
   const [activeSceneId, setActiveSceneId] = useState<string>('');
   const [scenesList, setScenesList] = useState<PropertyMedia[]>([]);
-  const [showFloorPlan, setShowFloorPlan] = useState(true);
+  const [showFloorPlan, setShowFloorPlan] = useState(false);
 
   useEffect(() => {
     // Fetch property meta
@@ -102,15 +102,10 @@ export default function VirtualTourPage({
   }, [propertyId]);
 
   // When user selects a scene from toolbar/floor plan, update active state
-  // Pannellum will switch internally via its own click-hotspot system.
-  // For external scene changes (from toolbar/floor plan), we must call viewer.loadScene.
-  // But we don't have a ref here — instead, we rebuild tourConfig with the new firstScene
-  // so Pannellum re-inits to that scene.
   const handleExternalSceneSelect = useCallback(
     (sceneId: string) => {
       if (!tourConfig || sceneId === activeSceneId) return;
       setActiveSceneId(sceneId);
-      // Update firstScene so the viewer re-initializes at this scene
       setTourConfig((prev) =>
         prev ? { ...prev, default: { ...prev.default, firstScene: sceneId } } : prev
       );
@@ -147,25 +142,13 @@ export default function VirtualTourPage({
             </p>
           </div>
         </div>
-
-        {/* Floor plan toggle */}
-        <button
-          onClick={() => setShowFloorPlan(!showFloorPlan)}
-          className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
-            showFloorPlan
-              ? 'bg-red-600 dark:bg-red-600/20 text-red-600 dark:text-red-400 border border-red-600 dark:border-red-600/30'
-              : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white'
-          }`}
-        >
-          🗺️ {lang === 'am' ? 'ፎቅ ካርታ' : 'Floor Plan'}
-        </button>
       </div>
 
       {/* ── Viewer area ─────────────────────────────────────────────────────── */}
-      <div className="flex-1 w-full px-2 sm:px-4 py-4 relative">
+      <div className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 relative flex flex-col justify-center">
         {tourConfig ? (
-          <div className="relative">
-            {/* Scene selector toolbar — positioned relative to this wrapper */}
+          <div className="relative rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-2xl">
+            {/* Scene selector toolbar */}
             <SceneSelectorToolbar
               scenes={Object.entries(tourConfig.scenes).map(([id, scene]) => ({
                 id,
@@ -181,19 +164,6 @@ export default function VirtualTourPage({
               tourConfig={tourConfig}
               onSceneChange={(sceneId) => setActiveSceneId(sceneId)}
             />
-
-            {/* Floor plan overlay — positioned inside same relative container */}
-            {showFloorPlan && (
-              <FloorPlanOverlay
-                floorPlanUrl={
-                  property?.floor_plan_url ||
-                  'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80'
-                }
-                scenes={scenesList}
-                activeSceneId={activeSceneId}
-                onSelectScene={handleExternalSceneSelect}
-              />
-            )}
           </div>
         ) : (
           <div className="flex items-center justify-center h-[550px]">
