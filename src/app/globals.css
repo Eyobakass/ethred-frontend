@@ -145,27 +145,31 @@ html {
   display: none !important;
 }
 
-/* 2. Glassmorphic Zoom Controls & Fullscreen Toggle Container */
-.pnm-zoom-controls, .pennellum-zoom-controls, div[class*="zoom-controls"],
+/* 2. Sleek Dark Glass Zoom Controls & Fullscreen Button Containers */
+.pnm-zoom-controls, .pennellum-zoom-controls,
 .pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  background: rgba(18, 18, 18, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 10px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
   overflow: hidden !important;
+  margin: 12px !important;
 }
 
-/* 3. Clean Standard Control Icons */
-.pnm-zoom-in, .pnm-zoom-out, .pennellum-zoom-in, .pennellum-zoom-out {
-  filter: none !important;
+/* 3. Make + / - / [ ] Icons Crisp White on Dark Background */
+.pnm-zoom-in, .pnm-zoom-out, .pennellum-zoom-in, .pennellum-zoom-out,
+.pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button {
+  filter: invert(1) !important;
 }
 
-/* 4. Crisp High-Visibility Compass */
+/* 4. Crisp Glassmorphic Compass */
 .pnm-compass, .pennellum-compass, div[class*="compass"] {
   background-color: rgba(255, 255, 255, 0.95) !important;
   border: 2px solid rgba(0, 0, 0, 0.15) !important;
   border-radius: 50% !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
   margin: 12px !important;
 }
 
