@@ -33,9 +33,9 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
         const propData = await propertyService.getPropertyById(id);
         setProperty(propData);
 
-        // Try to fetch tour config if it has a tour
-        if (propData.media?.some(m => m.is_tour_scene)) {
-          const tc = await tourService.getTourConfig(id).catch(() => null);
+        // Always attempt to fetch tour config if it exists
+        const tc = await tourService.getTourConfig(id).catch(() => null);
+        if (tc && tc.scenes && Object.keys(tc.scenes).length > 0) {
           setTourConfig(tc);
         }
       } catch (err) {
