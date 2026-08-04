@@ -47,6 +47,10 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
         setValidationError('Please enter a valid property area (sqm).');
         return;
       }
+      if (prop.rejection_info && new Date(prop.updated_at) <= new Date(prop.rejection_info.rejected_at)) {
+        setValidationError('You must edit your property details, photos, or 3D tour based on the admin feedback before resubmitting for review.');
+        return;
+      }
     }
 
     setIsSubmitting(id);
