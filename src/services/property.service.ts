@@ -14,7 +14,7 @@ export const propertyService = {
 
   async getPropertyById(id: string): Promise<Property> {
     const res = await apiClient.get<any, any>(`/properties/${id}`);
-    return res;
+    return res.data || res;
   },
 
   async createProperty(data: Partial<Property>): Promise<Property> {
