@@ -328,8 +328,8 @@ export default function EditListingPage({
               >
                 <option value="">Select Sub-city</option>
                 {subCities.map((sc) => (
-                  <option key={sc} value={sc}>
-                    {sc}
+                  <option key={sc.en} value={sc.en}>
+                    {lang === 'am' ? sc.am : sc.en}
                   </option>
                 ))}
               </select>
