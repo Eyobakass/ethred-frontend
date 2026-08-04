@@ -139,29 +139,34 @@ html {
 }
 
 /* ── Sleek Glassmorphic Pannellum UI Controls Overrides ───────────────────── */
-.pnm-controls-container {
-  margin: 12px !important;
-}
-
-.pnm-zoom-controls, .pnm-fullscreen-toggle-button {
-  background: rgba(15, 15, 15, 0.75) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
-}
-
-.pnm-zoom-in, .pnm-zoom-out, .pnm-fullscreen-toggle-button {
-  filter: invert(1) brightness(2) !important;
-  transition: opacity 0.2s ease, transform 0.2s ease !important;
-}
-
-.pnm-title-box {
+.pennellum-container .pennellum-zoom-controls,
+.pennellum-container .pnm-zoom-controls,
+.pennellum-container .pennellum-fullscreen-toggle-button,
+.pennellum-container .pnm-fullscreen-toggle-button {
   background: rgba(15, 15, 15, 0.85) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+}
+
+.pennellum-container .pennellum-zoom-in,
+.pennellum-container .pennellum-zoom-out,
+.pennellum-container .pnm-zoom-in,
+.pennellum-container .pnm-zoom-out,
+.pennellum-container .pennellum-fullscreen-toggle-button,
+.pennellum-container .pnm-fullscreen-toggle-button {
+  filter: invert(1) brightness(2) !important;
+}
+
+.pennellum-container .pennellum-title-box,
+.pennellum-container .pnm-title-box {
+  background: rgba(15, 15, 15, 0.85) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
   border-radius: 10px !important;
   padding: 6px 14px !important;
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
@@ -172,13 +177,14 @@ html {
   margin: 12px !important;
 }
 
-.pnm-compass {
-  background-color: rgba(15, 15, 15, 0.75) !important;
+.pennellum-container .pennellum-compass,
+.pennellum-container .pnm-compass {
+  background-color: rgba(15, 15, 15, 0.85) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: 2px solid rgba(255, 255, 255, 0.25) !important;
   border-radius: 50% !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
   margin: 12px !important;
 }
 
