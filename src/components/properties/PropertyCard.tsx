@@ -14,7 +14,10 @@ interface PropertyCardProps {
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const images = property.media?.filter((m) => m.media_category === 'IMAGE').map(m => m.file_url) || [];
+  const standardImages = property.media?.filter((m) => m.media_category === 'IMAGE' && !m.is_tour_scene).map(m => m.file_url) || [];
+  const allMediaImages = property.media?.map(m => m.file_url) || [];
+  const images = standardImages.length > 0 ? standardImages : (allMediaImages.length > 0 ? allMediaImages : []);
+
   if (images.length === 0) {
     images.push('https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80');
   }
