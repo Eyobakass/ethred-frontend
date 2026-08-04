@@ -79,4 +79,9 @@ export interface Property {
   updated_at: string;
   latitude?: number;
   longitude?: number;
+  rejection_info?: {
+    reason: string;
+    rejected_at: string;
+    rejected_by: string;
+  };
 }

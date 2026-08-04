@@ -110,13 +110,35 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                     <span className="flex items-center gap-1">🛁 {prop.bathrooms} Bath</span>
                     <span className="flex items-center gap-1">📐 {prop.area_sqm} m²</span>
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      prop.status === 'DRAFT' && prop.rejection_info ? 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800' :
                       prop.status === 'DRAFT' ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300' :
                       prop.status === 'PENDING' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
                       'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400'
                     }`}>
-                      {prop.status}
+                      {prop.status === 'DRAFT' && prop.rejection_info ? 'NEEDS REVISION' : prop.status}
                     </span>
                   </div>
+
+                  {/* Cool Rejection Feedback Alert Box */}
+                  {prop.status === 'DRAFT' && prop.rejection_info && (
+                    <div className="mt-3 p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-xs space-y-1.5 animate-in">
+                      <div className="flex items-center justify-between font-bold text-red-700 dark:text-red-400">
+                        <span className="flex items-center gap-1.5">
+                          <span>⚠️</span> Rejection Feedback (Action Required)
+                        </span>
+                        <span className="text-[10px] text-neutral-500 font-normal">
+                          {new Date(prop.rejection_info.rejected_at).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-neutral-800 dark:text-neutral-200 bg-white dark:bg-neutral-900 p-2.5 rounded-lg border border-red-100 dark:border-red-900/30 font-medium">
+                        &quot;{prop.rejection_info.reason}&quot;
+                      </p>
+                      <div className="text-[11px] text-neutral-500 flex items-center justify-between pt-1">
+                        <span>Reviewed by: <strong className="text-neutral-700 dark:text-neutral-300">{prop.rejection_info.rejected_by}</strong></span>
+                        <span className="text-red-600 dark:text-red-400 font-semibold">Please fix the requested changes and re-submit.</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 mt-4 sm:mt-0">
