@@ -6,8 +6,9 @@ export const adminService = {
     return apiClient.get('/admin/properties/pending');
   },
 
-  async updatePropertyStatus(propertyId: string, status: 'APPROVED' | 'SUSPENDED') {
-    return apiClient.patch(`/admin/properties/${propertyId}/status`, { status });
+  async updatePropertyStatus(propertyId: string, status: 'APPROVED' | 'SUSPENDED' | 'REJECTED', reason?: string) {
+    const route = status === 'APPROVED' ? 'approve' : (status === 'SUSPENDED' ? 'suspend' : 'reject');
+    return apiClient.patch(`/admin/properties/${propertyId}/${route}`, { reason });
   },
 
   async getVerificationTickets() {

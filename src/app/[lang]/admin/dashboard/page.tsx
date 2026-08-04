@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useEffect, useState, use } from 'react';
+import Link from 'next/link';
 import { Property } from '@/types/property.types';
 import { adminService } from '@/services/admin.service';
 
@@ -14,7 +15,11 @@ export default function AdminDashboardPage({ params }: { params: Promise<{ lang:
     adminService
       .getPendingProperties()
       .then((res: any) => {
-        if (res && Array.isArray(res)) setPendingProperties(res);
+        if (res?.results && Array.isArray(res.results)) {
+          setPendingProperties(res.results);
+        } else if (Array.isArray(res)) {
+          setPendingProperties(res);
+        }
       })
       .catch(() => {
         setPendingProperties([
@@ -90,18 +95,12 @@ export default function AdminDashboardPage({ params }: { params: Promise<{ lang:
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => handleReject(item.id)}
-                    className="px-4 py-2 rounded-xl bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 text-xs font-bold transition"
+                  <Link
+                    href={`/${lang}/admin/properties/${item.id}/review`}
+                    className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition shadow-lg shadow-red-600/20"
                   >
-                    Reject / Flag
-                  </button>
-                  <button
-                    onClick={() => handleApprove(item.id)}
-                    className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow"
-                  >
-                    Approve Listing
-                  </button>
+                    Review Listing &rarr;
+                  </Link>
                 </div>
               </div>
             ))
