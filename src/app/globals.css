@@ -139,10 +139,15 @@ html {
 }
 
 /* ── Sleek Glassmorphic Pannellum UI Controls Overrides ───────────────────── */
-.pennellum-container .pennellum-zoom-controls,
-.pennellum-container .pnm-zoom-controls,
-.pennellum-container .pennellum-fullscreen-toggle-button,
-.pennellum-container .pnm-fullscreen-toggle-button {
+
+/* 1. Hide the redundant bottom-left title box ("Salon1") */
+.pnm-title-box, .pennellum-title-box, div[class*="title-box"], div[class*="title"] {
+  display: none !important;
+}
+
+/* 2. Glassmorphic Zoom Controls & Fullscreen Toggle */
+.pnm-zoom-controls, .pennellum-zoom-controls, div[class*="zoom-controls"],
+.pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button, div[class*="fullscreen-toggle"] {
   background: rgba(15, 15, 15, 0.85) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
@@ -152,33 +157,14 @@ html {
   overflow: hidden !important;
 }
 
-.pennellum-container .pennellum-zoom-in,
-.pennellum-container .pennellum-zoom-out,
-.pennellum-container .pnm-zoom-in,
-.pennellum-container .pnm-zoom-out,
-.pennellum-container .pennellum-fullscreen-toggle-button,
-.pennellum-container .pnm-fullscreen-toggle-button {
+/* 3. Invert control icons to bright white */
+.pnm-zoom-in, .pnm-zoom-out, .pennellum-zoom-in, .pennellum-zoom-out,
+div[class*="zoom-in"], div[class*="zoom-out"], div[class*="fullscreen"] {
   filter: invert(1) brightness(2) !important;
 }
 
-.pennellum-container .pennellum-title-box,
-.pennellum-container .pnm-title-box {
-  background: rgba(15, 15, 15, 0.85) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 10px !important;
-  padding: 6px 14px !important;
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
-  font-weight: 700 !important;
-  font-size: 12px !important;
-  color: #ffffff !important;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6) !important;
-  margin: 12px !important;
-}
-
-.pennellum-container .pennellum-compass,
-.pennellum-container .pnm-compass {
+/* 4. Glassmorphic Compass */
+.pnm-compass, .pennellum-compass, div[class*="compass"] {
   background-color: rgba(15, 15, 15, 0.85) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
