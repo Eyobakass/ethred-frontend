@@ -141,36 +141,31 @@ html {
 /* ── Sleek Glassmorphic Pannellum UI Controls Overrides ───────────────────── */
 
 /* 1. Hide the redundant bottom-left title box ("Salon1") */
-.pnm-title-box, .pennellum-title-box, div[class*="title-box"], div[class*="title"] {
+.pnm-title-box, .pennellum-title-box, div[class*="title-box"] {
   display: none !important;
 }
 
-/* 2. Glassmorphic Zoom Controls & Fullscreen Toggle */
+/* 2. Glassmorphic Zoom Controls & Fullscreen Toggle Container */
 .pnm-zoom-controls, .pennellum-zoom-controls, div[class*="zoom-controls"],
-.pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button, div[class*="fullscreen-toggle"] {
-  background: rgba(15, 15, 15, 0.85) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+.pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
   overflow: hidden !important;
 }
 
-/* 3. Invert control icons to bright white */
-.pnm-zoom-in, .pnm-zoom-out, .pennellum-zoom-in, .pennellum-zoom-out,
-div[class*="zoom-in"], div[class*="zoom-out"], div[class*="fullscreen"] {
-  filter: invert(1) brightness(2) !important;
+/* 3. Clean Standard Control Icons */
+.pnm-zoom-in, .pnm-zoom-out, .pennellum-zoom-in, .pennellum-zoom-out {
+  filter: none !important;
 }
 
-/* 4. Glassmorphic Compass */
+/* 4. Crisp High-Visibility Compass */
 .pnm-compass, .pennellum-compass, div[class*="compass"] {
-  background-color: rgba(15, 15, 15, 0.85) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 2px solid rgba(255, 255, 255, 0.25) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
   border-radius: 50% !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3) !important;
   margin: 12px !important;
 }
 
