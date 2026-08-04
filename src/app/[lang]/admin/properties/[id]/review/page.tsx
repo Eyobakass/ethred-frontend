@@ -93,7 +93,41 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
           &larr; Back to Dashboard
         </Link>
       </div>
+      {/* Moderation Quality Checklist Banner */}
+      <div className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 mb-6 shadow-sm">
+        <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
+          <span>📋</span> Automated Quality Checklist
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className={`p-2.5 rounded-xl border flex items-center gap-2 font-medium ${
+            property.title_en?.length >= 5 ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400' : 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400'
+          }`}>
+            <span>{property.title_en?.length >= 5 ? '✅' : '❌'}</span>
+            <span>Title Length: {property.title_en?.length || 0} chars</span>
+          </div>
 
+          <div className={`p-2.5 rounded-xl border flex items-center gap-2 font-medium ${
+            images.length > 0 ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-900/50 text-amber-700 dark:text-amber-400'
+          }`}>
+            <span>{images.length > 0 ? '✅' : '⚠️'}</span>
+            <span>Photos: {images.length} uploaded</span>
+          </div>
+
+          <div className={`p-2.5 rounded-xl border flex items-center gap-2 font-medium ${
+            tourConfig ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400' : 'bg-neutral-100 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500'
+          }`}>
+            <span>{tourConfig ? '✅' : 'ℹ️'}</span>
+            <span>3D Virtual Tour: {tourConfig ? 'Configured' : 'None'}</span>
+          </div>
+
+          <div className={`p-2.5 rounded-xl border flex items-center gap-2 font-medium ${
+            Number(property.price_etb) > 0 && Number(property.area_sqm) > 0 ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400' : 'bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-900/50 text-red-700 dark:text-red-400'
+          }`}>
+            <span>{Number(property.price_etb) > 0 && Number(property.area_sqm) > 0 ? '✅' : '❌'}</span>
+            <span>Price & Area Valid</span>
+          </div>
+        </div>
+      </div>
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 mb-8 shadow-sm">
         <h2 className="text-lg font-bold mb-4 border-b pb-2">Property Details</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">

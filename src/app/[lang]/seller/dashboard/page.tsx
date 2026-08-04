@@ -29,16 +29,35 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
       });
   }, []);
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const handleSubmit = async (id: string) => {
+    // 1. Validation Guard: Find property and check readiness
+    const prop = properties.find((p) => p.id === id);
+    if (prop) {
+      if (!prop.title_en || prop.title_en.trim().length < 5) {
+        setValidationError('Please provide a descriptive English title (at least 5 characters).');
+        return;
+      }
+      if (!prop.price_etb || Number(prop.price_etb) <= 0) {
+        setValidationError('Please enter a valid listing price.');
+        return;
+      }
+      if (!prop.area_sqm || Number(prop.area_sqm) <= 0) {
+        setValidationError('Please enter a valid property area (sqm).');
+        return;
+      }
+    }
+
     setIsSubmitting(id);
     try {
       await propertyService.submitForReview(id);
       setProperties((prev) =>
         prev.map((p) => (p.id === id ? { ...p, status: 'PENDING' } : p))
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to submit for review', error);
-      alert('Failed to submit property for review. Please try again.');
+      alert(error.message || 'Failed to submit property for review. Please try again.');
     } finally {
       setIsSubmitting(null);
     }
@@ -152,6 +171,12 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                     </button>
                   )}
                   <Link
+                    href={`/${lang}/seller/listings/${prop.id}/edit`}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-700 transition flex items-center gap-1"
+                  >
+                    <span>✏️</span> Edit Details
+                  </Link>
+                  <Link
                     href={`/${lang}/seller/listings/${prop.id}/media`}
                     className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-700 transition flex items-center gap-1"
                   >
@@ -175,6 +200,27 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
           )}
         </div>
       </div>
+      {/* Validation Error Modal */}
+      {validationError && (
+        <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div className="flex items-center gap-3 text-amber-500 font-bold text-lg">
+              <span>⚠️</span> Listing Validation Guard
+            </div>
+            <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed bg-neutral-50 dark:bg-neutral-950 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800 font-medium">
+              {validationError}
+            </p>
+            <div className="flex justify-end pt-2">
+              <button
+                onClick={() => setValidationError(null)}
+                className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition shadow-lg shadow-red-600/20"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
