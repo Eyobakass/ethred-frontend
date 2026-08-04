@@ -13,7 +13,7 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
-  timeout: 15000, // 15s request timeout
+  timeout: 60000, // 60s request timeout to accommodate Render cold starts/deployments
 });
 
 // ── Request interceptor ─────────────────────────────────────────────────────
