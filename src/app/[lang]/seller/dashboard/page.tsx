@@ -176,22 +176,10 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                     </button>
                   )}
                   <Link
-                    href={`/${lang}/seller/listings/${prop.id}/edit`}
-                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-700 transition flex items-center gap-1"
+                    href={`/${lang}/seller/listings/${prop.id}`}
+                    className="px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white hover:bg-neutral-700 dark:hover:bg-neutral-100 text-white dark:text-neutral-900 text-xs font-bold border border-neutral-900 dark:border-white transition flex items-center gap-1.5"
                   >
-                    <span>✏️</span> Edit Details
-                  </Link>
-                  <Link
-                    href={`/${lang}/seller/listings/${prop.id}/media`}
-                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 text-xs font-semibold border border-neutral-200 dark:border-neutral-700 transition flex items-center gap-1"
-                  >
-                    <span>🖼️</span> Manage Photos
-                  </Link>
-                  <Link
-                    href={`/${lang}/seller/listings/${prop.id}/tour-editor`}
-                    className="px-3 py-1.5 rounded-lg bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-200 dark:border-red-900/50 transition flex items-center gap-1"
-                  >
-                    <span>🥽</span> Edit 3D Tour
+                    <span>✏️</span> Manage Listing
                   </Link>
                   <Link
                     href={`/${lang}/seller/promotions`}

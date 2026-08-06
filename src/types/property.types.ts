@@ -11,7 +11,7 @@ export type PropertyCategory =
 
 export type TransactionType = 'SALE' | 'RENT';
 
-export type PropertyStatus = 'DRAFT' | 'PENDING' | 'APPROVED' | 'SUSPENDED' | 'ARCHIVED';
+export type PropertyStatus = 'DRAFT' | 'PENDING' | 'PENDING_UPDATE' | 'APPROVED' | 'SUSPENDED' | 'ARCHIVED';
 
 export type MediaType = 'IMAGE' | 'VIDEO' | 'DOCUMENT';
 

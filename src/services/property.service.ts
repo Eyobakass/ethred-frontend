@@ -41,6 +41,15 @@ export const propertyService = {
     return res.data;
   },
 
+  async getExistingDraft(id: string): Promise<Property | null> {
+    const res = await apiClient.get<any, any>(`/properties/${id}/draft`);
+    return res.data || null;
+  },
+
+  async deleteDraft(draftId: string): Promise<void> {
+    await apiClient.delete(`/properties/${draftId}`);
+  },
+
   async toggleFavorite(property_id: string): Promise<{ favorited: boolean }> {
     return apiClient.post(`/favorites/toggle`, { property_id });
   },
