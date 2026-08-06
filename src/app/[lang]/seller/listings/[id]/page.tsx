@@ -387,7 +387,6 @@ export default function ListingManagerPage({
   const standardPhotos = property?.media?.filter(m => !m.is_tour_scene) || [];
   const currentScene = tourConfig?.scenes[activeSceneId];
   const statusLabel = property?.status === 'PENDING_UPDATE' ? 'PENDING UPDATE' : property?.status;
-  const canEdit = property && !['PENDING', 'PENDING_UPDATE', 'SUSPENDED', 'ARCHIVED'].includes(property.status);
   const isPending = property && ['PENDING', 'PENDING_UPDATE'].includes(property.status);
 
   if (isLoading) {
