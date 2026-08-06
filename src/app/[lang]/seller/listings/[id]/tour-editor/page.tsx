@@ -2,8 +2,10 @@
 'use client';
 
 import React, { useEffect, useState, use, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DoorOpen, Info } from 'lucide-react';
+import { propertyService } from '@/services/property.service';
 import { PannellumViewer } from '@/components/3d-tour/PannellumViewer';
 import { HotspotOverlay } from '@/components/3d-tour/HotspotOverlay';
 import { SceneSelectorToolbar } from '@/components/3d-tour/SceneSelectorToolbar';
@@ -46,8 +48,18 @@ export default function TourEditorPage({
     pitch: number;
   }>({ isOpen: false, yaw: 0, pitch: 0 });
 
+  const router = useRouter();
+
   const fetchTourConfig = useCallback(() => {
-    tourService
+    propertyService.getPropertyById(propertyId).then(property => {
+      if (property && property.status === 'APPROVED') {
+        propertyService.createDraftClone(propertyId).then(draft => {
+          router.replace(`/${lang}/seller/listings/${draft.id}/tour-editor`);
+        }).catch(console.error);
+        return;
+      }
+
+      tourService
       .getTourConfig(propertyId)
       .then((config) => {
         if (config?.scenes && Object.keys(config.scenes).length > 0) {

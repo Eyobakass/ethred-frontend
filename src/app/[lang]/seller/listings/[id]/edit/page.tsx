@@ -56,6 +56,20 @@ export default function EditListingPage({
       .then((data) => {
         setProperty(data);
         if (data) {
+          if (data.status === 'APPROVED') {
+            setInitialLoading(true);
+            propertyService.createDraftClone(data.id)
+              .then((draft) => {
+                router.replace(`/${lang}/seller/listings/${draft.id}/edit`);
+              })
+              .catch((err) => {
+                console.error(err);
+                setError('Failed to create a draft for editing.');
+                setInitialLoading(false);
+              });
+            return; // Stop setting form for this approved property
+          }
+
           setForm({
             title_en: data.title_en || '',
             title_am: data.title_am || '',

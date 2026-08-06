@@ -106,9 +106,6 @@ export default function VirtualTourPage({
     (sceneId: string) => {
       if (!tourConfig || sceneId === activeSceneId) return;
       setActiveSceneId(sceneId);
-      setTourConfig((prev) =>
-        prev ? { ...prev, default: { ...prev.default, firstScene: sceneId } } : prev
-      );
     },
     [tourConfig, activeSceneId]
   );
@@ -162,6 +159,7 @@ export default function VirtualTourPage({
             {/* Main 360° viewer */}
             <PannellumViewer
               tourConfig={tourConfig}
+              activeSceneId={activeSceneId}
               onSceneChange={(sceneId) => setActiveSceneId(sceneId)}
             />
           </div>

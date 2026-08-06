@@ -20,6 +20,19 @@ export default function MediaManagementPage({ params }: { params: Promise<{ lang
   const fetchProperty = async () => {
     try {
       const data = await propertyService.getPropertyById(id);
+      
+      if (data && data.status === 'APPROVED') {
+        setIsLoading(true);
+        try {
+          const draft = await propertyService.createDraftClone(id);
+          router.replace(`/${lang}/seller/listings/${draft.id}/media`);
+          return;
+        } catch (err) {
+          console.error(err);
+          setErrorMsg('Failed to create a draft for media upload.');
+        }
+      }
+
       setProperty(data);
     } catch (err) {
       console.error(err);
@@ -71,6 +84,13 @@ export default function MediaManagementPage({ params }: { params: Promise<{ lang
 
   const standardImages = property.media?.filter(m => !m.is_tour_scene) || [];
 
+  const getImageUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
+    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
@@ -112,8 +132,8 @@ export default function MediaManagementPage({ params }: { params: Promise<{ lang
             </div>
           ) : (
             standardImages.map((media) => (
-              <div key={media.id} className="relative group aspect-[4/3] rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800">
-                <img src={media.file_url} alt="Property" className="w-full h-full object-cover" />
+              <div key={media.id} className="relative group aspect-[4/3] rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-800">
+                <img src={getImageUrl(media.file_url)} alt="Property" className="w-full h-full object-cover" />
                 <button
                   onClick={() => handleDelete(media.id)}
                   className="absolute top-2 right-2 p-1.5 bg-black/50 hover:bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition"

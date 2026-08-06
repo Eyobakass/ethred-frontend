@@ -96,6 +96,13 @@ export default function PropertyDetailPage({
     );
   }
 
+  const getImageUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
+    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  };
+
   const title = lang === 'am' && property.title_am ? property.title_am : property.title_en;
   const description = lang === 'am' && property.description_am ? property.description_am : property.description_en;
   const images = property.media?.filter((m) => m.media_category === 'IMAGE') ?? [];
@@ -173,7 +180,7 @@ export default function PropertyDetailPage({
           <div className="space-y-2">
             <div className="group relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-2xl">
               <img
-                src={images[activeImageIdx]?.file_url ?? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80'}
+                src={getImageUrl(images[activeImageIdx]?.file_url ?? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80')}
                 alt={`${title} — photo ${activeImageIdx + 1}`}
                 className="w-full h-full object-cover"
               />
@@ -243,7 +250,7 @@ export default function PropertyDetailPage({
                       i === activeImageIdx ? 'border-red-600 dark:border-red-600' : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-500'
                     }`}
                   >
-                    <img src={img.file_url} alt="" className="w-full h-full object-cover" />
+                    <img src={getImageUrl(img.file_url)} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

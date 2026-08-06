@@ -6,9 +6,11 @@ import { TourConfig } from '@/types/tour.types';
 
 interface PannellumViewerProps {
   tourConfig: TourConfig;
+  activeSceneId?: string;
   onSceneChange?: (sceneId: string) => void;
   isEditMode?: boolean;
   onAddHotspot?: (yaw: number, pitch: number) => void;
+  onDeleteHotspot?: (hotspotId: string) => void;
 }
 
 declare global {
@@ -61,6 +63,7 @@ function loadPannellum(): Promise<void> {
 
 export const PannellumViewer: React.FC<PannellumViewerProps> = ({
   tourConfig,
+  activeSceneId,
   onSceneChange,
   isEditMode = false,
   onAddHotspot,
@@ -85,6 +88,28 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
       .then(() => setIsLoaded(true))
       .catch((err) => setError(err.message));
   }, []);
+
+  // Hold references to preloaded images so they aren't garbage collected
+  const preloadedImagesRef = useRef<{ [key: string]: HTMLImageElement }>({});
+
+  // Preload and decode all panoramas to avoid loading glitches
+  useEffect(() => {
+    if (!tourConfig || !tourConfig.scenes) return;
+    
+    Object.values(tourConfig.scenes).forEach((scene: any) => {
+      if (scene.panorama && !preloadedImagesRef.current[scene.panorama]) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = scene.panorama;
+        // Force off-thread decoding so the browser has the bitmap ready in RAM
+        img.decode().catch(() => {});
+        preloadedImagesRef.current[scene.panorama] = img;
+        
+        // Also fetch with CORS to strictly enforce network cache
+        fetch(scene.panorama, { mode: 'cors', cache: 'force-cache' }).catch(() => {});
+      }
+    });
+  }, [tourConfig]);
 
   // Stable click handler for edit mode
   const handleClick = useCallback((event: MouseEvent) => {
@@ -175,6 +200,15 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, tourConfig]);
 
+  // Change scene externally without destroying viewer
+  useEffect(() => {
+    if (viewerRef.current && activeSceneId) {
+      if (viewerRef.current.getScene() !== activeSceneId) {
+        viewerRef.current.loadScene(activeSceneId);
+      }
+    }
+  }, [activeSceneId]);
+
   // Attach / detach click handler when edit mode changes
   useEffect(() => {
     const container = containerRef.current;
@@ -217,6 +251,13 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
       )}
 
       <div ref={containerRef} className="w-full h-full" />
+      <style>{`
+        .pnlm-load-box, .pnlm-lbox {
+          display: none !important;
+          opacity: 0 !important;
+          visibility: hidden !important;
+        }
+      `}</style>
     </div>
   );
 };

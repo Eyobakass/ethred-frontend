@@ -14,12 +14,19 @@ interface PropertyCardProps {
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const standardImages = property.media?.filter((m) => m.media_category === 'IMAGE' && !m.is_tour_scene).map(m => m.file_url) || [];
-  const allMediaImages = property.media?.map(m => m.file_url) || [];
+  const getImageUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
+    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  };
+
+  const standardImages = property.media?.filter((m) => m.media_category === 'IMAGE' && !m.is_tour_scene).map(m => getImageUrl(m.file_url)) || [];
+  const allMediaImages = property.media?.map(m => getImageUrl(m.file_url)) || [];
   let images = standardImages.length > 0 ? standardImages : (allMediaImages.length > 0 ? allMediaImages : []);
 
   if (images.length === 0 && (property as any).thumbnail_url) {
-    images = [(property as any).thumbnail_url];
+    images = [getImageUrl((property as any).thumbnail_url)];
   }
 
   if (images.length === 0) {

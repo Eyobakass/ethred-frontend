@@ -47,8 +47,10 @@ apiClient.interceptors.response.use(
       const { useAuthStore } = require('@/store/useAuthStore');
       useAuthStore.getState().logout();
       // Preserve current language prefix in redirect
-      const lang = window.location.pathname.startsWith('/am') ? 'am' : 'en';
-      window.location.href = `/${lang}/auth/login`;
+      if (!window.location.pathname.includes('/auth/login')) {
+        const lang = window.location.pathname.startsWith('/am') ? 'am' : 'en';
+        window.location.href = `/${lang}/auth/login`;
+      }
     }
 
     // Normalise the error to always expose a `message` string

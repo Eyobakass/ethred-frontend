@@ -135,10 +135,11 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                     <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                       prop.status === 'DRAFT' && prop.rejection_info ? 'bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-800' :
                       prop.status === 'DRAFT' ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300' :
-                      prop.status === 'PENDING' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
+                      prop.status === 'PENDING' || prop.status === 'PENDING_UPDATE' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' :
                       'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400'
                     }`}>
-                      {prop.status === 'DRAFT' && prop.rejection_info ? 'NEEDS REVISION' : prop.status}
+                      {prop.status === 'DRAFT' && prop.rejection_info ? 'NEEDS REVISION' : 
+                       prop.status === 'PENDING_UPDATE' ? 'PENDING UPDATE' : prop.status}
                     </span>
                   </div>
 

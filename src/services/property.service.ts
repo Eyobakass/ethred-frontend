@@ -36,6 +36,11 @@ export const propertyService = {
     return res.data;
   },
 
+  async createDraftClone(id: string): Promise<Property> {
+    const res = await apiClient.post<any, any>(`/properties/${id}/draft`);
+    return res.data;
+  },
+
   async toggleFavorite(property_id: string): Promise<{ favorited: boolean }> {
     return apiClient.post(`/favorites/toggle`, { property_id });
   },
@@ -45,7 +50,8 @@ export const propertyService = {
   },
 
   async uploadImages(id: string, formData: FormData): Promise<any> {
-    const token = localStorage.getItem('auth_token');
+    const { useAuthStore } = require('@/store/useAuthStore');
+    const token = useAuthStore.getState().token;
     if (!token) throw new Error('No auth token');
 
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api/v1';
