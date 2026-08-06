@@ -298,7 +298,7 @@ export default function ListingManagerPage({
       }
       await tourService.deleteScene(workingId, sceneId);
       setTourMsg({ type: 'success', text: 'Scene deleted.' });
-      loadTourConfig(workingId);
+      await loadTourConfig(workingId);
     } catch { setTourMsg({ type: 'error', text: 'Failed to delete scene.' }); }
     finally { setIsTourSaving(false); }
   }, [workingId, tourConfig, loadTourConfig]);
@@ -335,7 +335,7 @@ export default function ListingManagerPage({
       } else {
         setTourMsg({ type: 'success', text: 'Scene uploaded.' });
       }
-      loadTourConfig(workingId);
+      await loadTourConfig(workingId);
     } catch { setTourMsg({ type: 'error', text: 'Failed to upload scene.' }); }
     finally {
       setIsTourSaving(false);
@@ -349,7 +349,7 @@ export default function ListingManagerPage({
     try {
       await tourService.updateScene(workingId, sceneId, { scene_name: newName });
       setTourMsg({ type: 'success', text: 'Scene renamed.' });
-      loadTourConfig(workingId);
+      await loadTourConfig(workingId);
     } catch { setTourMsg({ type: 'error', text: 'Failed to rename scene.' }); }
     finally { setIsTourSaving(false); }
   }, [workingId, loadTourConfig]);
