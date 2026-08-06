@@ -383,7 +383,7 @@ export default function ListingManagerPage({
 
   const toggleSection = (s: Section) => setOpenSections(prev => ({ ...prev, [s]: !prev[s] }));
 
-  const subCities = ETHIOPIAN_LOCATIONS[form.region]?.subCities || [];
+  const subCities: import('@/utils/location').SubCityOption[] = ETHIOPIAN_LOCATIONS[form.region]?.subCities || [];
   const standardPhotos = property?.media?.filter(m => !m.is_tour_scene) || [];
   const currentScene = tourConfig?.scenes[activeSceneId];
   const statusLabel = property?.status === 'PENDING_UPDATE' ? 'PENDING UPDATE' : property?.status;
@@ -557,7 +557,7 @@ export default function ListingManagerPage({
                     <select value={form.sub_city} onChange={e => setForm(p => ({ ...p, sub_city: e.target.value }))}
                       className="w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500">
                       <option value="">Select…</option>
-                      {subCities.map((sc: string) => <option key={sc}>{sc}</option>)}
+                      {subCities.map((sc) => <option key={sc.en} value={sc.en}>{sc.en}</option>)}
                     </select>
                   ) : (
                     <EditField label="" value={form.sub_city} onChange={v => setForm(p => ({ ...p, sub_city: v }))} placeholder="e.g. Merkato" />
