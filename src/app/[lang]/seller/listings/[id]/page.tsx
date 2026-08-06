@@ -798,13 +798,15 @@ function SectionCard({ title, isOpen, onToggle, children, headerExtra }: {
 }) {
   return (
     <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
-      <button onClick={onToggle} className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition">
-        <span className="font-bold text-neutral-900 dark:text-white text-sm">{title}</span>
+      <div className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition cursor-pointer">
+        <span onClick={onToggle} className="font-bold text-neutral-900 dark:text-white text-sm flex-1">{title}</span>
         <div className="flex items-center gap-2">
-          {headerExtra && <span onClick={e => e.stopPropagation()}>{headerExtra}</span>}
-          {isOpen ? <ChevronUp size={16} className="text-neutral-400" /> : <ChevronDown size={16} className="text-neutral-400" />}
+          {headerExtra && <span>{headerExtra}</span>}
+          <span onClick={onToggle}>
+            {isOpen ? <ChevronUp size={16} className="text-neutral-400" /> : <ChevronDown size={16} className="text-neutral-400" />}
+          </span>
         </div>
-      </button>
+      </div>
       {isOpen && <div className="px-5 pb-5 border-t border-neutral-100 dark:border-neutral-800 pt-4">{children}</div>}
     </div>
   );
