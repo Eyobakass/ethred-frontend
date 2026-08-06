@@ -67,6 +67,18 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to permanently delete this listing? This action cannot be undone.')) return;
+    try {
+      // deleteDraft calls DELETE /properties/:id, which now hard deletes ARCHIVED items
+      await propertyService.deleteDraft(id);
+      setProperties((prev) => prev.filter((p) => p.id !== id));
+    } catch (error: any) {
+      console.error('Failed to delete property', error);
+      alert(error.message || 'Failed to delete property.');
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
@@ -187,6 +199,14 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                   >
                     ⭐ Promote
                   </Link>
+                  {prop.status === 'ARCHIVED' && (
+                    <button
+                      onClick={() => handleDelete(prop.id)}
+                      className="px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 text-xs font-semibold border border-red-200 dark:border-red-800/50 transition"
+                    >
+                      🗑️ Delete Permanently
+                    </button>
+                  )}
                 </div>
               </div>
             ))
