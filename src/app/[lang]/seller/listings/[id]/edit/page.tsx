@@ -51,23 +51,25 @@ export default function EditListingPage({
   const [error, setError] = useState('');
 
   useEffect(() => {
+    let isRedirecting = false;
     propertyService
       .getPropertyById(id)
       .then((data) => {
         setProperty(data);
         if (data) {
           if (data.status === 'APPROVED') {
-            setInitialLoading(true);
+            isRedirecting = true;
             propertyService.createDraftClone(data.id)
               .then((draft) => {
                 router.replace(`/${lang}/seller/listings/${draft.id}/edit`);
               })
               .catch((err) => {
+                isRedirecting = false;
                 console.error(err);
                 setError('Failed to create a draft for editing.');
                 setInitialLoading(false);
               });
-            return; // Stop setting form for this approved property
+            return; // Don't set form or call finally's setInitialLoading
           }
 
           setForm({
@@ -93,7 +95,7 @@ export default function EditListingPage({
         setError('Failed to load property details.');
       })
       .finally(() => {
-        setInitialLoading(false);
+        if (!isRedirecting) setInitialLoading(false);
       });
   }, [id]);
 
