@@ -33,8 +33,8 @@ export const SceneSelectorToolbar: React.FC<SceneSelectorToolbarProps> = ({
   const [editingSceneId, setEditingSceneId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
 
-  if (!isEditMode && scenes.length <= 1) return null;
   if (scenes.length === 0) return null;
+  if (!isEditMode && scenes.length <= 1) return null;
 
   const handleStartEdit = (sceneId: string, currentName: string) => {
     setEditingSceneId(sceneId);
@@ -54,10 +54,10 @@ export const SceneSelectorToolbar: React.FC<SceneSelectorToolbarProps> = ({
   };
 
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 max-w-[95%]">
+    <div className="w-full">
       <div
         ref={scrollRef}
-        className="flex items-center gap-1.5 bg-neutral-950/80 backdrop-blur-xl px-2.5 py-1.5 rounded-full border border-white/15 shadow-2xl shadow-black/80 ring-1 ring-white/5 overflow-x-auto scrollbar-none"
+        className="flex items-center gap-1.5 bg-neutral-950/90 backdrop-blur-xl px-2.5 py-2 rounded-xl border border-white/10 shadow-inner overflow-x-auto scrollbar-none"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {scenes.map((scene) => {

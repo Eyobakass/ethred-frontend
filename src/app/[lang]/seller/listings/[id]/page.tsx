@@ -653,16 +653,7 @@ export default function ListingManagerPage({
                   💡 Double-click the viewer to drop a hotspot pin. Click any pin to delete it.
                 </div>
               )}
-              <div className="relative" style={{ height: '460px' }}>
-                <SceneSelectorToolbar
-                  scenes={Object.entries(tourConfig.scenes).map(([sid, s]) => ({ id: sid, name: s.title ?? sid, thumbnailUrl: s.panorama }))}
-                  activeSceneId={activeSceneId}
-                  onSelectScene={handleSceneSelect}
-                  isEditMode={mode === 'edit'}
-                  onDeleteScene={handleDeleteScene}
-                  onReplaceScene={handleReplaceSceneClick}
-                  onRenameScene={handleRenameScene}
-                />
+              <div className="relative">
                 <PannellumViewer
                   tourConfig={tourConfig}
                   isEditMode={mode === 'edit'}
@@ -675,6 +666,20 @@ export default function ListingManagerPage({
                   ⛶ Fullscreen
                 </button>
               </div>
+              {/* Scene selector strip — lives OUTSIDE the viewer so overflow-hidden doesn't clip it */}
+              {Object.keys(tourConfig.scenes).length > 1 || mode === 'edit' ? (
+                <div className="px-3 py-2 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950">
+                  <SceneSelectorToolbar
+                    scenes={Object.entries(tourConfig.scenes).map(([sid, s]) => ({ id: sid, name: s.title ?? sid, thumbnailUrl: s.panorama }))}
+                    activeSceneId={activeSceneId}
+                    onSelectScene={handleSceneSelect}
+                    isEditMode={mode === 'edit'}
+                    onDeleteScene={handleDeleteScene}
+                    onReplaceScene={handleReplaceSceneClick}
+                    onRenameScene={handleRenameScene}
+                  />
+                </div>
+              ) : null}
               {currentScene?.hotSpots && currentScene.hotSpots.length > 0 && (
                 <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
                   <p className="text-xs font-bold text-neutral-600 dark:text-neutral-400 mb-2">
