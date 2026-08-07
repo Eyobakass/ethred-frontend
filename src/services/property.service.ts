@@ -59,21 +59,9 @@ export const propertyService = {
   },
 
   async uploadImages(id: string, formData: FormData): Promise<any> {
-    const { useAuthStore } = require('@/store/useAuthStore');
-    const token = useAuthStore.getState().token;
-    if (!token) throw new Error('No auth token');
-
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api/v1';
-    const res = await fetch(`${baseUrl}/properties/${id}/media/images`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
+    return apiClient.post(`/properties/${id}/media/images`, formData, {
+      timeout: 120000, // 2-minute timeout for heavy image processing
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || 'Failed to upload images');
-    }
-    return res.json();
   },
 
   async deleteMedia(propertyId: string, mediaId: string): Promise<any> {
