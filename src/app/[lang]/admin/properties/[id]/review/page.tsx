@@ -78,7 +78,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
   if (isLoading) return <div className="p-10 text-center">Loading property details...</div>;
   if (!property) return <div className="p-10 text-center text-red-500">{errorMsg}</div>;
 
-  const images = property.media?.filter(m => !m.is_tour_scene) || [];
+  const images = property.media?.filter(m => m.media_category === 'IMAGE' && !m.is_tour_scene) || [];
 
   const getImageUrl = (url: string) => {
     if (!url) return '';
