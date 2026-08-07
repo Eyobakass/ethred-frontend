@@ -35,6 +35,7 @@ export const tourService = {
     const url = `/properties/${propertyId}/media/tour-scene` + (sceneName ? `?scene_name=${encodeURIComponent(sceneName)}` : '');
     
     return apiClient.post(url, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000, // 2-minute timeout for heavy image processing
     });
   },

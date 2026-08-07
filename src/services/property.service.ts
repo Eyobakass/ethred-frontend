@@ -60,6 +60,7 @@ export const propertyService = {
 
   async uploadImages(id: string, formData: FormData): Promise<any> {
     return apiClient.post(`/properties/${id}/media/images`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000, // 2-minute timeout for heavy image processing
     });
   },
