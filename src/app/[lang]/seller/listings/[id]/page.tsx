@@ -61,6 +61,7 @@ export default function ListingManagerPage({
   const [workingId, setWorkingId] = useState<string>(id);
   const [mode, setMode] = useState<Mode>('read');
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [globalMsg, setGlobalMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [openSections, setOpenSections] = useState<Record<Section, boolean>>({ details: true, photos: true, tour: true });
@@ -87,26 +88,41 @@ export default function ListingManagerPage({
   const tourFileInputRef = useRef<HTMLInputElement>(null);
   const [tourFullscreen, setTourFullscreen] = useState(false);
 
-  const loadProperty = useCallback(async (propertyId: string) => {
-    const data = await propertyService.getPropertyById(propertyId);
-    setProperty(data);
-    setWorkingId(propertyId);
-    setForm({
-      title_en: data.title_en || '', title_am: data.title_am || '',
-      description_en: data.description_en || '', description_am: data.description_am || '',
-      price_etb: String(data.price_etb || ''), transaction_mode: data.transaction_mode || 'SALE',
-      category: data.category || 'APARTMENT', region: data.region || 'Addis Ababa',
-      sub_city: data.sub_city || '', woreda: data.woreda || '',
-      nearest_landmark: data.nearest_landmark || '',
-      bedrooms: String(data.bedrooms || '1'), bathrooms: String(data.bathrooms || '1'),
-      area_sqm: String(data.area_sqm || ''),
-    });
-    return data;
+  const loadProperty = useCallback(async (propertyId: string, retries = 3): Promise<any> => {
+    try {
+      const data = await propertyService.getPropertyById(propertyId);
+      setProperty(data);
+      setWorkingId(propertyId);
+      setLoadError(null);
+      setForm({
+        title_en: data.title_en || '', title_am: data.title_am || '',
+        description_en: data.description_en || '', description_am: data.description_am || '',
+        price_etb: String(data.price_etb || ''), transaction_mode: data.transaction_mode || 'SALE',
+        category: data.category || 'APARTMENT', region: data.region || 'Addis Ababa',
+        sub_city: data.sub_city || '', woreda: data.woreda || '',
+        nearest_landmark: data.nearest_landmark || '',
+        bedrooms: String(data.bedrooms || '1'), bathrooms: String(data.bathrooms || '1'),
+        area_sqm: String(data.area_sqm || ''),
+      });
+      return data;
+    } catch (err: any) {
+      const is404 = err?.response?.status === 404 || err?.status === 404;
+      if (!is404 && retries > 0) {
+        // Non-404 error (e.g. timeout / cold-start) — wait 2s then retry
+        await new Promise(r => setTimeout(r, 2000));
+        return loadProperty(propertyId, retries - 1);
+      }
+      throw err;
+    }
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     loadProperty(id)
-      .catch(() => setGlobalMsg({ type: 'error', text: 'Failed to load property.' }))
+      .catch((err: any) => {
+        const is404 = err?.response?.status === 404 || err?.status === 404;
+        setLoadError(is404 ? 'This property does not exist or has been deleted.' : 'Could not reach the server. Please check your connection and try again.');
+      })
       .finally(() => setIsLoading(false));
   }, [id, loadProperty]);
 
@@ -401,7 +417,28 @@ export default function ListingManagerPage({
   }
 
   if (!property) {
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-red-500">Property not found.</p></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
+        <div className="text-center max-w-sm px-4">
+          <div className="text-4xl mb-3">{loadError?.includes('does not exist') ? '🗑️' : '📡'}</div>
+          <p className="text-red-500 font-bold mb-1">
+            {loadError?.includes('does not exist') ? 'Property Not Found' : 'Connection Problem'}
+          </p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">{loadError}</p>
+          {!loadError?.includes('does not exist') && (
+            <button
+              onClick={() => { setIsLoading(true); loadProperty(id).catch((e: any) => setLoadError(e.message)).finally(() => setIsLoading(false)); }}
+              className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg transition"
+            >
+              🔄 Retry
+            </button>
+          )}
+          <button onClick={() => router.push(`/${lang}/seller/dashboard`)} className="ml-3 px-5 py-2.5 bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-sm font-semibold rounded-lg transition">
+            ← Dashboard
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
