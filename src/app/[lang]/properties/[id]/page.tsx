@@ -182,6 +182,10 @@ export default function PropertyDetailPage({
               <img
                 src={getImageUrl(images[activeImageIdx]?.file_url ?? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80')}
                 alt={`${title} — photo ${activeImageIdx + 1}`}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80';
+                }}
                 className="w-full h-full object-cover"
               />
 
@@ -250,7 +254,15 @@ export default function PropertyDetailPage({
                       i === activeImageIdx ? 'border-red-600 dark:border-red-600' : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-500'
                     }`}
                   >
-                    <img src={getImageUrl(img.file_url)} alt="" className="w-full h-full object-cover" />
+                    <img 
+                      src={getImageUrl(img.file_url)} 
+                      alt="" 
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80';
+                      }}
+                      className="w-full h-full object-cover" 
+                    />
                   </button>
                 ))}
               </div>
