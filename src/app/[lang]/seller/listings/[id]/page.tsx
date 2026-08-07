@@ -630,7 +630,15 @@ export default function ListingManagerPage({
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               {standardPhotos.map(m => (
                 <div key={m.id} className="relative group aspect-square rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800">
-                  <img src={getImageUrl(m.file_url)} alt="" className="w-full h-full object-cover" />
+                  <img 
+                    src={getImageUrl(m.file_url)} 
+                    alt="" 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80';
+                    }}
+                    className="w-full h-full object-cover" 
+                  />
                   {mode === 'edit' && (
                     <button onClick={() => handleDeletePhoto(m.id)}
                       className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
