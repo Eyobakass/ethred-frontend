@@ -105,8 +105,8 @@ export default function PropertyDetailPage({
 
   const title = lang === 'am' && property.title_am ? property.title_am : property.title_en;
   const description = lang === 'am' && property.description_am ? property.description_am : property.description_en;
-  const images = property.media?.filter((m) => m.media_category === 'IMAGE') ?? [];
-  const hasTour = !!property.external_tour_url || images.some((m) => m.is_tour_scene);
+  const images = property.media?.filter((m) => m.media_category === 'IMAGE' && !m.is_tour_scene) ?? [];
+  const hasTour = !!property.external_tour_url || property.media?.some((m) => m.is_tour_scene);
 
   const handlePrevImage = () => {
     if (images.length === 0) return;
