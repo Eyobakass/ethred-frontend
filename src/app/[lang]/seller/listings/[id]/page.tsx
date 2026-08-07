@@ -175,11 +175,16 @@ export default function ListingManagerPage({
   }, [property, id, loadProperty, loadTourConfig]);
 
   const handleContinueEditing = useCallback(async () => {
-    const draft = draftModal.existingDraft!;
-    setDraftModal({ open: false, existingDraft: null });
-    await loadProperty(draft.id);
-    await loadTourConfig(draft.id);
-    setMode('edit');
+    try {
+      const draft = draftModal.existingDraft!;
+      setDraftModal({ open: false, existingDraft: null });
+      await loadProperty(draft.id);
+      await loadTourConfig(draft.id);
+      setMode('edit');
+    } catch (err: any) {
+      console.error(err);
+      setGlobalMsg({ type: 'error', text: 'Error loading draft: ' + err.message });
+    }
   }, [draftModal.existingDraft, loadProperty, loadTourConfig]);
 
   const handleDiscardAndFresh = useCallback(async () => {
@@ -187,7 +192,14 @@ export default function ListingManagerPage({
     setDraftModal({ open: false, existingDraft: null });
     setDraftModalLoading(true);
     try {
-      await propertyService.deleteDraft(draft.id);
+      try {
+        await propertyService.deleteDraft(draft.id);
+      } catch (err: any) {
+        // If the draft was already deleted (e.g. approved by admin), ignore the 404
+        if (err?.response?.status !== 404 && err?.status !== 404 && !err?.message?.includes('404')) {
+          throw err;
+        }
+      }
       const newDraft = await propertyService.createDraftClone(id);
       await loadProperty(newDraft.id);
       await loadTourConfig(newDraft.id);

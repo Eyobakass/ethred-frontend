@@ -148,7 +148,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
           </div>
           <div>
             <span className="block text-neutral-500">Price</span>
-            <span className="font-semibold">{formatCurrency(Number(property.price_etb), 'ETB', lang)}</span>
+            <span className="font-semibold">{formatCurrency(Number(property.price_etb), 'ETB', lang as 'en' | 'am')}</span>
           </div>
           <div>
             <span className="block text-neutral-500">Location</span>
