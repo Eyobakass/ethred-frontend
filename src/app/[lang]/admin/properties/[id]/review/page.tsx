@@ -80,6 +80,13 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
 
   const images = property.media?.filter(m => !m.is_tour_scene) || [];
 
+  const getImageUrl = (url: string) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
+    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 relative">
       <div className="flex items-center justify-between mb-6">
@@ -176,7 +183,15 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {images.map(img => (
               <div key={img.id} className="aspect-[4/3] rounded-xl overflow-hidden border border-neutral-200">
-                <img src={img.file_url} className="w-full h-full object-cover" alt="Property" />
+                <img 
+                  src={getImageUrl(img.file_url)} 
+                  className="w-full h-full object-cover" 
+                  alt="Property" 
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80';
+                  }}
+                />
               </div>
             ))}
           </div>
