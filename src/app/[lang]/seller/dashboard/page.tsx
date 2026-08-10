@@ -188,7 +188,7 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                     </button>
                   )}
                   <Link
-                    href={`/${lang}/seller/listings/${prop.id}`}
+                    href={`/${lang}/seller/listings/${(prop as any).pending_draft_id || prop.id}`}
                     className="px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white hover:bg-neutral-700 dark:hover:bg-neutral-100 text-white dark:text-neutral-900 text-xs font-bold border border-neutral-900 dark:border-white transition flex items-center gap-1.5"
                   >
                     <span>✏️</span> Manage Listing
