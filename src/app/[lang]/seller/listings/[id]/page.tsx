@@ -67,6 +67,7 @@ export default function ListingManagerPage({
   const [openSections, setOpenSections] = useState<Record<Section, boolean>>({ details: true, photos: true, tour: true });
   const [draftModal, setDraftModal] = useState<DraftModalState>({ open: false, existingDraft: null });
   const [draftModalLoading, setDraftModalLoading] = useState(false);
+  const [hasPendingUpdate, setHasPendingUpdate] = useState(false);
 
   const [form, setForm] = useState({
     title_en: '', title_am: '', description_en: '', description_am: '',
@@ -118,7 +119,18 @@ export default function ListingManagerPage({
 
   useEffect(() => {
     setIsLoading(true);
+    setHasPendingUpdate(false); // reset on every navigation
     loadProperty(id)
+      .then(async (data: any) => {
+        // If this is an APPROVED listing, silently check for a pending update draft
+        // so the Edit button immediately shows the correct state without requiring a click.
+        if (data?.status === 'APPROVED') {
+          try {
+            const existingDraft = await propertyService.getExistingDraft(id);
+            setHasPendingUpdate(existingDraft?.status === 'PENDING_UPDATE');
+          } catch { /* non-critical — ignore */ }
+        }
+      })
       .catch((err: any) => {
         const is404 = err?.response?.status === 404 || err?.status === 404;
         setLoadError(is404 ? 'This property does not exist or has been deleted.' : 'Could not reach the server. Please check your connection and try again.');
@@ -150,6 +162,7 @@ export default function ListingManagerPage({
 
   const enterEditMode = useCallback(async () => {
     if (!property) return;
+    // If we're already viewing a draft (DRAFT or PENDING_UPDATE), just enter edit mode directly
     if (['DRAFT', 'PENDING_UPDATE'].includes(property.status)) {
       setMode('edit');
       return;
@@ -159,8 +172,19 @@ export default function ListingManagerPage({
       try {
         const existingDraft = await propertyService.getExistingDraft(id);
         if (existingDraft) {
+          if (existingDraft.status === 'PENDING_UPDATE') {
+            // Draft is already submitted and locked under admin review — cannot edit
+            setHasPendingUpdate(true);
+            setGlobalMsg({
+              type: 'error',
+              text: 'Your update is currently under admin review and cannot be edited. Please wait for the admin to approve or reject it.',
+            });
+            return;
+          }
+          // Editable DRAFT exists — show the choice modal
           setDraftModal({ open: true, existingDraft });
         } else {
+          // No draft at all — create one silently and enter edit mode
           const draft = await propertyService.createDraftClone(id);
           await loadProperty(draft.id);
           await loadTourConfig(draft.id);
@@ -414,8 +438,11 @@ export default function ListingManagerPage({
   const subCities: import('@/utils/location').SubCityOption[] = ETHIOPIAN_LOCATIONS[form.region]?.subCities || [];
   const standardPhotos = property?.media?.filter(m => !m.is_tour_scene) || [];
   const currentScene = tourConfig?.scenes[activeSceneId];
-  const statusLabel = property?.status === 'PENDING_UPDATE' ? 'PENDING UPDATE' : property?.status;
-  const isPending = property && ['PENDING', 'PENDING_UPDATE'].includes(property.status);
+  const statusLabel = hasPendingUpdate
+    ? 'PENDING UPDATE'
+    : property?.status === 'PENDING_UPDATE' ? 'PENDING UPDATE' : property?.status;
+  // isPending: locked if the property itself is under review, OR if it's approved but has a submitted pending-update draft
+  const isPending = (property && ['PENDING', 'PENDING_UPDATE'].includes(property.status)) || hasPendingUpdate;
 
   if (isLoading) {
     return (
@@ -482,13 +509,23 @@ export default function ListingManagerPage({
               <button
                 onClick={isPending ? undefined : enterEditMode}
                 disabled={draftModalLoading || !!isPending}
-                title={isPending ? 'This listing is under admin review and cannot be edited right now.' : ''}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white hover:bg-neutral-700 dark:hover:bg-neutral-100 text-white dark:text-neutral-900 text-xs font-bold transition disabled:opacity-40 disabled:cursor-not-allowed"
+                title={
+                  hasPendingUpdate
+                    ? 'Your submitted update is under admin review. You cannot edit until it is approved or rejected.'
+                    : isPending
+                    ? 'This listing is under admin review and cannot be edited right now.'
+                    : 'Edit this listing'
+                }
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isPending
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700'
+                    : 'bg-neutral-900 dark:bg-white hover:bg-neutral-700 dark:hover:bg-neutral-100 text-white dark:text-neutral-900'
+                }`}
               >
                 {draftModalLoading
-                  ? <span className="w-3 h-3 border-2 border-white dark:border-neutral-900 border-t-transparent rounded-full animate-spin" />
-                  : <Pencil size={12} />}
-                {isPending ? 'Under Review' : 'Edit'}
+                  ? <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  : isPending ? <span>⏳</span> : <Pencil size={12} />}
+                {hasPendingUpdate ? 'Update Under Review' : isPending ? 'Under Review' : 'Edit'}
               </button>
             ) : (
               <>
