@@ -121,14 +121,16 @@ export default function ListingManagerPage({
     setIsLoading(true);
     setHasPendingUpdate(false); // reset on every navigation
     loadProperty(id)
-      .then(async (data: any) => {
+      .then((data: any) => {
         // If this is an APPROVED listing, silently check for a pending update draft
         // so the Edit button immediately shows the correct state without requiring a click.
         if (data?.status === 'APPROVED') {
-          try {
-            const existingDraft = await propertyService.getExistingDraft(id);
-            setHasPendingUpdate(existingDraft?.status === 'PENDING_UPDATE');
-          } catch { /* non-critical — ignore */ }
+          // Fire and forget (don't block page load)
+          propertyService.getExistingDraft(id)
+            .then(existingDraft => {
+              setHasPendingUpdate(existingDraft?.status === 'PENDING_UPDATE');
+            })
+            .catch(() => { /* non-critical — ignore */ });
         }
       })
       .catch((err: any) => {
