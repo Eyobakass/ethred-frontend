@@ -90,9 +90,12 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
               <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
                 {lang === 'am' ? 'የይለፍ ቃል' : 'Password'}
               </label>
-              <button type="button" className="text-[10px] text-red-600 dark:text-red-400 hover:underline">
+              <Link
+                href={`/${lang}/auth/forgot-password`}
+                className="text-xs text-neutral-500 hover:text-red-600 dark:hover:text-red-400 transition"
+              >
                 {lang === 'am' ? 'የይለፍ ቃል ረስተዋል?' : 'Forgot password?'}
-              </button>
+              </Link>
             </div>
             <div className="relative">
               <input

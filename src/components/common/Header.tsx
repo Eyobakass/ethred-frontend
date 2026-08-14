@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
     user?.role === 'SELLER'
       ? `/${lang}/seller/dashboard`
       : user?.role === 'AGENCY_ADMIN' || user?.role === 'AGENCY_AGENT'
-      ? `/${lang}/agency-portal/dashboard`
+      ? `/${lang}/buyer/favorites`
       : user?.role === 'ADMIN'
       ? `/${lang}/admin/dashboard`
       : `/${lang}/buyer/favorites`;
@@ -112,26 +112,61 @@ export const Header: React.FC = () => {
                     </p>
                   </div>
                   
-                  <div className="flex">
-                    <div className="flex-1 py-2">
-                      <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
-                        My Ethred
-                      </p>
-                      <Link
-                        href={dashboardHref}
-                        onClick={() => setMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                      >
-                        {dashboardLabel}
-                      </Link>
-                      <Link
-                        href={`/${lang}/buyer/favorites`}
-                        onClick={() => setMenuOpen(false)}
-                        className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                      >
-                        {lang === 'am' ? 'ተወዳጆች' : 'Favorites'}
-                      </Link>
-                    </div>
+                    <div className="flex">
+                      <div className="flex-1 py-2">
+                        <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
+                          My Ethred
+                        </p>
+                        {user?.role === 'SELLER' && (
+                          <Link href={`/${lang}/seller/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                            {lang === 'am' ? 'የሻጭ ገጽ' : 'Seller Dashboard'}
+                          </Link>
+                        )}
+                        {user?.role === 'ADMIN' && (
+                          <Link href={`/${lang}/admin/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                            Admin Portal
+                          </Link>
+                        )}
+                        {user?.role === 'AGENCY_ADMIN' && (
+                          <Link href={`/${lang}/agencies/${user.agency_id || 'me'}/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                            Agency Dashboard
+                          </Link>
+                        )}
+                        <Link href={`/${lang}/account/settings`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                          {lang === 'am' ? 'ማስተካከያዎች' : 'Account Settings'}
+                        </Link>
+                        <Link href={`/${lang}/account/verification`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                          Get Verified {!user?.is_identity_verified && <span className="ml-1 w-2 h-2 inline-block bg-red-500 rounded-full"></span>}
+                        </Link>
+                        <Link href={`/${lang}/account/billing`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                          Billing History
+                        </Link>
+                        <Link href={`/${lang}/buyer/favorites`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                          {lang === 'am' ? 'ተወዳጆች' : 'Favorites'}
+                        </Link>
+                        {user?.role === 'BUYER' && (
+                          <Link href={`/${lang}/buyer/inquiries`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                            My Inquiries
+                          </Link>
+                        )}
+                        {user?.role === 'SELLER' && (
+                          <Link href={`/${lang}/seller/inquiries`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
+                            Inquiries Received
+                          </Link>
+                        )}
+                        {user?.role === 'ADMIN' && (
+                          <>
+                            <Link href={`/${lang}/admin/users`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">Users</Link>
+                            <Link href={`/${lang}/admin/agencies`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">Agencies</Link>
+                            <Link href={`/${lang}/admin/audit-logs`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">Audit Logs</Link>
+                          </>
+                        )}
+                        {(!user?.role || !['AGENCY_ADMIN', 'AGENCY_AGENT'].includes(user.role)) && (
+                          <Link href={`/${lang}/agencies/apply`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30">
+                            Register Your Agency
+                          </Link>
+                        )}
+                      </div>
                     <div className="flex-1 py-2 border-l border-neutral-100 dark:border-neutral-800">
                       <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
                         Settings

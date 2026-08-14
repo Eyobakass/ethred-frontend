@@ -18,6 +18,7 @@ export interface User {
   is_phone_verified: boolean;
   is_identity_verified: boolean;
   profile?: Profile;
+  agency_id?: string;
   created_at: string;
 }
 

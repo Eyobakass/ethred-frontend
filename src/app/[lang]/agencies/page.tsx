@@ -1,10 +1,12 @@
 // src/app/[lang]/agencies/page.tsx
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, useMemo } from 'react';
 import Link from 'next/link';
 import { Agency } from '@/types/agency.types';
 import { agencyService } from '@/services/agency.service';
+
+const ITEMS_PER_PAGE = 12;
 
 export default function AgenciesPage({
   params,
@@ -15,6 +17,7 @@ export default function AgenciesPage({
   const lang = rawLang === 'am' ? 'am' : 'en';
   const [agencies, setAgencies] = useState<Agency[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     agencyService
@@ -57,6 +60,12 @@ export default function AgenciesPage({
       .finally(() => setLoading(false));
   }, []);
 
+  const totalPages = Math.ceil(agencies.length / ITEMS_PER_PAGE);
+  const paginatedAgencies = useMemo(() => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return agencies.slice(start, start + ITEMS_PER_PAGE);
+  }, [agencies, page]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
@@ -78,46 +87,70 @@ export default function AgenciesPage({
           <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {agencies.map((agency) => (
-            <div
-              key={agency.id}
-              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 hover:border-red-600 dark:border-red-600/40 transition group space-y-4 shadow-xl"
-            >
-              {/* Agency avatar */}
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-tr from-neutral-800 to-neutral-700 border border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-2xl flex-shrink-0">
-                  {agency.logo_url ? (
-                    <img src={agency.logo_url} alt={agency.name} className="w-full h-full object-cover rounded-xl" />
-                  ) : (
-                    '🏢'
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-sm font-bold text-neutral-900 dark:text-white group-hover:text-red-600 dark:text-red-400 transition truncate">
-                    {agency.name}
-                  </h2>
-                  {agency.is_verified && (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/50 border border-emerald-800 px-2 py-0.5 rounded-md mt-1">
-                      ✅ Verified Agency
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3">
-                {agency.description_en}
-              </p>
-
-              <Link
-                href={`/${lang}/agencies/${agency.id}`}
-                className="block text-center py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white text-xs font-semibold transition border border-neutral-300 dark:border-neutral-700"
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedAgencies.map((agency) => (
+              <div
+                key={agency.id}
+                className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 hover:border-red-600 dark:border-red-600/40 transition group space-y-4 shadow-xl flex flex-col"
               >
-                {lang === 'am' ? 'ዝርዝር ይመልከቱ' : 'View Agency Profile'}
-              </Link>
+                {/* Agency avatar */}
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-tr from-neutral-800 to-neutral-700 border border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-2xl flex-shrink-0">
+                    {agency.logo_url ? (
+                      <img src={agency.logo_url} alt={agency.name} className="w-full h-full object-cover rounded-xl" />
+                    ) : (
+                      '🏢'
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-bold text-neutral-900 dark:text-white group-hover:text-red-600 dark:text-red-400 transition truncate">
+                      {agency.name}
+                    </h2>
+                    {agency.is_verified && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-950/50 border border-emerald-800 px-2 py-0.5 rounded-md mt-1">
+                        ✅ Verified Agency
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3 flex-grow">
+                  {agency.description_en}
+                </p>
+
+                <Link
+                  href={`/${lang}/agencies/${agency.id}`}
+                  className="block mt-auto text-center py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 hover:bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white text-xs font-semibold transition border border-neutral-300 dark:border-neutral-700"
+                >
+                  {lang === 'am' ? 'ዝርዝር ይመልከቱ' : 'View Agency Profile'}
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-8 mt-8 border-t border-neutral-200 dark:border-neutral-800">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-4 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-sm font-semibold disabled:opacity-40 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
+              >
+                ← Previous
+              </button>
+              <span className="text-sm font-semibold text-neutral-500">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-4 py-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-sm font-semibold disabled:opacity-40 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
+              >
+                Next →
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </div>
   );

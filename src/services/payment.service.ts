@@ -1,18 +1,20 @@
 // src/services/payment.service.ts
 import { apiClient } from './api';
-import { BillingInvoice, PaymentProcessor } from '@/types/payment.types';
+import { BillingInvoice } from '@/types/index';
 
 export const paymentService = {
-  async createCheckout(data: {
-    property_id: string;
-    promotion_tier: string;
-    processor: PaymentProcessor;
-    amount: number;
-  }): Promise<{ checkout_url?: string; tx_ref: string }> {
-    return apiClient.post('/payments/checkout', data);
+  async initiatePayment(data: { property_id: string; promotion_tier: string; amount: number }) {
+    const res = await apiClient.post('/payments/initiate', data);
+    return (res as unknown as { data: { checkout_url: string; tx_ref: string } }).data ?? res;
   },
 
-  async getInvoiceStatus(tx_ref: string): Promise<BillingInvoice> {
-    return apiClient.get(`/payments/status/${tx_ref}`);
+  async listInvoices(): Promise<BillingInvoice[]> {
+    const res = await apiClient.get('/payments/invoices');
+    return (res as unknown as { data: BillingInvoice[] }).data ?? res;
+  },
+
+  async getInvoice(id: string): Promise<BillingInvoice> {
+    const res = await apiClient.get(`/payments/invoices/${id}`);
+    return (res as unknown as { data: BillingInvoice }).data ?? res;
   },
 };

@@ -41,10 +41,10 @@ export default function BuyerFavoritesPage({
 
   const handleRemoveFavorite = async (propertyId: string) => {
     try {
-      await propertyService.toggleFavorite(propertyId);
+      await propertyService.removeFavorite(propertyId);
       setFavorites((prev) => prev.filter((p) => p.id !== propertyId));
-    } catch {
-      // silent fail
+    } catch (err: any) {
+      console.error('Failed to remove favorite:', err?.message);
     }
   };
 

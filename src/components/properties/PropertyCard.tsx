@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Property } from '@/types/property.types';
 import { formatCurrency } from '@/utils/currency';
+import { getImageUrl } from '@/utils/imageUrl';
 
 interface PropertyCardProps {
   property: Property;
@@ -14,12 +15,7 @@ interface PropertyCardProps {
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const getImageUrl = (url: string) => {
-    if (!url) return '';
-    if (url.startsWith('http')) return url;
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://localhost:5000';
-    return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
-  };
+
 
   const standardImages = property.media?.filter((m) => m.media_category === 'IMAGE' && !m.is_tour_scene).map(m => getImageUrl(m.file_url)) || [];
   const allMediaImages = property.media?.map(m => getImageUrl(m.file_url)) || [];
@@ -56,6 +52,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en
         <img
           src={images[currentIndex]}
           alt={title}
+          loading="lazy"
+          decoding="async"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80';

@@ -1,34 +1,48 @@
 // src/services/agency.service.ts
 import { apiClient } from './api';
-import { Agency, AgencyEmployee } from '@/types/agency.types';
+import { Agency, AgencyEmployee } from '@/types/index';
 
 export const agencyService = {
-  async listAgencies(): Promise<Agency[]> {
-    return apiClient.get('/agencies');
+  async listAgencies(params?: { page?: number; limit?: number; search?: string }) {
+    const res = await apiClient.get('/agencies', { params });
+    return (res as unknown as { data: unknown }).data ?? res;
   },
 
-  async getAgencyById(id: string): Promise<Agency> {
-    return apiClient.get(`/agencies/${id}`);
+  async getAgency(id: string): Promise<Agency> {
+    const res = await apiClient.get(`/agencies/${id}`);
+    return (res as unknown as { data: Agency }).data ?? res;
   },
 
-  async registerAgency(data: {
-    name: string;
-    description_en?: string;
-    business_license_url?: string;
-    logo_url?: string;
-  }): Promise<Agency> {
-    return apiClient.post('/agencies', data);
+  async createAgency(formData: FormData): Promise<Agency> {
+    // Requires multipart/form-data for business_license file
+    const res = await apiClient.post('/agencies', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return (res as unknown as { data: Agency }).data ?? res;
   },
 
-  async addEmployee(agencyId: string, phone_number: string): Promise<AgencyEmployee> {
-    return apiClient.post(`/agencies/${agencyId}/employees`, { phone_number });
+  async updateAgency(id: string, data: Partial<Agency>): Promise<Agency> {
+    const res = await apiClient.put(`/agencies/${id}`, data);
+    return (res as unknown as { data: Agency }).data ?? res;
   },
 
-  async getAgencyEmployees(agencyId: string): Promise<AgencyEmployee[]> {
-    return apiClient.get(`/agencies/${agencyId}/employees`);
+  async inviteEmployee(agencyId: string, email: string) {
+    const res = await apiClient.post(`/agencies/${agencyId}/invite`, { email });
+    return (res as unknown as { data: unknown }).data ?? res;
   },
 
-  async removeEmployee(agencyId: string, employeeId: string): Promise<{ success: boolean }> {
-    return apiClient.delete(`/agencies/${agencyId}/employees/${employeeId}`);
+  async listEmployees(agencyId: string): Promise<AgencyEmployee[]> {
+    const res = await apiClient.get(`/agencies/${agencyId}/employees`);
+    return (res as unknown as { data: AgencyEmployee[] }).data ?? res;
+  },
+
+  async removeEmployee(agencyId: string, userId: string) {
+    const res = await apiClient.delete(`/agencies/${agencyId}/employees/${userId}`);
+    return (res as unknown as { data: unknown }).data ?? res;
+  },
+
+  async getAnalytics(agencyId: string) {
+    const res = await apiClient.get(`/agencies/${agencyId}/analytics`);
+    return (res as unknown as { data: unknown }).data ?? res;
   },
 };

@@ -3,8 +3,10 @@
 
 import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Property } from '@/types/property.types';
 import { propertyService } from '@/services/property.service';
+import { inquiryService } from '@/services/inquiry.service';
 import { formatCurrency } from '@/utils/currency';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -58,12 +60,21 @@ export default function PropertyDetailPage({
   const lang = rawLang === 'am' ? 'am' : 'en';
 
   const { isAuthenticated, validateSession } = useAuth();
+  const router = useRouter();
   const [property, setProperty] = useState<Property | null>(null);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [favorited, setFavorited] = useState(false);
   const [favLoading, setFavLoading] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [inquiryMsg, setInquiryMsg] = useState('');
+  const [isSubmittingInquiry, setIsSubmittingInquiry] = useState(false);
+  const [inquirySuccess, setInquirySuccess] = useState(false);
+  const [inquiryError, setInquiryError] = useState<string | null>(null);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportReason, setReportReason] = useState('');
+  const [isReporting, setIsReporting] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
+  const [reportError, setReportError] = useState<string | null>(null);
 
   useEffect(() => { validateSession(); }, [validateSession]);
 
@@ -74,18 +85,68 @@ export default function PropertyDetailPage({
       .catch(() => setProperty(makeSampleProperty(propertyId)));
   }, [propertyId]);
 
+  const handleSendInquiry = async () => {
+    if (!isAuthenticated) {
+      router.push(`/${lang}/auth/login`);
+      return;
+    }
+    if (inquiryMsg.trim().length < 20) {
+      setInquiryError('Message must be at least 20 characters.');
+      return;
+    }
+    setIsSubmittingInquiry(true);
+    setInquiryError(null);
+    try {
+      await inquiryService.createInquiry({ property_id: propertyId, message: inquiryMsg.trim() });
+      setInquirySuccess(true);
+      setInquiryMsg('');
+      setInquiryOpen(false);
+    } catch (err: any) {
+      setInquiryError(err?.message || 'Failed to send inquiry. Please try again.');
+    } finally {
+      setIsSubmittingInquiry(false);
+    }
+  };
+
+  const handleReport = async () => {
+    setReportError(null);
+    if (reportReason.trim().length < 20) {
+      setReportError('Please provide a reason of at least 20 characters.');
+      return;
+    }
+    setIsReporting(true);
+    try {
+      await inquiryService.reportListing(propertyId, reportReason.trim());
+      setReportSuccess(true);
+      setTimeout(() => { setReportOpen(false); setReportSuccess(false); setReportReason(''); setReportError(null); }, 2000);
+    } catch (err: any) {
+      setReportError(err?.message || 'Failed to submit report.');
+    } finally {
+      setIsReporting(false);
+    }
+  };
+
   const handleFavorite = async () => {
     if (!isAuthenticated) return;
+    
+    const wasFavorited = favorited;
+    setFavorited(!wasFavorited);
     setFavLoading(true);
+    
     try {
-      const res = await propertyService.toggleFavorite(propertyId);
-      setFavorited(res.favorited);
-    } catch {
-      setFavorited((v) => !v); // optimistic toggle fallback
+      if (wasFavorited) {
+        await propertyService.removeFavorite(propertyId);
+      } else {
+        await propertyService.addFavorite(propertyId);
+      }
+    } catch (err: any) {
+      console.error('Favorite action failed:', err?.message);
+      setFavorited(wasFavorited);
     } finally {
       setFavLoading(false);
     }
   };
+
 
   if (!property) {
     return (
@@ -120,6 +181,40 @@ export default function PropertyDetailPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      {/* JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": property.category === 'HOUSE' ? "SingleFamilyResidence" : property.category === 'APARTMENT' ? "Apartment" : "RealEstateListing",
+            "name": title,
+            "description": description,
+            "url": `https://ethred.com/${lang}/properties/${property.id}`,
+            "image": images.map(img => getImageUrl(img.file_url)),
+            "offers": {
+              "@type": "Offer",
+              "price": property.price_etb,
+              "priceCurrency": "ETB",
+              "availability": "https://schema.org/InStock",
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": property.city,
+              "addressRegion": property.region,
+              "streetAddress": `${property.sub_city}, ${property.woreda || ''}`,
+              "addressCountry": "ET"
+            },
+            "numberOfRooms": property.bedrooms,
+            "floorSize": {
+              "@type": "QuantitativeValue",
+              "value": property.area_sqm,
+              "unitCode": "MTK"
+            }
+          })
+        }}
+      />
+
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-neutral-500">
         <Link href={`/${lang}`} className="hover:text-neutral-900 dark:text-white transition">Home</Link>
@@ -324,7 +419,14 @@ export default function PropertyDetailPage({
             <h3 className="text-base font-bold text-neutral-900 dark:text-white">
               {lang === 'am' ? 'ለባለቤቱ ጥያቄ ያስቀምጡ' : 'Contact the Owner'}
             </h3>
-            {!inquiryOpen ? (
+            {inquirySuccess ? (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-300 dark:border-emerald-800">
+                <span>✅</span>
+                <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  Message sent! The seller will contact you soon.
+                </p>
+              </div>
+            ) : !inquiryOpen ? (
               <button
                 onClick={() => setInquiryOpen(true)}
                 className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition flex items-center justify-center gap-2"
@@ -337,23 +439,23 @@ export default function PropertyDetailPage({
                 <textarea
                   rows={4}
                   value={inquiryMsg}
-                  onChange={(e) => setInquiryMsg(e.target.value)}
+                  onChange={(e) => { setInquiryMsg(e.target.value); setInquiryError(null); }}
                   placeholder={lang === 'am' ? 'መልዕክትዎ...' : 'Hi, I am interested in this property. Is it still available?'}
                   className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600 resize-none transition"
                 />
+                {inquiryError && (
+                  <p className="text-[11px] text-red-600 dark:text-red-400">{inquiryError}</p>
+                )}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => {
-                      alert('Inquiry sent! (Backend integration pending)');
-                      setInquiryOpen(false);
-                      setInquiryMsg('');
-                    }}
-                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition"
+                    onClick={handleSendInquiry}
+                    disabled={isSubmittingInquiry || inquiryMsg.trim().length < 20}
+                    className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold transition"
                   >
-                    Send
+                    {isSubmittingInquiry ? 'Sending…' : 'Send'}
                   </button>
                   <button
-                    onClick={() => setInquiryOpen(false)}
+                    onClick={() => { setInquiryOpen(false); setInquiryError(null); }}
                     className="px-4 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs font-semibold hover:bg-neutral-100 dark:bg-neutral-700 transition"
                   >
                     Cancel
@@ -379,6 +481,56 @@ export default function PropertyDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Report Listing */}
+      <div className="text-center py-6">
+        <button
+          onClick={() => setReportOpen(true)}
+          className="text-xs text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition underline"
+        >
+          Report this listing
+        </button>
+      </div>
+
+      {/* Report Modal */}
+      {reportOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-neutral-900 dark:text-white">Report this listing</h3>
+              <button onClick={() => { setReportOpen(false); setReportReason(''); setReportError(null); }} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300">
+                ✕
+              </button>
+            </div>
+            {reportSuccess ? (
+              <p className="text-sm text-center font-semibold text-emerald-600 dark:text-emerald-400 py-4">
+                ✅ Thank you. Our team will review this listing.
+              </p>
+            ) : (
+              <>
+                <p className="text-xs text-neutral-500">Please describe the issue with this listing. Minimum 20 characters.</p>
+                <textarea
+                  rows={4}
+                  value={reportReason}
+                  onChange={(e) => { setReportReason(e.target.value); setReportError(null); }}
+                  placeholder="e.g. This listing contains fake photos and incorrect price information..."
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 resize-none transition"
+                />
+                {reportError && (
+                  <p className="text-[11px] text-red-600 dark:text-red-400">{reportError}</p>
+                )}
+                <button
+                  onClick={handleReport}
+                  disabled={isReporting || reportReason.trim().length < 20}
+                  className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white text-xs font-bold transition"
+                >
+                  {isReporting ? 'Submitting…' : 'Submit Report'}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useEffect, useState, use, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Property } from '@/types/property.types';
 import { propertyService } from '@/services/property.service';
 import { PropertyGrid } from '@/components/properties/PropertyGrid';
@@ -11,88 +11,116 @@ import { useFilterStore } from '@/store/useFilterStore';
 
 function PropertiesSearchContent({ lang }: { lang: 'en' | 'am' }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const filters = useFilterStore();
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Hydrate search_query from URL on mount
+  // Hydrate from URL on mount
   useEffect(() => {
     const q = searchParams.get('search_query');
     const mode = searchParams.get('transaction_mode');
+    const region = searchParams.get('region');
+    const sub_city = searchParams.get('sub_city');
+    const category = searchParams.get('category');
+    
     if (q) filters.setFilter('search_query', q);
     if (mode) filters.setFilter('transaction_mode', mode as any);
+    if (region) filters.setFilter('region', region);
+    if (sub_city) filters.setFilter('sub_city', sub_city);
+    if (category) filters.setFilter('category', category as any);
+    
+    setIsHydrated(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    propertyService
-      .searchProperties({
-        region: filters.region || undefined,
-        sub_city: filters.sub_city || undefined,
-        category: filters.category || undefined,
-        price_min: filters.price_min || undefined,
-        price_max: filters.price_max || undefined,
-        bedrooms: filters.bedrooms || undefined,
-        has_virtual_tour: filters.has_virtual_tour || undefined,
-        search_query: filters.search_query || undefined,
-        transaction_mode: filters.transaction_mode || undefined,
-      })
-      .then((data) => {
-        if (data && data.results) {
-          setProperties(data.results);
-        }
-      })
-      .catch(() => {
-        setProperties([
-          {
-            id: 'sample-1',
-            owner_id: 'user-1',
-            title_en: 'Luxury 3-Bedroom Apartment in Bole Edna Mall',
-            title_am: 'በቦሌ ኤድና ሞል አቅራቢያ የሚገኝ የቅንጦት ባለ 3 መኝታ አፓርታማ',
-            description_en: 'Modern high-rise apartment with 3D virtual tour.',
-            price_etb: 14500000,
-            transaction_mode: 'SALE',
-            category: 'APARTMENT',
-            region: 'Addis Ababa',
-            city: 'Addis Ababa',
-            sub_city: 'Bole',
-            woreda: 'Woreda 03',
-            bedrooms: 3,
-            bathrooms: 2,
-            area_sqm: 165,
-            status: 'APPROVED',
-            is_featured: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            media: [{ id: 'm1', property_id: 'sample-1', file_url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', media_category: 'IMAGE', sort_order: 0, is_tour_scene: true }],
-          },
-          {
-            id: 'sample-2',
-            owner_id: 'user-2',
-            title_en: 'Modern Villa House in Yeka CMC',
-            title_am: 'በየካ ሲኤምሲ የሚገኝ ዘመናዊ ቪላ ቤት',
-            description_en: 'Spacious 5-bedroom villa with private garden.',
-            price_etb: 28000000,
-            transaction_mode: 'SALE',
-            category: 'HOUSE',
-            region: 'Addis Ababa',
-            city: 'Addis Ababa',
-            sub_city: 'Yeka',
-            woreda: 'Woreda 08',
-            bedrooms: 5,
-            bathrooms: 4,
-            area_sqm: 350,
-            status: 'APPROVED',
-            is_featured: true,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-            media: [{ id: 'm2', property_id: 'sample-2', file_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', media_category: 'IMAGE', sort_order: 0, is_tour_scene: true }],
-          },
-        ]);
-      })
-      .finally(() => setLoading(false));
-  }, [filters.region, filters.sub_city, filters.category, filters.price_min, filters.price_max, filters.bedrooms, filters.has_virtual_tour, filters.search_query, filters.transaction_mode]);
+    if (!isHydrated) return;
+
+    const timer = setTimeout(() => {
+      // Sync state to URL
+      const params = new URLSearchParams();
+      if (filters.search_query) params.set('search_query', filters.search_query);
+      if (filters.transaction_mode) params.set('transaction_mode', filters.transaction_mode);
+      if (filters.region) params.set('region', filters.region);
+      if (filters.sub_city) params.set('sub_city', filters.sub_city);
+      if (filters.category) params.set('category', filters.category);
+      
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      setLoading(true);
+      propertyService
+        .searchProperties({
+          region: filters.region || undefined,
+          sub_city: filters.sub_city || undefined,
+          category: filters.category || undefined,
+          price_min: filters.price_min || undefined,
+          price_max: filters.price_max || undefined,
+          bedrooms: filters.bedrooms || undefined,
+          has_virtual_tour: filters.has_virtual_tour || undefined,
+          search_query: filters.search_query || undefined,
+          transaction_mode: filters.transaction_mode || undefined,
+        })
+        .then((data) => {
+          if (data && data.results) {
+            setProperties(data.results);
+          }
+        })
+        .catch(() => {
+          setProperties([
+            {
+              id: 'sample-1',
+              owner_id: 'user-1',
+              title_en: 'Luxury 3-Bedroom Apartment in Bole Edna Mall',
+              title_am: 'በቦሌ ኤድና ሞል አቅራቢያ የሚገኝ የቅንጦት ባለ 3 መኝታ አፓርታማ',
+              description_en: 'Modern high-rise apartment with 3D virtual tour.',
+              price_etb: 14500000,
+              transaction_mode: 'SALE',
+              category: 'APARTMENT',
+              region: 'Addis Ababa',
+              city: 'Addis Ababa',
+              sub_city: 'Bole',
+              woreda: 'Woreda 03',
+              bedrooms: 3,
+              bathrooms: 2,
+              area_sqm: 165,
+              status: 'APPROVED',
+              is_featured: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              media: [{ id: 'm1', property_id: 'sample-1', file_url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', media_category: 'IMAGE', sort_order: 0, is_tour_scene: true }],
+            },
+            {
+              id: 'sample-2',
+              owner_id: 'user-2',
+              title_en: 'Modern Villa House in Yeka CMC',
+              title_am: 'በየካ ሲኤምሲ የሚገኝ ዘመናዊ ቪላ ቤት',
+              description_en: 'Spacious 5-bedroom villa with private garden.',
+              price_etb: 28000000,
+              transaction_mode: 'SALE',
+              category: 'HOUSE',
+              region: 'Addis Ababa',
+              city: 'Addis Ababa',
+              sub_city: 'Yeka',
+              woreda: 'Woreda 08',
+              bedrooms: 5,
+              bathrooms: 4,
+              area_sqm: 350,
+              status: 'APPROVED',
+              is_featured: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+              media: [{ id: 'm2', property_id: 'sample-2', file_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80', media_category: 'IMAGE', sort_order: 0, is_tour_scene: true }],
+            },
+          ]);
+        })
+        .finally(() => setLoading(false));
+    }, 400);
+
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHydrated, filters.region, filters.sub_city, filters.category, filters.price_min, filters.price_max, filters.bedrooms, filters.has_virtual_tour, filters.search_query, filters.transaction_mode]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">

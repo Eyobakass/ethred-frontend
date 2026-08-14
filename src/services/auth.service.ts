@@ -36,5 +36,41 @@ export const authService = {
 
   async deleteAccount() {
     return apiClient.delete('/users/me');
-  }
+  },
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    return apiClient.post('/auth/forgot-password', { email });
+  },
+
+  async resetPassword(token: string, new_password: string): Promise<{ message: string }> {
+    return apiClient.post('/auth/reset-password', { token, new_password });
+  },
+
+  async uploadAvatar(file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return apiClient.post('/users/me/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  async updateProfile(data: { full_name?: string; preferred_language?: string }): Promise<any> {
+    return apiClient.put('/users/me', data);
+  },
+
+  async uploadIdDocument(file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('document', file);
+    return apiClient.post('/users/me/id-document', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
+  async updateNotificationPrefs(prefs: {
+    notify_on_approval?: boolean;
+    notify_on_inquiry?: boolean;
+    notify_on_rejection?: boolean;
+  }): Promise<any> {
+    return apiClient.put('/users/me/notifications', prefs);
+  },
 };

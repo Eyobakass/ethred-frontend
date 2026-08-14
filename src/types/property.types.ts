@@ -79,6 +79,8 @@ export interface Property {
   updated_at: string;
   latitude?: number;
   longitude?: number;
+  /** For draft clones: references the original APPROVED property this draft was created from */
+  parent_id?: string | null;
   rejection_info?: {
     reason: string;
     rejected_at: string;

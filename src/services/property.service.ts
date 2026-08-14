@@ -18,13 +18,11 @@ export const propertyService = {
   },
 
   async createProperty(data: Partial<Property>): Promise<Property> {
-    const res = await apiClient.post<any, any>('/properties', data);
-    return res.data;
+    return apiClient.post('/properties', data);
   },
 
   async updateProperty(id: string, data: Partial<Property>): Promise<Property> {
-    const res = await apiClient.put<any, any>(`/properties/${id}`, data);
-    return res.data;
+    return apiClient.put(`/properties/${id}`, data);
   },
 
   async deleteProperty(id: string): Promise<{ success: boolean }> {
@@ -32,26 +30,28 @@ export const propertyService = {
   },
 
   async submitForReview(id: string): Promise<Property> {
-    const res = await apiClient.post<any, any>(`/properties/${id}/submit`);
-    return res.data;
+    return apiClient.post(`/properties/${id}/submit`);
   },
 
   async createDraftClone(id: string): Promise<Property> {
-    const res = await apiClient.post<any, any>(`/properties/${id}/draft`);
-    return res.data;
+    return apiClient.post(`/properties/${id}/draft`);
   },
 
   async getExistingDraft(id: string): Promise<Property | null> {
     const res = await apiClient.get<any, any>(`/properties/${id}/draft`);
-    return res.data || null;
+    return res || null;
   },
 
   async deleteDraft(draftId: string): Promise<void> {
     await apiClient.delete(`/properties/${draftId}`);
   },
 
-  async toggleFavorite(property_id: string): Promise<{ favorited: boolean }> {
-    return apiClient.post(`/favorites/toggle`, { property_id });
+  async addFavorite(propertyId: string): Promise<any> {
+    return apiClient.post(`/favorites/${propertyId}`);
+  },
+
+  async removeFavorite(propertyId: string): Promise<any> {
+    return apiClient.delete(`/favorites/${propertyId}`);
   },
 
   async getFavorites(): Promise<Property[]> {
@@ -67,5 +67,29 @@ export const propertyService = {
 
   async deleteMedia(propertyId: string, mediaId: string): Promise<any> {
     return apiClient.delete(`/properties/${propertyId}/media/${mediaId}`);
+  },
+
+  async getListingStats(id: string): Promise<{ property_id: string; favorites_count: number; inquiries_count: number }> {
+    const res = await apiClient.get<any, any>(`/properties/${id}/stats`);
+    return res.data || res;
+  },
+
+  async uploadDocument(propertyId: string, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('document', file);
+    return apiClient.post(`/properties/${propertyId}/media/documents`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120000,
+    });
+  },
+
+  async uploadFloorPlan(propertyId: string, file: File): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await apiClient.post<any, any>(`/properties/${propertyId}/floor-plan`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 120000,
+    });
+    return res.data || res;
   },
 };

@@ -11,43 +11,6 @@ import { propertyService } from '@/services/property.service';
 import { TourConfig } from '@/types/tour.types';
 import { Property, PropertyMedia } from '@/types/property.types';
 
-// ── Demo fallback data ────────────────────────────────────────────────────────
-const DEMO_TOUR_CONFIG: TourConfig = {
-  default: { firstScene: 'living-room', sceneFadeDuration: 1000 },
-  scenes: {
-    'living-room': {
-      title: 'Living Room',
-      type: 'equirectangular',
-      panorama: 'https://pannellum.org/images/alma.jpg',
-      hotSpots: [
-        { pitch: 0, yaw: 45, type: 'scene', text: 'Walk to Kitchen', sceneId: 'kitchen' },
-        { pitch: 10, yaw: -90, type: 'info', text: 'Italian Marble Floor' },
-      ],
-    },
-    kitchen: {
-      title: 'Kitchen',
-      type: 'equirectangular',
-      panorama: 'https://pannellum.org/images/cerro-toco.jpg',
-      hotSpots: [
-        { pitch: 0, yaw: -135, type: 'scene', text: 'Back to Living Room', sceneId: 'living-room' },
-      ],
-    },
-    bedroom: {
-      title: 'Master Bedroom',
-      type: 'equirectangular',
-      panorama: 'https://pannellum.org/images/jfk.jpg',
-      hotSpots: [
-        { pitch: -5, yaw: 100, type: 'scene', text: 'Back to Living Room', sceneId: 'living-room' },
-      ],
-    },
-  },
-};
-
-const DEMO_SCENES: PropertyMedia[] = [
-  { id: 'living-room', property_id: '', file_url: 'https://pannellum.org/images/alma.jpg', media_category: 'IMAGE', sort_order: 0, is_tour_scene: true, scene_name: 'Living Room', fp_x: 30, fp_y: 60 },
-  { id: 'kitchen', property_id: '', file_url: 'https://pannellum.org/images/cerro-toco.jpg', media_category: 'IMAGE', sort_order: 1, is_tour_scene: true, scene_name: 'Kitchen', fp_x: 65, fp_y: 40 },
-  { id: 'bedroom', property_id: '', file_url: 'https://pannellum.org/images/jfk.jpg', media_category: 'IMAGE', sort_order: 2, is_tour_scene: true, scene_name: 'Master Bedroom', fp_x: 50, fp_y: 20 },
-];
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function VirtualTourPage({
@@ -59,6 +22,7 @@ export default function VirtualTourPage({
   const lang = rawLang === 'am' ? 'am' : 'en';
 
   const [tourConfig, setTourConfig] = useState<TourConfig | null>(null);
+  const [tourError, setTourError] = useState<string | null>(null);
   const [property, setProperty] = useState<Property | null>(null);
   const [activeSceneId, setActiveSceneId] = useState<string>('');
   const [scenesList, setScenesList] = useState<PropertyMedia[]>([]);
@@ -93,11 +57,13 @@ export default function VirtualTourPage({
           setScenesList(mediaList);
         }
       })
-      .catch(() => {
-        // Demo fallback
-        setTourConfig(DEMO_TOUR_CONFIG);
-        setActiveSceneId('living-room');
-        setScenesList(DEMO_SCENES.map((s) => ({ ...s, property_id: propertyId })));
+      .catch((err: any) => {
+        const is404 = err?.response?.status === 404 || err?.status === 404;
+        if (is404) {
+          setTourConfig({ default: { firstScene: '', sceneFadeDuration: 1000 }, scenes: {} });
+        } else {
+          setTourError('Could not load the virtual tour. Please check your connection.');
+        }
       });
   }, [propertyId]);
 
@@ -106,6 +72,9 @@ export default function VirtualTourPage({
     (sceneId: string) => {
       if (!tourConfig || sceneId === activeSceneId) return;
       setActiveSceneId(sceneId);
+      setTourConfig((prev) =>
+        prev ? { ...prev, default: { ...prev.default, firstScene: sceneId } } : prev
+      );
     },
     [tourConfig, activeSceneId]
   );
@@ -143,7 +112,30 @@ export default function VirtualTourPage({
 
       {/* ── Viewer area ─────────────────────────────────────────────────────── */}
       <div className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 relative flex flex-col justify-center">
-        {tourConfig ? (
+        {tourError ? (
+          <div className="flex items-center justify-center h-[550px]">
+            <div className="text-center space-y-4 max-w-md">
+              <div className="text-5xl">⚠️</div>
+              <p className="text-red-600 dark:text-red-400 font-semibold">{tourError}</p>
+              <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
+            </div>
+          </div>
+        ) : !tourConfig ? (
+          <div className="flex items-center justify-center h-[550px]">
+            <div className="text-center space-y-3">
+              <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-red-600 dark:text-red-400 text-sm font-semibold">Loading 3D Scene Graph...</p>
+            </div>
+          </div>
+        ) : Object.keys(tourConfig.scenes).length === 0 ? (
+          <div className="flex items-center justify-center h-[550px]">
+            <div className="text-center space-y-4 max-w-md">
+              <div className="text-5xl">❌</div>
+              <p className="text-neutral-600 dark:text-neutral-400 font-semibold">No virtual tour available for this property.</p>
+              <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
+            </div>
+          </div>
+        ) : (
           <div className="relative rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-2xl">
             {/* Scene selector toolbar */}
             <SceneSelectorToolbar
@@ -162,13 +154,6 @@ export default function VirtualTourPage({
               activeSceneId={activeSceneId}
               onSceneChange={(sceneId) => setActiveSceneId(sceneId)}
             />
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-[550px]">
-            <div className="text-center space-y-3">
-              <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-red-600 dark:text-red-400 text-sm font-semibold">Loading 3D Scene Graph...</p>
-            </div>
           </div>
         )}
       </div>

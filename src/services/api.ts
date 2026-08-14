@@ -16,6 +16,15 @@ export const apiClient = axios.create({
   timeout: 60000, // 60s request timeout to accommodate Render cold starts/deployments
 });
 
+// ── Token refresh state ──────────────────────────────────────────────────────
+let isRefreshing = false;
+let refreshQueue: Array<(token: string | null) => void> = [];
+
+function processRefreshQueue(token: string | null) {
+  refreshQueue.forEach((cb) => cb(token));
+  refreshQueue = [];
+}
+
 // ── Request interceptor ─────────────────────────────────────────────────────
 // Access the store lazily (inside the request callback) so it is never
 // called during SSR module initialisation.
@@ -40,13 +49,63 @@ apiClient.interceptors.response.use(
   // Unwrap the data envelope so callers get `res` not `res.data`
   (response) => response.data,
 
-  (error: AxiosError<{ message?: string }>) => {
+  async (error: AxiosError<{ message?: string }>) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     const status = error.response?.status;
 
-    if (status === 401 && typeof window !== 'undefined') {
+    // ── Token refresh on 401 ────────────────────────────────────────────────
+    if (status === 401 && typeof window !== 'undefined' && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Another refresh is in flight — queue this request
+        return new Promise((resolve, reject) => {
+          refreshQueue.push((token) => {
+            if (token) {
+              originalRequest._retry = true;
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
+              resolve(apiClient(originalRequest));
+            } else {
+              reject(error);
+            }
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Attempt silent refresh using httpOnly refresh token cookie
+        const refreshResponse = await axios.post(
+          `${BASE_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+        const newToken: string = (refreshResponse.data as any)?.token || (refreshResponse as any)?.token;
+
+        if (newToken) {
+          const { useAuthStore } = require('@/store/useAuthStore');
+          const { user } = useAuthStore.getState();
+          if (user) {
+            useAuthStore.getState().setAuth(user, newToken);
+          }
+          processRefreshQueue(newToken);
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          }
+          isRefreshing = false;
+          return apiClient(originalRequest);
+        }
+      } catch {
+        // Refresh failed — log out and redirect
+        processRefreshQueue(null);
+        isRefreshing = false;
+      }
+
+      // Refresh failed or no token — logout
       const { useAuthStore } = require('@/store/useAuthStore');
       useAuthStore.getState().logout();
-      // Preserve current language prefix in redirect
       if (!window.location.pathname.includes('/auth/login')) {
         const lang = window.location.pathname.startsWith('/am') ? 'am' : 'en';
         window.location.href = `/${lang}/auth/login`;

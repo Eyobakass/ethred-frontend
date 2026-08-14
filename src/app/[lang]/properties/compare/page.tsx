@@ -7,6 +7,13 @@ import { Property } from '@/types/property.types';
 import { propertyService } from '@/services/property.service';
 import { formatCurrency } from '@/utils/currency';
 
+const getImageUrl = (url: string) => {
+  if (!url) return '';
+  if (url.startsWith('http') || url.startsWith('blob:')) return url;
+  const base = process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') ?? '';
+  return base ? `${base}${url.startsWith('/') ? '' : '/'}${url}` : url;
+};
+
 export default function ComparePropertiesPage({
   params,
 }: {
@@ -37,6 +44,10 @@ export default function ComparePropertiesPage({
 
   const assignToSlot = (property: Property) => {
     if (activeSlot === null) return;
+    // Prevent adding the same property twice
+    if (compareSlots.some((slot) => slot?.id === property.id)) {
+      return;
+    }
     const updated = [...compareSlots];
     updated[activeSlot] = property;
     setCompareSlots(updated);
@@ -97,7 +108,7 @@ export default function ComparePropertiesPage({
             {prop ? (
               <>
                 <img
-                  src={prop.media?.[0]?.file_url ?? 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=60'}
+                  src={getImageUrl(prop.media?.[0]?.file_url ?? 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=60')}
                   alt={prop.title_en}
                   className="w-full h-24 object-cover rounded-lg"
                 />
@@ -155,7 +166,7 @@ export default function ComparePropertiesPage({
                   onClick={() => assignToSlot(p)}
                   className="w-full flex items-center gap-3 p-3 text-left hover:bg-neutral-50 dark:bg-neutral-800 transition rounded-lg"
                 >
-                  <img src={p.media?.[0]?.file_url ?? ''} alt="" className="w-12 h-10 object-cover rounded-lg" />
+                  <img src={getImageUrl(p.media?.[0]?.file_url ?? '')} alt="" className="w-12 h-10 object-cover rounded-lg" />
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-neutral-900 dark:text-white truncate">{p.title_en}</p>
                     <p className="text-[10px] text-neutral-600 dark:text-neutral-400">{p.sub_city} · {formatCurrency(Number(p.price_etb), 'ETB', lang)}</p>

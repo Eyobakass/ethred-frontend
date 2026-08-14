@@ -13,7 +13,7 @@ import { formatCurrency } from '@/utils/currency';
 import { PannellumViewer } from '@/components/3d-tour/PannellumViewer';
 import { HotspotOverlay } from '@/components/3d-tour/HotspotOverlay';
 import { SceneSelectorToolbar } from '@/components/3d-tour/SceneSelectorToolbar';
-import { DoorOpen, Info, Pencil, X, CheckCircle, Save, ChevronDown, ChevronUp } from 'lucide-react';
+import { DoorOpen, Info, Pencil, X, CheckCircle, Save, ChevronDown, ChevronUp, Heart, MessageSquare, FileText } from 'lucide-react';
 
 const CATEGORIES: { value: PropertyCategory; label: string }[] = [
   { value: 'APARTMENT', label: 'Apartment' },
@@ -64,7 +64,7 @@ export default function ListingManagerPage({
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [globalMsg, setGlobalMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [openSections, setOpenSections] = useState<Record<Section, boolean>>({ details: true, photos: true, tour: true });
+  const [openSections, setOpenSections] = useState<Record<Section, boolean>>({ details: true, photos: true, tour: false });
   const [draftModal, setDraftModal] = useState<DraftModalState>({ open: false, existingDraft: null });
   const [draftModalLoading, setDraftModalLoading] = useState(false);
   const [hasPendingUpdate, setHasPendingUpdate] = useState(false);
@@ -88,6 +88,26 @@ export default function ListingManagerPage({
   const [replacingSceneId, setReplacingSceneId] = useState<string | null>(null);
   const tourFileInputRef = useRef<HTMLInputElement>(null);
   const [tourFullscreen, setTourFullscreen] = useState(false);
+  const isTourLoadingRef = useRef(false);
+  const isEnteringEditRef = useRef(false);
+
+  // Sprint 1B — Listing stats
+  const [stats, setStats] = useState<{ favorites_count: number; inquiries_count: number } | null>(null);
+
+  // Sprint 1C — Amenities editor
+  const [amenities, setAmenities] = useState<string[]>([]);
+  const [amenityInput, setAmenityInput] = useState('');
+
+  // Sprint 1D — Document upload
+  const [documents, setDocuments] = useState<any[]>([]);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [docsOpen, setDocsOpen] = useState(false);
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
+  const docInputRef = useRef<HTMLInputElement>(null);
+
+  // Sprint 1E — Floor plan upload
+  const [isUploadingFloorPlan, setIsUploadingFloorPlan] = useState(false);
+  const floorPlanInputRef = useRef<HTMLInputElement>(null);
 
   const loadProperty = useCallback(async (propertyId: string, retries = 3): Promise<any> => {
     try {
@@ -105,6 +125,10 @@ export default function ListingManagerPage({
         bedrooms: String(data.bedrooms || '1'), bathrooms: String(data.bathrooms || '1'),
         area_sqm: String(data.area_sqm || ''),
       });
+      // Load amenities
+      setAmenities((data.amenities || []).map((a: any) => a.amenity_name));
+      // Load documents
+      setDocuments((data.media || []).filter((m: any) => m.media_category === 'DOCUMENT'));
       return data;
     } catch (err: any) {
       const is404 = err?.response?.status === 404 || err?.status === 404;
@@ -122,6 +146,10 @@ export default function ListingManagerPage({
     setHasPendingUpdate(false); // reset on every navigation
     loadProperty(id)
       .then((data: any) => {
+        // Sprint 1B — Load listing stats (fire-and-forget)
+        propertyService.getListingStats(id)
+          .then((s) => setStats({ favorites_count: s.favorites_count, inquiries_count: s.inquiries_count }))
+          .catch(() => { /* non-critical */ });
         // If this is an APPROVED listing, silently check for a pending update draft
         // so the Edit button immediately shows the correct state without requiring a click.
         if (data?.status === 'APPROVED') {
@@ -141,6 +169,7 @@ export default function ListingManagerPage({
   }, [id, loadProperty]);
 
   const loadTourConfig = useCallback(async (propertyId: string) => {
+    isTourLoadingRef.current = true;
     try {
       const config = await tourService.getTourConfig(propertyId);
       if (config?.scenes && Object.keys(config.scenes).length > 0) {
@@ -157,13 +186,20 @@ export default function ListingManagerPage({
     } catch {
       setTourConfig({ default: { firstScene: '', sceneFadeDuration: 1000 }, scenes: {} });
       setActiveSceneId('');
+    } finally {
+      isTourLoadingRef.current = false;
     }
   }, []);
 
-  useEffect(() => { if (workingId) loadTourConfig(workingId); }, [workingId, loadTourConfig]);
+  useEffect(() => {
+    if (workingId && !isTourLoadingRef.current) {
+      loadTourConfig(workingId);
+    }
+  }, [workingId, loadTourConfig]);
 
   const enterEditMode = useCallback(async () => {
-    if (!property) return;
+    if (!property || isEnteringEditRef.current) return;
+    isEnteringEditRef.current = true;
     // If we're already viewing a draft (DRAFT or PENDING_UPDATE), just enter edit mode directly
     if (['DRAFT', 'PENDING_UPDATE'].includes(property.status)) {
       setMode('edit');
@@ -192,10 +228,13 @@ export default function ListingManagerPage({
           await loadTourConfig(draft.id);
           setMode('edit');
         }
-      } catch {
-        setGlobalMsg({ type: 'error', text: 'Failed to prepare draft. Please try again.' });
+      } catch (err: any) {
+        const msg = err?.response?.data?.message || err?.message || 'Failed to prepare draft.';
+        setGlobalMsg({ type: 'error', text: `Error: ${msg}. Please try again.` });
+        console.error('enterEditMode error:', err);
       } finally {
         setDraftModalLoading(false);
+        isEnteringEditRef.current = false;
       }
     }
   }, [property, id, loadProperty, loadTourConfig]);
@@ -230,38 +269,43 @@ export default function ListingManagerPage({
       await loadProperty(newDraft.id);
       await loadTourConfig(newDraft.id);
       setMode('edit');
-    } catch {
-      setGlobalMsg({ type: 'error', text: 'Failed to reset draft. Please try again.' });
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || 'Failed to reset draft.';
+      setGlobalMsg({ type: 'error', text: `Error: ${msg}. Please try again.` });
+      console.error('handleDiscardAndFresh error:', err);
     } finally {
       setDraftModalLoading(false);
     }
   }, [draftModal.existingDraft, id, loadProperty, loadTourConfig]);
 
-  const handleCancelEdit = useCallback(() => {
-    if (!window.confirm('Discard unsaved text changes? Photos and tour changes are already saved to your draft.')) return;
-    if (property) {
-      setForm({
-        title_en: property.title_en || '', title_am: property.title_am || '',
-        description_en: property.description_en || '', description_am: property.description_am || '',
-        price_etb: String(property.price_etb || ''), transaction_mode: property.transaction_mode || 'SALE',
-        category: property.category || 'APARTMENT', region: property.region || 'Addis Ababa',
-        sub_city: property.sub_city || '', woreda: property.woreda || '',
-        nearest_landmark: property.nearest_landmark || '',
-        bedrooms: String(property.bedrooms || '1'), bathrooms: String(property.bathrooms || '1'),
-        area_sqm: String(property.area_sqm || ''),
-      });
+  const handleCancelEdit = useCallback(async () => {
+    if (!window.confirm('Discard this draft completely? Any photo, text, or tour changes made in this draft will be lost.')) return;
+    
+    setIsLoading(true);
+    try {
+      if (property?.id) {
+        await propertyService.deleteDraft(workingId);
+      }
+      // Reload the approved listing
+      await loadProperty(id);
+      await loadTourConfig(id);
+      setMode('read');
+    } catch (err: any) {
+      console.error('Failed to discard draft:', err);
+      setGlobalMsg({ type: 'error', text: 'Failed to discard draft. Please try again.' });
+      setIsLoading(false);
     }
-    setMode('read');
-  }, [property]);
+  }, [property, workingId, id, loadProperty, loadTourConfig]);
 
-  const buildPayload = useCallback(() => ({
+  const buildPayload = useCallback((): any => ({
     title_en: form.title_en.trim(), title_am: form.title_am.trim() || undefined,
     description_en: form.description_en.trim(), description_am: form.description_am.trim() || undefined,
     price_etb: Number(form.price_etb), transaction_mode: form.transaction_mode,
     category: form.category, region: form.region, sub_city: form.sub_city,
     woreda: form.woreda, nearest_landmark: form.nearest_landmark.trim() || undefined,
     bedrooms: Number(form.bedrooms), bathrooms: Number(form.bathrooms), area_sqm: Number(form.area_sqm),
-  }), [form]);
+    amenities: amenities.map((name) => ({ amenity_name: name })),
+  }), [form, amenities]);
 
   const handleSaveDraft = useCallback(async () => {
     if (!form.title_en.trim()) { setGlobalMsg({ type: 'error', text: 'English title is required.' }); return; }
@@ -277,8 +321,12 @@ export default function ListingManagerPage({
 
   const handleSubmitForReview = useCallback(async () => {
     if (!form.title_en.trim()) { setGlobalMsg({ type: 'error', text: 'English title is required.' }); return; }
-    if (!form.price_etb || Number(form.price_etb) <= 0) { setGlobalMsg({ type: 'error', text: 'A valid price is required.' }); return; }
-    if (!form.area_sqm || Number(form.area_sqm) <= 0) { setGlobalMsg({ type: 'error', text: 'Property area (m²) is required.' }); return; }
+    const priceNum = Number(form.price_etb);
+    if (!form.price_etb || isNaN(priceNum) || priceNum <= 0) { setGlobalMsg({ type: 'error', text: 'Please enter a valid numeric price.' }); return; }
+    const areaNum = Number(form.area_sqm);
+    if (!form.area_sqm || isNaN(areaNum) || areaNum <= 0) { setGlobalMsg({ type: 'error', text: 'Please enter a valid area in m².' }); return; }
+    if (form.title_en.trim().length > 200) { setGlobalMsg({ type: 'error', text: 'Title must be under 200 characters.' }); return; }
+    if (form.description_en.length > 5000) { setGlobalMsg({ type: 'error', text: 'English description must be under 5000 characters.' }); return; }
     if (!window.confirm('Save your changes and submit for admin review?')) return;
     setIsSaving(true); setGlobalMsg(null);
     try {
@@ -309,12 +357,74 @@ export default function ListingManagerPage({
 
   const handleDeletePhoto = useCallback(async (mediaId: string) => {
     if (!window.confirm('Delete this photo?')) return;
+    // Optimistically remove from local state immediately
+    setProperty((prev) => {
+      if (!prev) return prev;
+      return { ...prev, media: prev.media?.filter((m) => m.id !== mediaId) ?? [] };
+    });
     try {
       await propertyService.deleteMedia(workingId, mediaId);
-      const updated = await propertyService.getPropertyById(workingId);
-      setProperty(updated);
-    } catch { setGlobalMsg({ type: 'error', text: 'Failed to delete photo.' }); }
-  }, [workingId]);
+    } catch (err: any) {
+      // Revert by reloading from server
+      await loadProperty(workingId).catch(() => {});
+      setGlobalMsg({ type: 'error', text: 'Failed to delete photo. Please try again.' });
+    }
+  }, [workingId, loadProperty]);
+
+  const handleAddAmenity = () => {
+    const trimmed = amenityInput.trim();
+    if (!trimmed || amenities.includes(trimmed)) return;
+    setAmenities((prev) => [...prev, trimmed]);
+    setAmenityInput('');
+  };
+
+  const handleRemoveAmenity = (name: string) => {
+    setAmenities((prev) => prev.filter((a) => a !== name));
+  };
+
+  const handleDocUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingDoc(true);
+    try {
+      const result: any = await propertyService.uploadDocument(workingId, file);
+      const newDoc = result?.data || result;
+      setDocuments((prev) => [...prev, newDoc]);
+      setGlobalMsg({ type: 'success', text: 'Document uploaded successfully.' });
+    } catch (err: any) {
+      setGlobalMsg({ type: 'error', text: err?.message || 'Document upload failed.' });
+    } finally {
+      setIsUploadingDoc(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleDeleteDocument = async (mediaId: string) => {
+    if (!window.confirm('Delete this document?')) return;
+    setDocuments((prev) => prev.filter((d) => d.id !== mediaId));
+    try {
+      await propertyService.deleteMedia(workingId, mediaId);
+    } catch (err: any) {
+      await loadProperty(workingId).catch(() => {});
+      setGlobalMsg({ type: 'error', text: 'Failed to delete document.' });
+    }
+  };
+
+  const handleFloorPlanUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploadingFloorPlan(true);
+    try {
+      const result: any = await propertyService.uploadFloorPlan(workingId, file);
+      setProperty((prev) => prev ? { ...prev, floor_plan_url: result?.floor_plan_url || result?.data?.floor_plan_url } : prev);
+      setGlobalMsg({ type: 'success', text: 'Floor plan uploaded successfully.' });
+    } catch (err: any) {
+      setGlobalMsg({ type: 'error', text: err?.message || 'Floor plan upload failed.' });
+    } finally {
+      setIsUploadingFloorPlan(false);
+      e.target.value = '';
+    }
+  };
 
   const handleAddHotspotClick = useCallback((yaw: number, pitch: number) => {
     setHotspotModal({ isOpen: true, yaw, pitch });
@@ -402,10 +512,22 @@ export default function ListingManagerPage({
     setIsTourSaving(true);
     try {
       await tourService.updateScene(workingId, sceneId, { scene_name: newName });
+      // Optimistically update local title — no re-fetch needed
+      setTourConfig((prev) => {
+        if (!prev || !prev.scenes[sceneId]) return prev;
+        return {
+          ...prev,
+          scenes: { ...prev.scenes, [sceneId]: { ...prev.scenes[sceneId], title: newName } },
+        };
+      });
       setTourMsg({ type: 'success', text: 'Scene renamed.' });
-      await loadTourConfig(workingId);
-    } catch { setTourMsg({ type: 'error', text: 'Failed to rename scene.' }); }
-    finally { setIsTourSaving(false); }
+    } catch (err: any) {
+      setTourMsg({ type: 'error', text: 'Failed to rename scene.' });
+      // Revert by reloading
+      await loadTourConfig(workingId).catch(() => {});
+    } finally {
+      setIsTourSaving(false);
+    }
   }, [workingId, loadTourConfig]);
 
   const handleSaveHotspot = useCallback(async (data: { type: 'NAVIGATION' | 'INFO'; targetSceneId?: string; label?: string }) => {
@@ -419,7 +541,7 @@ export default function ListingManagerPage({
         target_scene_id: data.targetSceneId, label: data.label,
       });
       const hs = {
-        id: res.data?.id, pitch: hotspotModal.pitch, yaw,
+        id: res?.id ?? res?.data?.id, pitch: hotspotModal.pitch, yaw,
         type: data.type === 'NAVIGATION' ? 'scene' : 'info',
         text: data.label ?? (data.type === 'NAVIGATION' ? 'Go to ' + (data.targetSceneId ?? '') : 'Info'),
         sceneId: data.targetSceneId, cssClass: data.type === 'NAVIGATION' ? 'tour-nav-hotspot' : 'tour-info-hotspot',
@@ -487,6 +609,8 @@ export default function ListingManagerPage({
       {/* Hidden inputs */}
       <input ref={photoInputRef} type="file" accept="image/*" multiple className="hidden" onChange={handlePhotoUpload} />
       <input ref={tourFileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleTourFileSelect} />
+      <input ref={docInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" className="hidden" onChange={handleDocUpload} />
+      <input ref={floorPlanInputRef} type="file" accept="image/*" className="hidden" onChange={handleFloorPlanUpload} />
 
       {/* ── Sticky Header ── */}
       <div className="sticky top-0 z-40 border-b border-neutral-200 dark:border-neutral-800 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-md">
@@ -501,12 +625,29 @@ export default function ListingManagerPage({
                 ? (lang === 'am' && property.title_am ? property.title_am : property.title_en)
                 : (form.title_en || 'Editing Draft…')}
             </h1>
-            <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${STATUS_STYLES[property.status] || ''}`}>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold shrink-0 ${
+              hasPendingUpdate
+                ? STATUS_STYLES['PENDING_UPDATE']
+                : STATUS_STYLES[property.status] || ''
+            }`}>
               {statusLabel}
             </span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
+            {/* Sprint 1B — Stats pills */}
+            {stats && mode === 'read' && (
+              <div className="hidden sm:flex items-center gap-2">
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-600 dark:text-neutral-400 font-semibold">
+                  <Heart size={11} className="text-red-500" />
+                  {stats.favorites_count}
+                </span>
+                <span className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-600 dark:text-neutral-400 font-semibold">
+                  <MessageSquare size={11} className="text-blue-500" />
+                  {stats.inquiries_count}
+                </span>
+              </div>
+            )}
             {mode === 'read' ? (
               <button
                 onClick={isPending ? undefined : enterEditMode}
@@ -562,7 +703,7 @@ export default function ListingManagerPage({
       )}
 
       {/* ── Rejection banner ── */}
-      {property.status === 'DRAFT' && property.rejection_info && (
+      {property.status === 'DRAFT' && property.rejection_info && property.parent_id && (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-6">
           <div className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 text-sm space-y-2">
             <div className="flex items-center gap-2 font-bold text-red-700 dark:text-red-400">⚠️ Rejection Feedback — Action Required</div>
@@ -665,6 +806,56 @@ export default function ListingManagerPage({
           )}
         </SectionCard>
 
+        {/* ════ AMENITIES ════ */}
+        <SectionCard
+          title={`✅ Amenities & Features (${amenities.length})`}
+          isOpen={amenitiesOpen}
+          onToggle={() => setAmenitiesOpen((p) => !p)}
+        >
+          {mode === 'edit' ? (
+            <div className="space-y-3">
+              <div className="flex flex-wrap gap-1.5">
+                {amenities.length === 0 && (
+                  <p className="text-xs text-neutral-500">No amenities yet. Add them below.</p>
+                )}
+                {amenities.map((name) => (
+                  <span key={name} className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-700">
+                    {name}
+                    <button onClick={() => handleRemoveAmenity(name)} className="ml-0.5 text-neutral-400 hover:text-red-600 transition text-[10px] font-bold">×</button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={amenityInput}
+                  onChange={(e) => setAmenityInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddAmenity(); } }}
+                  placeholder="e.g. Swimming Pool, Parking, Gym…"
+                  className="flex-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg px-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-red-500 transition"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddAmenity}
+                  className="px-4 py-2 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-xs font-bold hover:bg-neutral-700 dark:hover:bg-neutral-200 transition"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-1.5">
+              {amenities.length === 0 ? (
+                <span className="text-xs text-neutral-500">No amenities listed.</span>
+              ) : amenities.map((name) => (
+                <span key={name} className="px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300 border border-neutral-300 dark:border-neutral-700">
+                  ✅ {name}
+                </span>
+              ))}
+            </div>
+          )}
+        </SectionCard>
+
         {/* ════ PHOTOS ════ */}
         <SectionCard title={`🖼️ Photos (${standardPhotos.length})`} isOpen={openSections.photos} onToggle={() => toggleSection('photos')}>
           {standardPhotos.length === 0 ? (
@@ -706,6 +897,51 @@ export default function ListingManagerPage({
                     : <><span className="text-3xl leading-none">+</span><span className="text-xs font-semibold">Add Photos</span></>}
                 </button>
               )}
+            </div>
+          )}
+        </SectionCard>
+
+        {/* ════ DOCUMENTS ════ */}
+        <SectionCard
+          title="📄 Documents & Deeds"
+          isOpen={docsOpen}
+          onToggle={() => setDocsOpen((p) => !p)}
+          headerExtra={
+            mode === 'edit' ? (
+              <button
+                onClick={(e) => { e.stopPropagation(); docInputRef.current?.click(); }}
+                disabled={isUploadingDoc}
+                className="px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-[11px] font-bold hover:bg-neutral-700 dark:hover:bg-neutral-200 transition disabled:opacity-50"
+              >
+                {isUploadingDoc ? 'Uploading…' : '+ Upload'}
+              </button>
+            ) : undefined
+          }
+        >
+          {documents.length === 0 ? (
+            <p className="text-xs text-neutral-500 py-2">
+              {mode === 'edit' ? 'No documents uploaded yet. Use "+ Upload" to add deeds or certificates.' : 'No documents uploaded.'}
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {documents.map((doc) => (
+                <div key={doc.id} className="flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileText size={14} className="text-neutral-400 flex-shrink-0" />
+                    <span className="text-xs text-neutral-700 dark:text-neutral-300 truncate">
+                      {doc.scene_name || doc.file_url?.split('/').pop() || 'Document'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline">View</a>
+                    {mode === 'edit' && (
+                      <button onClick={() => handleDeleteDocument(doc.id)}
+                        className="text-xs text-red-500 hover:text-red-700 transition">Delete</button>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </SectionCard>
@@ -783,7 +1019,7 @@ export default function ListingManagerPage({
                   </p>
                   <div className="space-y-1.5">
                     {currentScene.hotSpots.map((hs: any, i: number) => (
-                      <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300">
+                      <div key={hs.id ?? `hs-${i}`} className="flex items-center gap-3 p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-xs text-neutral-700 dark:text-neutral-300">
                         {hs.type === 'scene' ? <DoorOpen className="w-4 h-4 text-emerald-500 shrink-0" /> : <Info className="w-4 h-4 text-blue-500 shrink-0" />}
                         <span className="font-medium">{hs.text ?? 'Pin'}</span>
                         <span className="ml-auto font-mono text-neutral-500 shrink-0">P:{hs.pitch?.toFixed(1)}° Y:{hs.yaw?.toFixed(1)}°</span>
@@ -899,14 +1135,15 @@ function SectionCard({ title, isOpen, onToggle, children, headerExtra }: {
 }) {
   return (
     <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
-      <div className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition cursor-pointer">
-        <span onClick={onToggle} className="font-bold text-neutral-900 dark:text-white text-sm flex-1">{title}</span>
-        <div className="flex items-center gap-2">
+      <div
+        className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition cursor-pointer"
+        onClick={onToggle}
+      >
+        <span className="font-bold text-neutral-900 dark:text-white text-sm flex-1">{title}</span>
+        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           {headerExtra && <span>{headerExtra}</span>}
-          <span onClick={onToggle}>
-            {isOpen ? <ChevronUp size={16} className="text-neutral-400" /> : <ChevronDown size={16} className="text-neutral-400" />}
-          </span>
         </div>
+        {isOpen ? <ChevronUp size={16} className="text-neutral-400" /> : <ChevronDown size={16} className="text-neutral-400" />}
       </div>
       {isOpen && <div className="px-5 pb-5 border-t border-neutral-100 dark:border-neutral-800 pt-4">{children}</div>}
     </div>

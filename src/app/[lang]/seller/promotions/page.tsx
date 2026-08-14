@@ -1,252 +1,135 @@
 // src/app/[lang]/seller/promotions/page.tsx
 'use client';
 
-import React, { useState, use } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, use, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { paymentService } from '@/services/payment.service';
-import { PaymentProcessor } from '@/types/payment.types';
 
 const TIERS = [
-  {
-    id: 'FEATURED_BASIC',
-    label: 'Featured Basic',
-    labelAm: 'መሰረታዊ ፊቻር',
-    price: 500,
-    duration: '7 days',
-    durationAm: '7 ቀናት',
-    perks: ['Homepage featured section', '3D tour badge on card', 'Priority in search results'],
-    perksAm: ['በዋናው ገጽ ይታያሉ', '3D ቱር ምልክት', 'በፍለጋ ውጤቶች ቅድሚያ'],
-    color: 'from-neutral-700 to-neutral-600',
-    accentColor: 'text-neutral-700 dark:text-neutral-300',
-    recommended: false,
-  },
-  {
-    id: 'FEATURED_PREMIUM',
-    label: 'Featured Premium',
-    labelAm: 'ፕሪሚየም ፊቻር',
-    price: 1200,
-    duration: '30 days',
-    durationAm: '30 ቀናት',
-    perks: [
-      'Homepage hero carousel slot',
-      '3D virtual tour priority display',
-      'Gold badge + Featured label',
-      'WhatsApp inquiry integration',
-    ],
-    perksAm: [
-      'በዋናው ስላይደር ይታያሉ',
-      '3D ቱር ቅድሚያ',
-      'ወርቃማ ምልክት',
-      'WhatsApp ጥያቄ',
-    ],
-    color: 'from-red-700 to-red-500',
-    accentColor: 'text-red-600 dark:text-red-400',
-    recommended: true,
-  },
-  {
-    id: 'FEATURED_ELITE',
-    label: 'Elite Spotlight',
-    labelAm: 'ኤሊት ስፖትላይት',
-    price: 2500,
-    duration: '60 days',
-    durationAm: '60 ቀናት',
-    perks: [
-      'All Premium features',
-      'Dedicated email blast to buyers',
-      'Social media mention',
-      'Dedicated account manager',
-    ],
-    perksAm: [
-      'ሁሉም ፕሪሚየም ባህሪያት',
-      'ለገዢዎች ኢሜይል',
-      'ሶሻል ሚዲያ ማቴ',
-      'ተወካይ',
-    ],
-    color: 'from-violet-700 to-violet-500',
-    accentColor: 'text-violet-400',
-    recommended: false,
-  },
-] as const;
-
-const PAYMENT_METHODS: { id: PaymentProcessor; label: string; icon: string }[] = [
-  { id: 'CHAPA', label: 'Chapa', icon: '💳' },
-  { id: 'TELEBIRR', label: 'Telebirr', icon: '📱' },
-  { id: 'CBE_BIRR', label: 'CBE Birr', icon: '🏦' },
+  { id: 'FEATURED_BASIC', name: 'Featured Basic', price: 500, duration: '7 days', description: 'Appears in Featured section on homepage' },
+  { id: 'FEATURED_PREMIUM', name: 'Featured Premium', price: 1200, duration: '14 days', description: 'Top of search results + Featured section' },
+  { id: 'ELITE_SPOTLIGHT', name: 'Elite Spotlight', price: 2500, duration: '30 days', description: 'Banner placement + all of the above' },
 ];
 
-export default function SellerPromotionsPage({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}) {
-  const { lang: rawLang } = use(params);
-  const lang = rawLang === 'am' ? 'am' : 'en';
-  const router = useRouter();
+function PromotionsContent({ lang }: { lang: 'en' | 'am' }) {
+  const searchParams = useSearchParams();
+  const propertyId = searchParams.get('propertyId');
 
-  const [selectedTier, setSelectedTier] = useState<string>('FEATURED_PREMIUM');
-  const [selectedProcessor, setSelectedProcessor] = useState<PaymentProcessor>('CHAPA');
-  const [propertyId, setPropertyId] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [selectedTier, setSelectedTier] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const tier = TIERS.find((t) => t.id === selectedTier)!;
+  const handleProceed = async () => {
+    if (!propertyId || !selectedTier) return;
+    const tierObj = TIERS.find(t => t.id === selectedTier);
+    if (!tierObj) return;
 
-  const handleCheckout = async () => {
-    if (!propertyId.trim()) {
-      setError(lang === 'am' ? 'ቤቱን ያስገቡ' : 'Please enter a Property ID to promote.');
-      return;
-    }
-    setLoading(true);
-    setError('');
+    setIsLoading(true);
+    setError(null);
     try {
-      const res = await paymentService.createCheckout({
-        property_id: propertyId.trim(),
+      const res = await paymentService.initiatePayment({
+        property_id: propertyId,
         promotion_tier: selectedTier,
-        processor: selectedProcessor,
-        amount: tier.price,
+        amount: tierObj.price,
       });
-      if (res?.checkout_url) {
+      if (res.checkout_url) {
         window.location.href = res.checkout_url;
       } else {
-        router.push(`/${lang}/seller/dashboard?promotion=success&tx=${res.tx_ref}`);
+        throw new Error('No checkout URL received from the server.');
       }
     } catch (err: any) {
-      setError(err?.message ?? 'Payment initiation failed. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(err?.message || 'Failed to initiate payment. Please try again.');
+      setIsLoading(false);
     }
   };
 
+  if (!propertyId) {
+    return (
+      <div className="py-20 text-center">
+        <h1 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">No Property Selected</h1>
+        <p className="text-neutral-500 mb-6">You must select a property to promote.</p>
+        <Link href={`/${lang}/seller/dashboard`} className="text-red-600 font-bold hover:underline">
+          ← Back to Dashboard
+        </Link>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
-      <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
-        <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
-          ⭐ Boost Your Listing
-        </div>
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
-          {lang === 'am' ? 'ቤትዎን ያስተዋውቁ' : 'Promote Your Property'}
-        </h1>
-        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-          {lang === 'am'
-            ? 'ተጨማሪ ገዢዎችን ለመሳብ ቤትዎን ያስተዋውቁ'
-            : 'Reach more verified buyers with featured placement on the platform.'}
-        </p>
+    <>
+      <div className="text-center space-y-2">
+        <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Boost Your Listing</p>
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Promote Property</h1>
+        <p className="text-neutral-500 text-sm">Select a promotion tier to increase visibility and attract more buyers.</p>
       </div>
 
-      {/* Tier cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {TIERS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setSelectedTier(t.id)}
-            className={`relative p-6 rounded-2xl border text-left transition-all ${
-              selectedTier === t.id
-                ? 'border-red-600 dark:border-red-600 ring-2 ring-red-600/30 bg-white dark:bg-neutral-900'
-                : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900/50 hover:border-neutral-300 dark:border-neutral-700'
+      {error && (
+        <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm font-semibold border border-red-100 dark:border-red-900/50 text-center">
+          ⚠ {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {TIERS.map((tier) => (
+          <div
+            key={tier.id}
+            onClick={() => setSelectedTier(tier.id)}
+            className={`relative rounded-3xl p-6 cursor-pointer transition-all duration-200 border-2 ${
+              selectedTier === tier.id
+                ? 'border-red-600 bg-red-50/50 dark:bg-red-900/10 shadow-lg shadow-red-600/10 scale-105'
+                : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-red-300 dark:hover:border-red-900'
             }`}
           >
-            {t.recommended && (
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-red-600 dark:bg-red-600 text-white text-[10px] font-extrabold whitespace-nowrap">
-                ⭐ MOST POPULAR
+            {selectedTier === tier.id && (
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-600 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                Selected
               </div>
             )}
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-tr ${t.color} mb-4 flex items-center justify-center`}>
-              <span className="text-neutral-900 dark:text-white font-extrabold text-sm">
-                {t.id === 'FEATURED_BASIC' ? 'B' : t.id === 'FEATURED_PREMIUM' ? 'P' : 'E'}
-              </span>
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white">{tier.name}</h2>
+            <div className="my-4 flex items-baseline gap-1">
+              <span className="text-3xl font-extrabold text-neutral-900 dark:text-white">{tier.price}</span>
+              <span className="text-sm font-semibold text-neutral-500">ETB</span>
             </div>
-            <h3 className="text-sm font-extrabold text-neutral-900 dark:text-white mb-0.5">
-              {lang === 'am' ? t.labelAm : t.label}
-            </h3>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-3">
-              {lang === 'am' ? t.durationAm : t.duration}
-            </p>
-            <div className={`text-2xl font-extrabold mb-4 ${t.accentColor}`}>
-              {t.price} ETB
-            </div>
-            <ul className="space-y-1.5">
-              {(lang === 'am' ? t.perksAm : t.perks).map((perk, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-neutral-700 dark:text-neutral-300">
-                  <span className="text-emerald-400 mt-0.5 flex-shrink-0">✓</span>
-                  {perk}
-                </li>
-              ))}
-            </ul>
-            {selectedTier === t.id && (
-              <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-red-600 dark:bg-red-600 flex items-center justify-center">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-            )}
-          </button>
+            <p className="text-xs font-bold text-neutral-500 uppercase tracking-wide mb-4">Duration: {tier.duration}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">{tier.description}</p>
+          </div>
         ))}
       </div>
 
-      {/* Checkout form */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-5">
-        <h2 className="text-base font-bold text-neutral-900 dark:text-white">
-          {lang === 'am' ? 'ክፍያ ዝርዝሮች' : 'Checkout Details'}
-        </h2>
-
-        {error && (
-          <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl">
-            {error}
-          </div>
-        )}
-
-        <div>
-          <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-            {lang === 'am' ? 'የቤቱ ID' : 'Property ID to Promote'}
-          </label>
-          <input
-            type="text"
-            value={propertyId}
-            onChange={(e) => setPropertyId(e.target.value)}
-            placeholder="e.g. prop_abc123"
-            className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600 transition"
-          />
-          <p className="text-[10px] text-neutral-500 mt-1">
-            Find the ID in your Seller Dashboard listing row.
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
-            {lang === 'am' ? 'የክፍያ ዘዴ' : 'Payment Method'}
-          </label>
-          <div className="grid grid-cols-3 gap-3">
-            {PAYMENT_METHODS.map((pm) => (
-              <button
-                key={pm.id}
-                onClick={() => setSelectedProcessor(pm.id)}
-                className={`py-3 rounded-xl border text-xs font-bold flex flex-col items-center gap-1.5 transition ${
-                  selectedProcessor === pm.id
-                    ? 'bg-red-600 dark:bg-red-600/10 border-red-600 dark:border-red-600 text-red-600 dark:text-red-400'
-                    : 'bg-neutral-50 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:border-neutral-600'
-                }`}
-              >
-                <span className="text-lg">{pm.icon}</span>
-                {pm.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-neutral-600 dark:text-neutral-400">Total amount</p>
-            <p className="text-2xl font-extrabold text-red-600 dark:text-red-400">{tier.price} ETB</p>
-          </div>
-          <button
-            onClick={handleCheckout}
-            disabled={loading}
-            className="px-8 py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-extrabold text-sm shadow-lg shadow-red-600 dark:shadow-red-600/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Processing...' : lang === 'am' ? 'ክፍያ ፈጽም' : 'Pay & Boost Listing'}
-          </button>
-        </div>
+      <div className="flex justify-center pt-8">
+        <button
+          onClick={handleProceed}
+          disabled={!selectedTier || isLoading}
+          className="px-8 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-lg disabled:opacity-50 transition shadow-xl shadow-red-600/20"
+        >
+          {isLoading ? 'Processing...' : 'Proceed to Payment'}
+        </button>
       </div>
+      
+      <div className="text-center pt-4">
+        <Link href={`/${lang}/seller/dashboard`} className="text-sm font-semibold text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-300 transition">
+          Cancel and return to dashboard
+        </Link>
+      </div>
+    </>
+  );
+}
+
+export default function PromotionsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: rawLang } = use(params);
+  const lang = rawLang === 'am' ? 'am' : 'en';
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-12 space-y-8">
+      <Suspense fallback={
+        <div className="py-20 text-center">
+          <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-neutral-500">Loading...</p>
+        </div>
+      }>
+        <PromotionsContent lang={lang} />
+      </Suspense>
     </div>
   );
 }
