@@ -1,4 +1,4 @@
-﻿// src/app/[lang]/agencies/join/page.tsx
+// src/app/[lang]/agencies/join/page.tsx
 "use client";
 
 import React, { use, Suspense } from "react";
@@ -13,7 +13,7 @@ function JoinContent({ lang }: { lang: string }) {
   if (!agencyId || !email) {
     return (
       <div className="py-20 text-center space-y-4">
-        <span className="text-5xl block">ERROR</span>
+        <span className="text-5xl block">❌</span>
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Invalid Invitation</h1>
         <p className="text-neutral-500 text-sm">This invitation link is invalid or has expired.</p>
         <Link href={"/" + lang} className="inline-flex px-6 py-3 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm">
@@ -25,7 +25,7 @@ function JoinContent({ lang }: { lang: string }) {
 
   return (
     <div className="py-20 text-center space-y-6 max-w-md mx-auto">
-      <span className="text-5xl block">AGENCY</span>
+      <span className="text-5xl block">🏢</span>
       <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">Agency Invitation</h1>
       <p className="text-neutral-500 text-sm">
         You have been invited to join an agency on Ethred. Sign in or create an account with{" "}

@@ -1,4 +1,4 @@
-﻿// src/app/[lang]/payment/success/page.tsx
+// src/app/[lang]/payment/success/page.tsx
 "use client";
 
 import React, { use, Suspense } from "react";
@@ -11,7 +11,7 @@ function PaymentSuccessContent({ lang }: { lang: string }) {
 
   return (
     <div className="py-20 text-center space-y-6 max-w-md mx-auto">
-      <span className="text-6xl block">SUCCESS</span>
+      <span className="text-6xl block">✅</span>
       <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Payment Successful!</h1>
       <p className="text-neutral-500 text-sm leading-relaxed">
         Your payment has been received and your listing promotion is now active.

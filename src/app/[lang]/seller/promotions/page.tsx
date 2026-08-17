@@ -31,7 +31,6 @@ function PromotionsContent({ lang }: { lang: 'en' | 'am' }) {
       const res = await paymentService.initiatePayment({
         property_id: propertyId,
         promotion_tier: selectedTier,
-        amount: tierObj.price,
       });
       if (res.checkout_url) {
         window.location.href = res.checkout_url;

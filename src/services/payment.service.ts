@@ -3,9 +3,10 @@ import { apiClient } from './api';
 import { BillingInvoice } from '@/types/index';
 
 export const paymentService = {
-  async initiatePayment(data: { property_id: string; promotion_tier: string; amount: number }) {
-    const res = await apiClient.post('/payments/initiate', data);
-    return (res as unknown as { data: { checkout_url: string; tx_ref: string } }).data ?? res;
+  async initiatePayment(data: { property_id: string; promotion_tier: string; currency?: string }) {
+    const res: any = await apiClient.post('/payments/initiate', data);
+    // Axios interceptor already unwraps response.data, so res = { success, checkout_url, tx_ref, invoice_id }
+    return res?.data ?? res;
   },
 
   async listInvoices(): Promise<BillingInvoice[]> {

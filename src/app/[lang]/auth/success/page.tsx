@@ -1,4 +1,4 @@
-﻿// src/app/[lang]/auth/success/page.tsx
+// src/app/[lang]/auth/success/page.tsx
 "use client";
 
 import { useEffect, use } from "react";
@@ -22,7 +22,7 @@ export default function AuthSuccessPage({
         const res: any = await authService.getMe();
         const user = res?.user || res;
         if (user?.id) {
-          setAuth(user, "");
+          setAuth(user, null as any);
           const role: string = user.role || "BUYER";
           const destinations: Record<string, string> = {
             ADMIN: "/" + lang + "/admin/dashboard",
