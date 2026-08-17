@@ -39,7 +39,8 @@ export const propertyService = {
 
   async getExistingDraft(id: string): Promise<Property | null> {
     const res = await apiClient.get<any, any>(`/properties/${id}/draft`);
-    return res || null;
+    // Axios interceptor unwraps response.data, so res is { success, data }
+    return res?.data || null;
   },
 
   async deleteDraft(draftId: string): Promise<void> {
@@ -55,7 +56,9 @@ export const propertyService = {
   },
 
   async getFavorites(): Promise<Property[]> {
-    return apiClient.get('/favorites');
+    const res = await apiClient.get<any, any>('/favorites');
+    // res is { success, count, results: [{id, property_id, property: {...}}] }
+    return (res?.results || []).map((f: any) => f.property).filter(Boolean);
   },
 
   async uploadImages(id: string, formData: FormData): Promise<any> {

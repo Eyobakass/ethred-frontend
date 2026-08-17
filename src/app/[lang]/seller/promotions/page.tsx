@@ -7,9 +7,9 @@ import Link from 'next/link';
 import { paymentService } from '@/services/payment.service';
 
 const TIERS = [
-  { id: 'FEATURED_BASIC', name: 'Featured Basic', price: 500, duration: '7 days', description: 'Appears in Featured section on homepage' },
-  { id: 'FEATURED_PREMIUM', name: 'Featured Premium', price: 1200, duration: '14 days', description: 'Top of search results + Featured section' },
-  { id: 'ELITE_SPOTLIGHT', name: 'Elite Spotlight', price: 2500, duration: '30 days', description: 'Banner placement + all of the above' },
+  { id: 'HOMEPAGE_FEATURED', name: 'Homepage Featured', price: 2500, duration: '30 days', description: 'Top banner placement + Featured section on homepage' },
+  { id: 'SEARCH_BOOST', name: 'Search Boost', price: 1500, duration: '30 days', description: 'Top of search results + increased visibility' },
+  { id: 'PREMIUM_BADGE', name: 'Premium Badge', price: 800, duration: '30 days', description: 'Premium badge displayed on listing card' },
 ];
 
 function PromotionsContent({ lang }: { lang: 'en' | 'am' }) {

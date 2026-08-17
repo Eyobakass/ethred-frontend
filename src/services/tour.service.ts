@@ -20,7 +20,7 @@ export const tourService = {
   },
 
   async updateHotspot(id: string, data: Partial<Hotspot>): Promise<Hotspot> {
-    return apiClient.put(`/hotspots/${id}`, data);
+    return apiClient.patch(`/hotspots/${id}`, data);
   },
 
   async deleteHotspot(id: string): Promise<{ success: boolean }> {
