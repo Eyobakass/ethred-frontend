@@ -25,7 +25,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
   if (!isAuthenticated) {
     return (
       <div className="py-20 text-center">
-        <p className="text-sm font-semibold text-neutral-600 mb-4">Please log in to register an agency.</p>
+        <p className="text-sm font-semibold text-neutral-600 mb-4">{lang === 'am' ? 'ኤጀንሲ ለመመዝገብ እባክዎ ይግቡ።' : 'Please log in to register an agency.'}</p>
         <Link href={`/${lang}/auth/login?returnUrl=/${lang}/agencies/apply`}
           className="px-6 py-2.5 rounded-xl bg-red-600 text-white font-bold text-sm">
           Log In
@@ -65,7 +65,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
         <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
           ✓
         </div>
-        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">Application Submitted!</h1>
+        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">{lang === 'am' ? 'ማመልከቻው ገብቷል!' : 'Application Submitted!'}</h1>
         <p className="text-neutral-500 text-sm">
           Thank you for registering <strong>{agencyName}</strong>. Our administrative team will review your application and business license within 2–3 business days. You will be notified via email once approved.
         </p>
@@ -83,7 +83,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
       {/* Header */}
       <div className="text-center space-y-2">
         <p className="text-xs font-bold text-red-500 uppercase tracking-widest">For Businesses</p>
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Register Your Agency</h1>
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">{lang === 'am' ? 'ኤጀንሲዎን ይመዝገቡ' : 'Register Your Agency'}</h1>
         <p className="text-neutral-500 text-sm">Join the platform to manage multiple agents and listings under one company brand.</p>
       </div>
 
@@ -111,7 +111,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
         {/* Step 1: Name */}
         {step === 1 && (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Agency Details</h2>
+            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የኤጀንሲ ዝርዝሮች' : 'Agency Details'}</h2>
             <div className="space-y-2">
               <label className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">Official Agency Name <span className="text-red-500">*</span></label>
               <input
@@ -136,7 +136,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
         {/* Step 2: Documents */}
         {step === 2 && (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Legal Verification</h2>
+            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ህጋዊ ማረጋገጫ' : 'Legal Verification'}</h2>
             <p className="text-sm text-neutral-500">Please upload a valid business registration license or broker certification. Must be PDF, JPG, or PNG under 5MB.</p>
             
             <div 
@@ -179,7 +179,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
         {/* Step 3: Review */}
         {step === 3 && (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Review & Submit</h2>
+            <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ገምግም እና ላክ' : 'Review & Submit'}</h2>
             
             <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-2xl p-5 space-y-4 border border-neutral-100 dark:border-neutral-800">
               <div>

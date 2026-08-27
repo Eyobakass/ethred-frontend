@@ -137,8 +137,8 @@ export default function SellerInquiriesPage({ params }: { params: Promise<{ lang
             {inquiries.length === 0 ? (
               <div className="py-20 text-center">
                 <MessageSquare className="w-10 h-10 text-neutral-400 mx-auto mb-3" />
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">No inquiries received yet.</p>
-                <p className="text-xs text-neutral-400 mt-1">Buyers will contact you here when they are interested in your listings.</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">{lang === 'am' ? 'እስካሁን ምንም ጥያቄ አልደረሰዎትም።' : 'No inquiries received yet.'}</p>
+                <p className="text-xs text-neutral-400 mt-1">{lang === 'am' ? 'ገዢዎች የእርስዎን ንብረት ሲፈልጉ እዚህ ያነጋግሩዎታል።' : 'Buyers will contact you here when they are interested in your listings.'}</p>
               </div>
             ) : (
               <>
@@ -212,7 +212,7 @@ export default function SellerInquiriesPage({ params }: { params: Promise<{ lang
             {!active ? (
               <div className="flex flex-col items-center justify-center h-64 rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700">
                 <MessageSquare className="w-8 h-8 text-neutral-400 mb-2" />
-                <p className="text-sm text-neutral-500 dark:text-neutral-400">Select an inquiry to view details</p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">{lang === 'am' ? 'ዝርዝሩን ለማየት ጥያቄ ይምረጡ' : 'Select an inquiry to view details'}</p>
               </div>
             ) : (
               <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 space-y-4">

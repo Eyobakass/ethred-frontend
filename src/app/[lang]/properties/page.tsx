@@ -25,12 +25,14 @@ function PropertiesSearchContent({ lang }: { lang: 'en' | 'am' }) {
     const region = searchParams.get('region');
     const sub_city = searchParams.get('sub_city');
     const category = searchParams.get('category');
+    const has_virtual_tour = searchParams.get('has_virtual_tour');
     
     if (q) filters.setFilter('search_query', q);
     if (mode) filters.setFilter('transaction_mode', mode as any);
     if (region) filters.setFilter('region', region);
     if (sub_city) filters.setFilter('sub_city', sub_city);
     if (category) filters.setFilter('category', category as any);
+    if (has_virtual_tour === 'true') filters.setFilter('has_virtual_tour', true);
     
     setIsHydrated(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -47,6 +49,7 @@ function PropertiesSearchContent({ lang }: { lang: 'en' | 'am' }) {
       if (filters.region) params.set('region', filters.region);
       if (filters.sub_city) params.set('sub_city', filters.sub_city);
       if (filters.category) params.set('category', filters.category);
+      if (filters.has_virtual_tour) params.set('has_virtual_tour', 'true');
       
       router.replace(`${pathname}?${params.toString()}`, { scroll: false });
       setLoading(true);

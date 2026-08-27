@@ -31,13 +31,13 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
     return (
       <div className="text-center space-y-3">
         <span className="text-4xl">⚠️</span>
-        <p className="text-base font-bold text-neutral-900 dark:text-white">Invalid or expired link</p>
+        <p className="text-base font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የተሳሳተ ወይም ጊዜው ያለፈበት ሊንክ' : 'Invalid or expired link'}</p>
         <p className="text-xs text-neutral-500">This password reset link is invalid or has expired.</p>
         <Link
           href={`/${lang}/auth/forgot-password`}
           className="inline-block mt-3 px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-500 transition"
         >
-          Request a new link
+          {lang === 'am' ? 'አዲስ ሊንክ ይጠይቁ' : 'Request a new link'}
         </Link>
       </div>
     );
@@ -80,7 +80,7 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
             <span className="text-2xl">✅</span>
           </div>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            Your password has been reset successfully. Redirecting to login…
+            {lang === 'am' ? 'የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል። ወደ መግቢያ በመመለስ ላይ...' : 'Your password has been reset successfully. Redirecting to login…'}
           </p>
         </div>
       ) : (

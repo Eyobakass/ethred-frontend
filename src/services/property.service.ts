@@ -18,23 +18,28 @@ export const propertyService = {
   },
 
   async createProperty(data: Partial<Property>): Promise<Property> {
-    return apiClient.post('/properties', data);
+    const res: any = await apiClient.post('/properties', data);
+    return res?.data ?? res;
   },
 
   async updateProperty(id: string, data: Partial<Property>): Promise<Property> {
-    return apiClient.put(`/properties/${id}`, data);
+    const res: any = await apiClient.put(`/properties/${id}`, data);
+    return res?.data ?? res;
   },
 
   async deleteProperty(id: string): Promise<{ success: boolean }> {
-    return apiClient.delete(`/properties/${id}`);
+    const res: any = await apiClient.delete(`/properties/${id}`);
+    return res?.data ?? res;
   },
 
   async submitForReview(id: string): Promise<Property> {
-    return apiClient.post(`/properties/${id}/submit`);
+    const res: any = await apiClient.post(`/properties/${id}/submit`);
+    return res?.data ?? res;
   },
 
   async createDraftClone(id: string): Promise<Property> {
-    return apiClient.post(`/properties/${id}/draft`);
+    const res: any = await apiClient.post(`/properties/${id}/draft`);
+    return res?.data ?? res;
   },
 
   async getExistingDraft(id: string): Promise<Property | null> {
@@ -48,11 +53,13 @@ export const propertyService = {
   },
 
   async addFavorite(propertyId: string): Promise<any> {
-    return apiClient.post(`/favorites/${propertyId}`);
+    const res: any = await apiClient.post(`/favorites/${propertyId}`);
+    return res?.data ?? res;
   },
 
   async removeFavorite(propertyId: string): Promise<any> {
-    return apiClient.delete(`/favorites/${propertyId}`);
+    const res: any = await apiClient.delete(`/favorites/${propertyId}`);
+    return res?.data ?? res;
   },
 
   async getFavorites(): Promise<Property[]> {
@@ -62,14 +69,16 @@ export const propertyService = {
   },
 
   async uploadImages(id: string, formData: FormData): Promise<any> {
-    return apiClient.post(`/properties/${id}/media/images`, formData, {
+    const res: any = await apiClient.post(`/properties/${id}/media/images`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000, // 2-minute timeout for heavy image processing
     });
+    return res?.data ?? res;
   },
 
   async deleteMedia(propertyId: string, mediaId: string): Promise<any> {
-    return apiClient.delete(`/properties/${propertyId}/media/${mediaId}`);
+    const res: any = await apiClient.delete(`/properties/${propertyId}/media/${mediaId}`);
+    return res?.data ?? res;
   },
 
   async getListingStats(id: string): Promise<{ property_id: string; favorites_count: number; inquiries_count: number }> {
@@ -80,10 +89,11 @@ export const propertyService = {
   async uploadDocument(propertyId: string, file: File): Promise<any> {
     const formData = new FormData();
     formData.append('document', file);
-    return apiClient.post(`/properties/${propertyId}/media/documents`, formData, {
+    const res: any = await apiClient.post(`/properties/${propertyId}/media/documents`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 120000,
     });
+    return res?.data ?? res;
   },
 
   async uploadFloorPlan(propertyId: string, file: File): Promise<any> {

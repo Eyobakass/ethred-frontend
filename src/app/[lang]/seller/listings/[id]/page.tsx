@@ -13,6 +13,7 @@ import { formatCurrency } from '@/utils/currency';
 import { PannellumViewer } from '@/components/3d-tour/PannellumViewer';
 import { HotspotOverlay } from '@/components/3d-tour/HotspotOverlay';
 import { SceneSelectorToolbar } from '@/components/3d-tour/SceneSelectorToolbar';
+import { FloorPlanOverlay } from '@/components/3d-tour/FloorPlanOverlay';
 import { DoorOpen, Info, Pencil, X, CheckCircle, Save, ChevronDown, ChevronUp, Heart, MessageSquare, FileText } from 'lucide-react';
 
 const CATEGORIES: { value: PropertyCategory; label: string }[] = [
@@ -171,7 +172,7 @@ export default function ListingManagerPage({
   const loadTourConfig = useCallback(async (propertyId: string) => {
     isTourLoadingRef.current = true;
     try {
-      const config = await tourService.getTourConfig(propertyId);
+      const config = await tourService.getTourConfig(propertyId, true);
       if (config?.scenes && Object.keys(config.scenes).length > 0) {
         setTourConfig(config);
         setActiveSceneId(prev =>
@@ -530,6 +531,40 @@ export default function ListingManagerPage({
     }
   }, [workingId, loadTourConfig]);
 
+  // ETH-INT-004: Reorder scenes — swap positions in current order, update local state optimistically,
+  // then persist via PATCH /properties/:id/tour/reorder
+  const handleReorderScene = useCallback(async (sceneId: string, direction: 'left' | 'right') => {
+    if (!tourConfig) return;
+    const sceneIds = Object.keys(tourConfig.scenes);
+    const idx = sceneIds.indexOf(sceneId);
+    if (idx === -1) return;
+    const swapIdx = direction === 'left' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= sceneIds.length) return;
+
+    // Swap in local order array
+    const newOrder = [...sceneIds];
+    [newOrder[idx], newOrder[swapIdx]] = [newOrder[swapIdx], newOrder[idx]];
+
+    // Rebuild scenes map preserving all data, just in new key order
+    const reorderedScenes: typeof tourConfig.scenes = {};
+    for (const sid of newOrder) reorderedScenes[sid] = tourConfig.scenes[sid];
+
+    // Optimistic update
+    setTourConfig(prev => prev ? { ...prev, scenes: reorderedScenes } : prev);
+
+    setIsTourSaving(true);
+    try {
+      await tourService.reorderScenes(workingId, newOrder);
+      setTourMsg({ type: 'success', text: 'Scene order updated.' });
+    } catch {
+      // Revert on failure
+      setTourConfig(prev => prev ? { ...prev, scenes: tourConfig.scenes } : prev);
+      setTourMsg({ type: 'error', text: 'Failed to reorder scenes.' });
+    } finally {
+      setIsTourSaving(false);
+    }
+  }, [workingId, tourConfig]);
+
   const handleSaveHotspot = useCallback(async (data: { type: 'NAVIGATION' | 'INFO'; targetSceneId?: string; label?: string }) => {
     if (!tourConfig) return;
     setIsTourSaving(true);
@@ -558,6 +593,32 @@ export default function ListingManagerPage({
   }, [tourConfig, activeSceneId, hotspotModal]);
 
   const toggleSection = (s: Section) => setOpenSections(prev => ({ ...prev, [s]: !prev[s] }));
+
+  // ETH-INT-001: Drop a floor-plan pin for the currently active scene
+  const handlePinDrop = useCallback(async (x: number, y: number) => {
+    if (!activeSceneId) return;
+    // Optimistically update local scene data so pin renders immediately
+    setProperty((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        media: prev.media?.map((m) =>
+          m.id === activeSceneId ? { ...m, fp_x: x, fp_y: y } : m
+        ) ?? [],
+      };
+    });
+    setIsTourSaving(true);
+    try {
+      await tourService.updateScene(workingId, activeSceneId, { fp_x: x, fp_y: y });
+      setTourMsg({ type: 'success', text: `Pin set at (${x.toFixed(1)}%, ${y.toFixed(1)}%).` });
+    } catch {
+      setTourMsg({ type: 'error', text: 'Failed to save floor plan pin.' });
+      // Revert
+      await loadProperty(workingId).catch(() => {});
+    } finally {
+      setIsTourSaving(false);
+    }
+  }, [activeSceneId, workingId, loadProperty]);
 
   const subCities: import('@/utils/location').SubCityOption[] = ETHIOPIAN_LOCATIONS[form.region]?.subCities || [];
   const standardPhotos = property?.media?.filter(m => !m.is_tour_scene) || [];
@@ -864,7 +925,7 @@ export default function ListingManagerPage({
               <p className="text-sm text-neutral-500 mb-4">No photos uploaded yet.</p>
               {mode === 'edit' && (
                 <button onClick={() => photoInputRef.current?.click()} className="px-5 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-lg shadow-lg shadow-red-600/20 transition">
-                  Upload Photos
+                  {lang === 'am' ? 'ፎቶዎችን ይጫኑ' : 'Upload Photos'}
                 </button>
               )}
             </div>
@@ -997,6 +1058,16 @@ export default function ListingManagerPage({
                   className="absolute bottom-3 right-3 z-20 bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded-lg transition backdrop-blur-sm">
                   ⛶ Fullscreen
                 </button>
+                {/* ETH-INT-001: Floor-plan overlay — view mode shows existing pins; edit mode enables pin-drop */}
+                {property?.floor_plan_url && (
+                  <FloorPlanOverlay
+                    floorPlanUrl={property.floor_plan_url}
+                    scenes={(property.media ?? []).filter((m) => m.is_tour_scene)}
+                    activeSceneId={activeSceneId}
+                    onSelectScene={handleSceneSelect}
+                    onPinDrop={mode === 'edit' && activeSceneId ? handlePinDrop : undefined}
+                  />
+                )}
               </div>
               {/* Scene selector strip — lives OUTSIDE the viewer so overflow-hidden doesn't clip it */}
               {Object.keys(tourConfig.scenes).length > 1 || mode === 'edit' ? (
@@ -1009,6 +1080,7 @@ export default function ListingManagerPage({
                     onDeleteScene={handleDeleteScene}
                     onReplaceScene={handleReplaceSceneClick}
                     onRenameScene={handleRenameScene}
+                    onReorderScene={mode === 'edit' ? handleReorderScene : undefined}
                   />
                 </div>
               ) : null}
@@ -1057,7 +1129,7 @@ export default function ListingManagerPage({
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-5">
             <div>
-              <h2 className="text-base font-extrabold text-neutral-900 dark:text-white mb-2">📋 Pending Update Exists</h2>
+              <h2 className="text-base font-extrabold text-neutral-900 dark:text-white mb-2">📋 {lang === 'am' ? 'የሚጠብቅ ማሻሻያ አለ' : 'Pending Update Exists'}</h2>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
                 You already have a saved draft update for this property. What would you like to do?
               </p>
@@ -1102,6 +1174,7 @@ export default function ListingManagerPage({
               onDeleteScene={handleDeleteScene}
               onReplaceScene={handleReplaceSceneClick}
               onRenameScene={handleRenameScene}
+              onReorderScene={mode === 'edit' ? handleReorderScene : undefined}
             />
             <PannellumViewer
               tourConfig={tourConfig}

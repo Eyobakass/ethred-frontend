@@ -3,53 +3,14 @@
 
 import React, { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, notFound } from 'next/navigation';
 import { Property } from '@/types/property.types';
 import { propertyService } from '@/services/property.service';
 import { inquiryService } from '@/services/inquiry.service';
 import { formatCurrency } from '@/utils/currency';
 import { useAuth } from '@/hooks/useAuth';
 
-// Sample property for when API is unavailable
-const makeSampleProperty = (id: string): Property => ({
-  id,
-  owner_id: 'owner-1',
-  title_en: 'Luxury 3-Bedroom Apartment in Bole Edna Mall',
-  title_am: 'በቦሌ ኤድና ሞል አቅራቢያ የሚገኝ የቅንጦት ባለ 3 መኝታ አፓርታማ',
-  description_en:
-    'Exceptional modern apartment featuring a navigable 3D Matterport-style virtual tour. This high-rise unit boasts a master suite with jacuzzi, Italian marble finishes, high-speed elevators, backup power generator, underground parking, 24/7 security and CCTV coverage.',
-  description_am:
-    'ዘመናዊ ቅርፅ ያለው አፓርታማ ከ 3D ቨርቹዋል ጉብኝት ጋር። ዋናው ክፍል ጃኩዚ አለው፣ ኢጣሊያዊ የእብነ በረድ ፍጻሜ፣ ፈጣን ሊፍቶች፣ ምትክ ኃይለ ኤሌክትሪክ፣ ምድር ቤት ፓርኪንግ፣ 24/7 ደህንነት።',
-  price_etb: 14500000,
-  price_usd: 110000,
-  transaction_mode: 'SALE',
-  category: 'APARTMENT',
-  region: 'Addis Ababa',
-  city: 'Addis Ababa',
-  sub_city: 'Bole',
-  woreda: 'Woreda 03',
-  nearest_landmark: 'Edna Mall',
-  bedrooms: 3,
-  bathrooms: 2,
-  area_sqm: 165,
-  status: 'APPROVED',
-  is_featured: true,
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-  amenities: [
-    { id: 'a1', property_id: id, amenity_name: 'Backup Generator' },
-    { id: 'a2', property_id: id, amenity_name: 'Underground Parking' },
-    { id: 'a3', property_id: id, amenity_name: '24/7 Security' },
-    { id: 'a4', property_id: id, amenity_name: 'CCTV' },
-    { id: 'a5', property_id: id, amenity_name: 'Swimming Pool' },
-    { id: 'a6', property_id: id, amenity_name: 'Gym / Fitness Center' },
-  ],
-  media: [
-    { id: 'm1', property_id: id, file_url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80', media_category: 'IMAGE', sort_order: 0, is_tour_scene: true },
-    { id: 'm2', property_id: id, file_url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80', media_category: 'IMAGE', sort_order: 1 },
-    { id: 'm3', property_id: id, file_url: 'https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=800&q=80', media_category: 'IMAGE', sort_order: 2 },
-  ],
-});
+
 
 export default function PropertyDetailPage({
   params,
@@ -82,7 +43,7 @@ export default function PropertyDetailPage({
     propertyService
       .getPropertyById(propertyId)
       .then((res) => { if (res) setProperty(res); })
-      .catch(() => setProperty(makeSampleProperty(propertyId)));
+      .catch(() => { notFound(); });
   }, [propertyId]);
 
   const handleSendInquiry = async () => {
@@ -398,7 +359,7 @@ export default function PropertyDetailPage({
         <div className="space-y-5">
           {/* Key specs card */}
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
-            <h3 className="text-base font-bold text-neutral-900 dark:text-white">Key Specifications</h3>
+            <h3 className="text-base font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ቁልፍ መግለጫዎች' : 'Key Specifications'}</h3>
             <div className="grid grid-cols-2 gap-3 text-xs">
               {[
                 { icon: '🛏️', label: lang === 'am' ? 'መኝታ ቤቶች' : 'Bedrooms', value: `${property.bedrooms} Beds` },
@@ -423,7 +384,7 @@ export default function PropertyDetailPage({
               <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-300 dark:border-emerald-800">
                 <span>✅</span>
                 <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
-                  Message sent! The seller will contact you soon.
+                  {lang === 'am' ? 'መልዕክቱ ተልኳል! ሻጩ በቅርቡ ያነጋግርዎታል።' : 'Message sent! The seller will contact you soon.'}
                 </p>
               </div>
             ) : !inquiryOpen ? (
@@ -488,7 +449,7 @@ export default function PropertyDetailPage({
           onClick={() => setReportOpen(true)}
           className="text-xs text-neutral-400 hover:text-red-600 dark:hover:text-red-400 transition underline"
         >
-          Report this listing
+          {lang === 'am' ? 'ይህን ማስታወቂያ ጥቆማ አድርግ' : 'Report this listing'}
         </button>
       </div>
 
@@ -497,7 +458,7 @@ export default function PropertyDetailPage({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-neutral-900 dark:text-white">Report this listing</h3>
+              <h3 className="text-base font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ይህን ማስታወቂያ ጥቆማ አድርግ' : 'Report this listing'}</h3>
               <button onClick={() => { setReportOpen(false); setReportReason(''); setReportError(null); }} className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300">
                 ✕
               </button>

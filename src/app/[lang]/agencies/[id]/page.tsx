@@ -26,7 +26,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
     ])
       .then(([agencyRes, propsRes]) => {
         if (agencyRes) setAgency(agencyRes as Agency);
-        else setError('Agency not found.');
+        else setError(lang === 'am' ? 'ኤጀንሲው አልተገኘም.' : 'Agency not found.');
 
         const list = Array.isArray(propsRes) ? propsRes
           : Array.isArray((propsRes as any)?.results) ? (propsRes as any).results
@@ -47,7 +47,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
   if (error || !agency) {
     return (
       <div className="py-20 text-center">
-        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">Agency not found</h1>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">{lang === 'am' ? 'ኤጀንሲው አልተገኘም' : 'Agency not found'}</h1>
         <p className="text-neutral-500 mb-6">{error || 'The agency you are looking for does not exist or has been removed.'}</p>
         <Link href={`/${lang}/agencies`} className="text-red-600 font-bold hover:underline">
           ← Back to Agencies
@@ -83,7 +83,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
             )}
           </div>
           <p className="text-neutral-500 text-sm mb-4 max-w-2xl">
-            A trusted real estate partner on Ethred. Browse our exclusive portfolio of properties.
+            {lang === 'am' ? 'በኢትሬድ ላይ የታመነ የሪል ስቴት አጋር። ልዩ የሆኑ ቤቶቻችንን ያስሱ።' : 'A trusted real estate partner on Ethred. Browse our exclusive portfolio of properties.'}
           </p>
           <div className="flex items-center justify-center md:justify-start gap-6 text-sm">
             <div>
@@ -112,7 +112,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
         {listings.length === 0 ? (
           <div className="bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-20 text-center">
             <p className="text-4xl mb-4">🏠</p>
-            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">No active listings</h3>
+            <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{lang === 'am' ? 'ምንም ገቢር ንብረቶች የሉም' : 'No active listings'}</h3>
             <p className="text-neutral-500 text-sm">This agency currently has no properties available for sale or rent.</p>
           </div>
         ) : (

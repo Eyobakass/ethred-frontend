@@ -41,7 +41,7 @@ export const Header: React.FC = () => {
         ? 'የሻጭ ገጽ'
         : 'Seller Dashboard'
       : user?.role === 'ADMIN'
-      ? 'Admin Portal'
+      ? lang === 'am' ? 'የአስተዳዳሪ ማዕከል' : 'Admin Portal'
       : lang === 'am'
       ? 'መለያዬ'
       : 'My Account';
@@ -55,11 +55,7 @@ export const Header: React.FC = () => {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-red-700 to-red-500 flex items-center justify-center shadow-lg shadow-red-600 dark:shadow-red-600/20">
             <span className="text-white font-extrabold text-lg leading-none">E</span>
           </div>
-          <span className="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
-            ETHRED
-            <span className="text-red-600 dark:text-red-400 text-[10px] ml-1.5 font-semibold tracking-widest uppercase">
-              Real Estate
-            </span>
+          <span className="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-white">{lang === 'am' ? 'ኢትሬድ' : 'ETHRED'}<span className="text-red-600 dark:text-red-400 text-[10px] ml-1.5 font-semibold tracking-widest uppercase">{lang === 'am' ? 'ሪል ስቴት' : 'Real Estate'}</span>
           </span>
         </Link>
 
@@ -68,21 +64,15 @@ export const Header: React.FC = () => {
           <Link
             href={`/${lang}/properties`}
             className="hover:text-neutral-900 dark:text-white hover:text-red-600 dark:text-red-400 transition-colors"
-          >
-            {lang === 'am' ? 'ቤቶች' : 'Properties'}
-          </Link>
+          >{lang === 'am' ? 'ቤቶች' : 'Properties'}</Link>
           <Link
             href={`/${lang}/agencies`}
             className="hover:text-red-600 dark:text-red-400 transition-colors"
-          >
-            {lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}
-          </Link>
+          >{lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}</Link>
           <Link
             href={`/${lang}/properties/compare`}
             className="hover:text-red-600 dark:text-red-400 transition-colors"
-          >
-            {lang === 'am' ? 'ማወዳደሪያ' : 'Compare'}
-          </Link>
+          >{lang === 'am' ? 'ያወዳድሩ' : 'Compare'}</Link>
         </nav>
 
         {/* Right controls */}
@@ -115,89 +105,63 @@ export const Header: React.FC = () => {
                     <div className="flex">
                       <div className="flex-1 py-2">
                         <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
-                          My Ethred
+                          {lang === 'am' ? 'የእኔ ኢትሬድ' : 'My Ethred'}
                         </p>
                         {user?.role === 'SELLER' && (
-                          <Link href={`/${lang}/seller/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                            {lang === 'am' ? 'የሻጭ ገጽ' : 'Seller Dashboard'}
-                          </Link>
+                          <Link href={`/${lang}/seller/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የሻጭ ገጽ' : 'Seller Dashboard'}</Link>
                         )}
                         {user?.role === 'ADMIN' && (
-                          <Link href={`/${lang}/admin/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                            Admin Portal
-                          </Link>
+                          <Link href={`/${lang}/admin/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የአስተዳዳሪ ማዕከል' : 'Admin Portal'}</Link>
                         )}
                         {user?.role === 'AGENCY_ADMIN' && (
-                          <Link href={`/${lang}/agencies/${user.agency_id || 'me'}/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                            Agency Dashboard
-                          </Link>
+                          <Link href={`/${lang}/agencies/${user.agency_id || 'me'}/dashboard`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የኤጀንሲ ገጽ' : 'Agency Dashboard'}</Link>
                         )}
-                        <Link href={`/${lang}/account/settings`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                          {lang === 'am' ? 'ማስተካከያዎች' : 'Account Settings'}
-                        </Link>
+                        <Link href={`/${lang}/account/settings`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የአካውንት ቅንብሮች' : 'Account Settings'}</Link>
                         <Link href={`/${lang}/account/verification`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                          Get Verified {!user?.is_identity_verified && <span className="ml-1 w-2 h-2 inline-block bg-red-500 rounded-full"></span>}
+                          {lang === 'am' ? 'ማንነትዎን ያረጋግጡ' : 'Get Verified'} {!user?.is_identity_verified && <span className="ml-1 w-2 h-2 inline-block bg-red-500 rounded-full"></span>}
                         </Link>
-                        <Link href={`/${lang}/account/billing`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                          Billing History
-                        </Link>
-                        <Link href={`/${lang}/buyer/favorites`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                          {lang === 'am' ? 'ተወዳጆች' : 'Favorites'}
-                        </Link>
+                        <Link href={`/${lang}/account/billing`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የክፍያ ታሪክ' : 'Billing History'}</Link>
+                        <Link href={`/${lang}/buyer/favorites`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የተቀመጡ ቤቶች' : 'Favorites'}</Link>
                         {user?.role === 'BUYER' && (
-                          <Link href={`/${lang}/buyer/inquiries`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                            My Inquiries
-                          </Link>
+                          <Link href={`/${lang}/buyer/inquiries`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የእኔ ጥያቄዎች' : 'My Inquiries'}</Link>
                         )}
                         {user?.role === 'SELLER' && (
-                          <Link href={`/${lang}/seller/inquiries`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                            Inquiries Received
-                          </Link>
+                          <Link href={`/${lang}/seller/inquiries`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የደረሱኝ ጥያቄዎች' : 'Inquiries Received'}</Link>
                         )}
                         {user?.role === 'ADMIN' && (
                           <>
-                            <Link href={`/${lang}/admin/users`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">Users</Link>
-                            <Link href={`/${lang}/admin/agencies`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">Agencies</Link>
-                            <Link href={`/${lang}/admin/audit-logs`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">Audit Logs</Link>
+                            <Link href={`/${lang}/admin/users`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'ተጠቃሚዎች' : 'Users'}</Link>
+                            <Link href={`/${lang}/admin/agencies`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}</Link>
+                            <Link href={`/${lang}/admin/audit-logs`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800">{lang === 'am' ? 'የኦዲት መዝገቦች' : 'Audit Logs'}</Link>
                           </>
                         )}
                         {(!user?.role || !['AGENCY_ADMIN', 'AGENCY_AGENT'].includes(user.role)) && (
-                          <Link href={`/${lang}/agencies/apply`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30">
-                            Register Your Agency
-                          </Link>
+                          <Link href={`/${lang}/agencies/apply`} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30">{lang === 'am' ? 'ኤጀንሲዎን ይመዝገቡ' : 'Register Your Agency'}</Link>
                         )}
                       </div>
                     <div className="flex-1 py-2 border-l border-neutral-100 dark:border-neutral-800">
-                      <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">
-                        Settings
-                      </p>
+                      <p className="px-4 text-xs font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider mb-1">{lang === 'am' ? 'ቅንብሮች' : 'Settings'}</p>
                       <button
                         onClick={() => {
                           setMenuOpen(false);
                           setShowPasswordModal(true);
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                      >
-                        Change password
-                      </button>
+                      >{lang === 'am' ? 'የይለፍ ቃል ቀይር' : 'Change password'}</button>
                       <button
                         onClick={() => {
                           setMenuOpen(false);
                           setShowDeleteModal(true);
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
-                      >
-                        Delete account
-                      </button>
+                      >{lang === 'am' ? 'አካውንት ሰርዝ' : 'Delete account'}</button>
                       <button
                         onClick={() => {
                           setMenuOpen(false);
                           setShowLogoutConfirm(true);
                         }}
                         className="w-full text-left px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-                      >
-                        Sign out
-                      </button>
+                      >{lang === 'am' ? 'ውጣ' : 'Sign out'}</button>
                     </div>
                   </div>
                 </div>
@@ -208,15 +172,11 @@ export const Header: React.FC = () => {
               <Link
                 href={`/${lang}/auth/login`}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white transition"
-              >
-                {lang === 'am' ? 'ግባ' : 'Sign In'}
-              </Link>
+              >{lang === 'am' ? 'ይግቡ' : 'Sign In'}</Link>
               <Link
                 href={`/${lang}/auth/register`}
                 className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition shadow"
-              >
-                {lang === 'am' ? 'ተመዝገብ' : 'Register'}
-              </Link>
+              >{lang === 'am' ? 'ይመዝገቡ' : 'Register'}</Link>
             </div>
           )}
 
@@ -242,27 +202,17 @@ export const Header: React.FC = () => {
       {/* Mobile dropdown */}
       {menuOpen && (
         <div className="md:hidden bg-neutral-50 dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 px-4 py-4 flex flex-col gap-3 text-sm font-medium">
-          <Link href={`/${lang}/properties`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">
-            {lang === 'am' ? 'ቤቶች' : 'Properties'}
-          </Link>
-          <Link href={`/${lang}/agencies`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">
-            {lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}
-          </Link>
-          <Link href={`/${lang}/properties/compare`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">
-            {lang === 'am' ? 'ማወዳደሪያ' : 'Compare'}
-          </Link>
+          <Link href={`/${lang}/properties`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">{lang === 'am' ? 'ቤቶች' : 'Properties'}</Link>
+          <Link href={`/${lang}/agencies`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">{lang === 'am' ? 'ኤጀንሲዎች' : 'Agencies'}</Link>
+          <Link href={`/${lang}/properties/compare`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-red-600 dark:text-red-400">{lang === 'am' ? 'ያወዳድሩ' : 'Compare'}</Link>
           {!isAuthenticated && (
             <>
-              <Link href={`/${lang}/auth/login`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:text-white">
-                {lang === 'am' ? 'ግባ' : 'Sign In'}
-              </Link>
+              <Link href={`/${lang}/auth/login`} onClick={() => setMenuOpen(false)} className="text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:text-white">{lang === 'am' ? 'ይግቡ' : 'Sign In'}</Link>
               <Link
                 href={`/${lang}/auth/register`}
                 onClick={() => setMenuOpen(false)}
                 className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold text-center"
-              >
-                {lang === 'am' ? 'ተመዝገብ' : 'Register'}
-              </Link>
+              >{lang === 'am' ? 'ይመዝገቡ' : 'Register'}</Link>
             </>
           )}
         </div>
@@ -273,19 +223,13 @@ export const Header: React.FC = () => {
     {showLogoutConfirm && (
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
         <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-neutral-200 dark:border-neutral-800 transform transition-all">
-          <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">
-            Sign Out
-          </h3>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
-            Are you sure you want to sign out of your account?
-          </p>
+          <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">{lang === 'am' ? 'ውጣ' : 'Sign Out'}</h3>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">{lang === 'am' ? 'በእርግጠኝነት ከአካውንትዎ መውጣት ይፈልጋሉ?' : 'Are you sure you want to sign out of your account?'}</p>
           <div className="flex items-center gap-3 justify-end">
             <button
               onClick={() => setShowLogoutConfirm(false)}
               className="px-5 py-2.5 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
-            >
-              Cancel
-            </button>
+            >{lang === 'am' ? 'ሰርዝ' : 'Cancel'}</button>
             <button
               onClick={async () => {
                 setShowLogoutConfirm(false);
@@ -297,9 +241,7 @@ export const Header: React.FC = () => {
                 router.push(`/${lang}`);
               }}
               className="px-5 py-2.5 rounded-xl font-bold bg-red-600 hover:bg-red-700 text-white shadow-lg shadow-red-600/20 transition"
-            >
-              Sign Out
-            </button>
+            >{lang === 'am' ? 'ውጣ' : 'Sign Out'}</button>
           </div>
         </div>
       </div>

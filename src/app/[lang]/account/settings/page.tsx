@@ -24,6 +24,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
   // Passwords
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
@@ -34,7 +35,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
 
   // Notifications
   const [emailNotifs, setEmailNotifs] = useState(true);
-  const [smsNotifs, setSmsNotifs] = useState(true);
+  const [smsNotifs, setSmsNotifs] = useState(false);
 
   useEffect(() => {
     if (user?.profile) {
@@ -71,13 +72,11 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const previewUrl = URL.createObjectURL(file);
-      setAvatarPreview(previewUrl);
-      
       try {
-        await authService.uploadAvatar(file);
+        const url = await authService.uploadAvatar(file);
+        setAvatarPreview(url);
         validateSession();
-      } catch (err) {
+      } catch {
         alert('Failed to upload avatar.');
       }
     }
@@ -85,6 +84,10 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      setPasswordMsg({ type: 'error', text: 'New passwords do not match.' });
+      return;
+    }
     setIsChangingPassword(true);
     setPasswordMsg(null);
     try {
@@ -92,6 +95,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
       setPasswordMsg({ type: 'success', text: 'Password changed successfully.' });
       setCurrentPassword('');
       setNewPassword('');
+      setConfirmPassword('');
     } catch (err: any) {
       setPasswordMsg({ type: 'error', text: err?.message || 'Failed to change password.' });
     } finally {
@@ -156,7 +160,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
 
               <form onSubmit={handleUpdateProfile} className="space-y-4 max-w-md">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{lang === 'am' ? 'ሙሉ ስም' : 'Full Name'}</label>
                   <input
                     type="text"
                     value={fullName}
@@ -165,7 +169,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Preferred Language</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{lang === 'am' ? 'የተመረጠ ቋንቋ' : 'Preferred Language'}</label>
                   <select
                     value={preferredLanguage}
                     onChange={(e) => setPreferredLanguage(e.target.value as 'en' | 'am')}
@@ -199,7 +203,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
               </h2>
               <form onSubmit={handleChangePassword} className="space-y-4 max-w-md">
                 <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Current Password</label>
+                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{lang === 'am' ? 'የአሁኑ የይለፍ ቃል' : 'Current Password'}</label>
                   <input
                     type="password"
                     required
@@ -208,19 +212,30 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
                     className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">New Password</label>
-                  <input
-                    type="password"
-                    required
-                    minLength={8}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none"
-                  />
-                </div>
-                
-                {passwordMsg && (
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{lang === 'am' ? 'አዲስ የይለፍ ቃል' : 'New Password'}</label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">{lang === 'am' ? 'አዲሱን የይለፍ ቃል ያረጋግጡ' : 'Confirm New Password'}</label>
+                    <input
+                      type="password"
+                      required
+                      minLength={8}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none"
+                    />
+                  </div>
+                  
+                  {passwordMsg && (
                   <div className={`text-sm font-medium ${passwordMsg.type === 'success' ? 'text-emerald-600' : 'text-red-600'}`}>
                     {passwordMsg.text}
                   </div>
@@ -238,7 +253,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
 
             {/* Danger Zone */}
             <div className="bg-red-50 dark:bg-red-950/20 p-6 sm:p-8 rounded-2xl shadow-sm border border-red-200 dark:border-red-900/30">
-              <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">Danger Zone</h2>
+              <h2 className="text-xl font-bold text-red-700 dark:text-red-400 mb-2">{lang === 'am' ? 'አደገኛ ዞን' : 'Danger Zone'}</h2>
               <p className="text-sm text-red-600/80 dark:text-red-400/80 mb-6">
                 Permanently delete your account and all associated data. This cannot be undone.
               </p>
@@ -274,7 +289,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
           <div className="space-y-8">
             {/* Notification Preferences */}
             <div className="bg-white dark:bg-neutral-950 p-6 sm:p-8 rounded-2xl shadow-sm border border-neutral-200 dark:border-neutral-800">
-              <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">Notifications</h2>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">{lang === 'am' ? 'ማሳወቂያዎች' : 'Notifications'}</h2>
               <div className="space-y-4">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input 
@@ -284,7 +299,7 @@ export default function AccountSettingsPage({ params }: { params: Promise<{ lang
                     className="w-5 h-5 rounded border-neutral-300 text-red-600 focus:ring-red-600"
                   />
                   <div>
-                    <p className="text-sm font-bold text-neutral-900 dark:text-white">Email Notifications</p>
+                    <p className="text-sm font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የኢሜል ማሳወቂያዎች' : 'Email Notifications'}</p>
                     <p className="text-xs text-neutral-500">Receive alerts via email.</p>
                   </div>
                 </label>

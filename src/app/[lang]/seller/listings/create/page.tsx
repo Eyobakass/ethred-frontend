@@ -96,7 +96,7 @@ export default function CreateListingPage({
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
         <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
-          ➕ New Property Listing
+          ➕ {lang === 'am' ? 'አዲስ የንብረት ማስታወቂያ' : 'New Property Listing'}
         </div>
         <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'አዲስ ቤት ይዝግቡ' : 'Create New Listing'}
@@ -117,7 +117,7 @@ export default function CreateListingPage({
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📝 Basic Information</h2>
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📝 {lang === 'am' ? 'መሰረታዊ መረጃ' : 'Basic Information'}</h2>
           <div>
             <label className={labelClass}>Title (English) *</label>
             <input type="text" className={inputClass} value={form.title_en}
@@ -146,7 +146,7 @@ export default function CreateListingPage({
 
         {/* Pricing & Type */}
         <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">💰 Pricing & Listing Type</h2>
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">💰 {lang === 'am' ? 'የዋጋ እና የማስታወቂያ አይነት' : 'Pricing & Listing Type'}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Price (ETB) *</label>
@@ -191,7 +191,7 @@ export default function CreateListingPage({
 
         {/* Location */}
         <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📍 Location Details</h2>
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📍 {lang === 'am' ? 'የአድራሻ ዝርዝሮች' : 'Location Details'}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Region / City</label>
@@ -234,7 +234,7 @@ export default function CreateListingPage({
 
         {/* Specifications */}
         <section className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-4">
-          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📐 Property Specifications</h2>
+          <h2 className="text-sm font-bold text-neutral-900 dark:text-white">📐 {lang === 'am' ? 'የንብረት መግለጫዎች' : 'Property Specifications'}</h2>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className={labelClass}>Bedrooms</label>

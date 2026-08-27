@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Trash2, RefreshCw, Edit2, Check, X } from 'lucide-react';
+import { Trash2, RefreshCw, Edit2, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface SceneOption {
   id: string;
@@ -18,6 +18,8 @@ interface SceneSelectorToolbarProps {
   onDeleteScene?: (sceneId: string) => void;
   onReplaceScene?: (sceneId: string) => void;
   onRenameScene?: (sceneId: string, newName: string) => void;
+  // ETH-INT-004: reorder callback — direction is relative to current order
+  onReorderScene?: (sceneId: string, direction: 'left' | 'right') => void;
 }
 
 export const SceneSelectorToolbar: React.FC<SceneSelectorToolbarProps> = ({
@@ -28,6 +30,7 @@ export const SceneSelectorToolbar: React.FC<SceneSelectorToolbarProps> = ({
   onDeleteScene,
   onReplaceScene,
   onRenameScene,
+  onReorderScene,
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [editingSceneId, setEditingSceneId] = useState<string | null>(null);
@@ -105,6 +108,25 @@ export const SceneSelectorToolbar: React.FC<SceneSelectorToolbarProps> = ({
               
               {isActive && isEditMode && !isEditing && (
                 <div className="flex items-center gap-1.5 ml-1 bg-black/80 dark:bg-black/60 rounded-full px-2 py-1">
+                  {/* ETH-INT-004: Reorder arrows */}
+                  {onReorderScene && scenes.indexOf(scene) > 0 && (
+                    <button
+                      onClick={() => onReorderScene(scene.id, 'left')}
+                      title="Move Scene Left"
+                      className="text-neutral-300 hover:text-white transition p-0.5"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                  {onReorderScene && scenes.indexOf(scene) < scenes.length - 1 && (
+                    <button
+                      onClick={() => onReorderScene(scene.id, 'right')}
+                      title="Move Scene Right"
+                      className="text-neutral-300 hover:text-white transition p-0.5"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   {onRenameScene && (
                     <button onClick={() => handleStartEdit(scene.id, scene.name)} title="Rename Scene" className="text-neutral-300 hover:text-white transition p-0.5">
                       <Edit2 className="w-3.5 h-3.5" />

@@ -78,7 +78,7 @@ export default function AdminAgenciesPage({ params }: { params: Promise<{ lang: 
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <div>
           <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Admin</p>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">Agency Applications</h1>
+          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">{lang === 'am' ? 'የኤጀንሲ ማመልከቻዎች' : 'Agency Applications'}</h1>
         </div>
         <Link href={`/${lang}/admin/dashboard`}
           className="text-xs font-semibold text-neutral-500 hover:text-red-600 transition">← Dashboard</Link>
@@ -98,7 +98,7 @@ export default function AdminAgenciesPage({ params }: { params: Promise<{ lang: 
       ) : agencies.length === 0 ? (
         <div className="py-20 text-center">
           <p className="text-4xl mb-3">✅</p>
-          <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">No pending agency applications.</p>
+          <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">{lang === 'am' ? 'የሚጠብቅ የኤጀንሲ ማመልከቻ የለም።' : 'No pending agency applications.'}</p>
         </div>
       ) : (
         <div className="space-y-4">

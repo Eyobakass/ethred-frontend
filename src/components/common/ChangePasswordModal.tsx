@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { authService } from '@/services/auth.service';
 
 interface Props {
@@ -9,6 +10,9 @@ interface Props {
 }
 
 export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
+  const pathname = usePathname();
+  const lang = pathname?.split('/').filter(Boolean)[0] === 'am' ? 'am' : 'en';
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -22,13 +26,12 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setMsg(null);
     try {
       await authService.changePassword({ current_password: currentPassword, new_password: newPassword });
-      setMsg({ type: 'success', text: 'Password changed successfully.' });
+      setMsg({ type: 'success', text: lang === 'am' ? 'የይለፍ ቃል በተሳካ ሁኔታ ተቀይሯል።' : 'Password changed successfully.' });
       setCurrentPassword('');
       setNewPassword('');
-      // Optionally close after a delay
       setTimeout(onClose, 2000);
     } catch (err: any) {
-      setMsg({ type: 'error', text: err?.response?.data?.message || 'Failed to change password.' });
+      setMsg({ type: 'error', text: err?.response?.data?.message || (lang === 'am' ? 'የይለፍ ቃል መቀየር አልተሳካም።' : 'Failed to change password.') });
     } finally {
       setIsLoading(false);
     }
@@ -38,35 +41,36 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-neutral-200 dark:border-neutral-800">
         <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
-          Change Password
+          {lang === 'am' ? 'የይለፍ ቃል ቀይር' : 'Change Password'}
         </h3>
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              Current Password
+              {lang === 'am' ? 'የአሁኑ የይለፍ ቃል' : 'Current Password'}
             </label>
             <input
               type="password"
-              required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
+              required
+              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              New Password
+              {lang === 'am' ? 'አዲስ የይለፍ ቃል' : 'New Password'}
             </label>
             <input
               type="password"
-              required
-              minLength={8}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
+              required
+              minLength={6}
+              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
             />
           </div>
-          
+
           {msg && (
             <div className={`text-sm font-medium ${msg.type === 'success' ? 'text-emerald-600' : 'text-red-600'}`}>
               {msg.text}
@@ -79,14 +83,14 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
               onClick={onClose}
               className="px-5 py-2.5 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
             >
-              Cancel
+              {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2.5 rounded-xl font-bold bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-200 transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 shadow-lg shadow-red-600/20"
             >
-              {isLoading ? 'Saving...' : 'Update'}
+              {isLoading ? (lang === 'am' ? 'በመቀየር ላይ...' : 'Changing...') : (lang === 'am' ? 'ቀይር' : 'Change')}
             </button>
           </div>
         </form>

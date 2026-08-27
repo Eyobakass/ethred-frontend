@@ -21,7 +21,7 @@ export default function VerificationPage({ params }: { params: Promise<{ lang: s
   if (!isAuthenticated || !user) {
     return (
       <div className="py-20 text-center">
-        <p className="text-neutral-500 mb-4">Please log in to verify your identity.</p>
+        <p className="text-neutral-500 mb-4">{lang === 'am' ? 'ማንነትዎን ለማረጋገጥ እባክዎ ይግቡ።' : 'Please log in to verify your identity.'}</p>
         <Link href={`/${lang}/auth/login`} className="text-red-600 font-bold hover:underline">Sign In</Link>
       </div>
     );
@@ -51,9 +51,9 @@ export default function VerificationPage({ params }: { params: Promise<{ lang: s
     <div className="max-w-3xl mx-auto px-4 py-10 space-y-8">
       {/* Header */}
       <div className="text-center space-y-2">
-        <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Trust & Safety</p>
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">Identity Verification</h1>
-        <p className="text-neutral-500 text-sm">Verify your identity to increase trust and unlock all features on Ethred.</p>
+        <p className="text-xs font-bold text-red-500 uppercase tracking-widest">{lang === 'am' ? 'ደህንነት እና እምነት' : 'Trust & Safety'}</p>
+        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">{lang === 'am' ? 'የማንነት ማረጋገጫ' : 'Identity Verification'}</h1>
+        <p className="text-neutral-500 text-sm">{lang === 'am' ? 'እምነትን ለመጨመር እና ሁሉንም የኢትሬድ አገልግሎቶች ለማግኘት ማንነትዎን ያረጋግጡ።' : 'Verify your identity to increase trust and unlock all features on Ethred.'}</p>
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 shadow-sm">
@@ -85,13 +85,13 @@ export default function VerificationPage({ params }: { params: Promise<{ lang: s
         {user.is_identity_verified ? (
           <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-xl p-6 text-center space-y-2">
             <div className="text-4xl">✅</div>
-            <h3 className="font-bold text-emerald-800 dark:text-emerald-400">You are fully verified!</h3>
+            <h3 className="font-bold text-emerald-800 dark:text-emerald-400">{lang === 'am' ? 'ማንነትዎ ሙሉ በሙሉ ተረጋግጧል!' : 'You are fully verified!'}</h3>
             <p className="text-sm text-emerald-600 dark:text-emerald-500">Thank you for helping keep Ethred safe.</p>
           </div>
         ) : submitted ? (
           <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-xl p-6 text-center space-y-2">
             <div className="text-4xl">⏳</div>
-            <h3 className="font-bold text-amber-800 dark:text-amber-400">Verification in Progress</h3>
+            <h3 className="font-bold text-amber-800 dark:text-amber-400">{lang === 'am' ? 'ማረጋገጫ በሂደት ላይ ነው' : 'Verification in Progress'}</h3>
             <p className="text-sm text-amber-700 dark:text-amber-500">We are reviewing your document. This usually takes 1-2 business days.</p>
           </div>
         ) : (

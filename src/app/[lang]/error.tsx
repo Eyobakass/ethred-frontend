@@ -21,7 +21,7 @@ export default function ErrorBoundary({
         <div className="text-6xl">🔥</div>
         <div>
           <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white mb-2">
-            Something went wrong
+            {lang === 'am' ? 'የሆነ ስህተት ተፈጥሯል' : 'Something went wrong'}
           </h1>
           <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
             {error.message || 'An unexpected error occurred on this page.'}
@@ -37,7 +37,7 @@ export default function ErrorBoundary({
             onClick={reset}
             className="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-bold transition shadow-lg shadow-red-600/20"
           >
-            Try Again
+            {lang === 'am' ? 'እንደገና ይሞክሩ' : 'Try Again'}
           </button>
           <Link
             href={`/${lang}`}

@@ -109,8 +109,8 @@ export default function AdminDashboardPage({ params }: { params: Promise<{ lang:
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="border-b border-neutral-200 dark:border-neutral-800 pb-4">
-        <p className="text-xs font-bold text-red-500 uppercase tracking-widest">🛡️ Platform Administration</p>
-        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">Admin Dashboard</h1>
+        <p className="text-xs font-bold text-red-500 uppercase tracking-widest">🛡️ {lang === 'am' ? 'የፕላትፎርም አስተዳደር' : 'Platform Administration'}</p>
+        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">{lang === 'am' ? '??????? ?????' : 'Admin Dashboard'}</h1>
       </div>
 
       {/* Quick Nav */}
@@ -191,7 +191,7 @@ export default function AdminDashboardPage({ params }: { params: Promise<{ lang:
         ) : pendingProperties.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-4xl mb-3">✅</p>
-            <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">All caught up! No pending properties.</p>
+            <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">{lang === 'am' ? '??? ????? ????? ???!' : 'All caught up! No pending properties.'}</p>
           </div>
         ) : (
           <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
@@ -295,7 +295,7 @@ export default function AdminDashboardPage({ params }: { params: Promise<{ lang:
               rows={4}
               value={reasonText}
               onChange={e => { setReasonText(e.target.value); setReasonError(null); }}
-              placeholder="Provide a clear, specific reason (min. 5 characters)…"
+              placeholder={lang === 'am' ? 'ግልጽ እና የተለየ ምክንያት ያቅርቡ (ቢያንስ 5 ፊደላት)...' : 'Provide a clear, specific reason (min. 5 characters)…'}
               className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-red-500 resize-none transition"
             />
             {reasonError && (

@@ -3,6 +3,7 @@
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { TourConfig } from '@/types/tour.types';
+import { getImageUrl } from '@/utils/imageUrl';
 
 interface PannellumViewerProps {
   tourConfig: TourConfig;
@@ -97,16 +98,19 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
     if (!tourConfig || !tourConfig.scenes) return;
     
     Object.values(tourConfig.scenes).forEach((scene: any) => {
-      if (scene.panorama && !preloadedImagesRef.current[scene.panorama]) {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.src = scene.panorama;
-        // Force off-thread decoding so the browser has the bitmap ready in RAM
-        img.decode().catch(() => {});
-        preloadedImagesRef.current[scene.panorama] = img;
-        
-        // Also fetch with CORS to strictly enforce network cache
-        fetch(scene.panorama, { mode: 'cors', cache: 'force-cache' }).catch(() => {});
+      if (scene.panorama) {
+        const fullUrl = getImageUrl(scene.panorama);
+        if (!preloadedImagesRef.current[fullUrl]) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.src = fullUrl;
+          // Force off-thread decoding so the browser has the bitmap ready in RAM
+          img.decode().catch(() => {});
+          preloadedImagesRef.current[fullUrl] = img;
+          
+          // Also fetch with CORS to strictly enforce network cache
+          fetch(fullUrl, { mode: 'cors', cache: 'force-cache' }).catch(() => {});
+        }
       }
     });
   }, [tourConfig]);
@@ -151,6 +155,7 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
           sceneId,
           {
             ...scene,
+            panorama: scene.panorama ? getImageUrl(scene.panorama) : scene.panorama,
             hotSpots: scene.hotSpots?.map((hs: any) => ({
               ...hs,
               clickHandlerFunc: (event: any, args: any) => {

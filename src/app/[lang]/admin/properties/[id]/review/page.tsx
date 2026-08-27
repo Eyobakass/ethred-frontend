@@ -34,7 +34,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
         setProperty(propData);
 
         // Always attempt to fetch tour config if it exists
-        const tc = await tourService.getTourConfig(id).catch(() => null);
+        const tc = await tourService.getTourConfig(id, true).catch(() => null);
         if (tc && tc.scenes && Object.keys(tc.scenes).length > 0) {
           setTourConfig(tc);
         }
@@ -75,7 +75,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
     }
   };
 
-  if (isLoading) return <div className="p-10 text-center">Loading property details...</div>;
+  if (isLoading) return <div className="p-10 text-center">{lang === 'am' ? 'የንብረቱን ዝርዝር በማምጣት ላይ...' : 'Loading property details...'}</div>;
   if (!property) return <div className="p-10 text-center text-red-500">{errorMsg}</div>;
 
   const images = property.media?.filter(m => m.media_category === 'IMAGE' && !m.is_tour_scene) || [];
@@ -92,7 +92,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
-            Admin Review Mode
+            {lang === 'am' ? 'የአስተዳዳሪ ግምገማ ሁኔታ' : 'Admin Review Mode'}
           </div>
           <h1 className="text-2xl font-bold">{property.title_en}</h1>
         </div>
@@ -103,7 +103,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
       {/* Moderation Quality Checklist Banner */}
       <div className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 mb-6 shadow-sm">
         <div className="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-3 flex items-center gap-2">
-          <span>📋</span> Automated Quality Checklist
+          <span>📋</span> {lang === 'am' ? 'ራስ-ሰር የጥራት መቆጣጠሪያ' : 'Automated Quality Checklist'}
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div className={`p-2.5 rounded-xl border flex items-center gap-2 font-medium ${
@@ -124,7 +124,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
             tourConfig ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400' : 'bg-neutral-100 dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 text-neutral-500'
           }`}>
             <span>{tourConfig ? '✅' : 'ℹ️'}</span>
-            <span>3D Virtual Tour: {tourConfig ? 'Configured' : 'None'}</span>
+            <span>{lang === 'am' ? '3D ቨርቹዋል ጉብኝት' : '3D Virtual Tour'}: {tourConfig ? 'Configured' : 'None'}</span>
           </div>
 
           <div className={`p-2.5 rounded-xl border flex items-center gap-2 font-medium ${
@@ -136,7 +136,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
         </div>
       </div>
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 mb-8 shadow-sm">
-        <h2 className="text-lg font-bold mb-4 border-b pb-2">Property Details</h2>
+        <h2 className="text-lg font-bold mb-4 border-b pb-2">{lang === 'am' ? 'የንብረት ዝርዝሮች' : 'Property Details'}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
           <div>
             <span className="block text-neutral-500">Category</span>
@@ -199,7 +199,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
       </div>
 
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 mb-24 shadow-sm">
-        <h2 className="text-lg font-bold mb-4 border-b pb-2">3D Virtual Tour</h2>
+        <h2 className="text-lg font-bold mb-4 border-b pb-2">{lang === 'am' ? '3D ቨርቹዋል ጉብኝት' : '3D Virtual Tour'}</h2>
         {!tourConfig ? (
           <p className="text-sm text-neutral-500">No 3D tour provided.</p>
         ) : (
@@ -231,7 +231,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
               disabled={isSubmitting}
               className="px-8 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition shadow-lg shadow-emerald-600/20"
             >
-              Approve Listing
+              {lang === 'am' ? 'ማስታወቂያውን አጽድቅ' : 'Approve Listing'}
             </button>
           </div>
         </div>
@@ -241,7 +241,7 @@ export default function AdminPropertyReviewPage({ params }: { params: Promise<{ 
       {showRejectModal && (
         <div className="fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4">
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 w-full max-w-md shadow-2xl">
-            <h3 className="text-lg font-bold mb-2">Reject Listing</h3>
+            <h3 className="text-lg font-bold mb-2">{lang === 'am' ? 'ማስታወቂያውን ውድቅ አድርግ' : 'Reject Listing'}</h3>
             <p className="text-sm text-neutral-500 mb-4">
               Please provide a reason. This will be sent directly to the seller via email so they can fix the issues.
             </p>

@@ -16,6 +16,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
 
   const [analytics, setAnalytics] = useState<any | null>(null);
   const [employees, setEmployees] = useState<AgencyEmployee[]>([]);
+  const [agency, setAgency] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,24 +25,40 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
+  const [editAgencyName, setEditAgencyName] = useState('');
+  const [editAgencyDesc, setEditAgencyDesc] = useState('');
+  const [editAgencyPhone, setEditAgencyPhone] = useState('');
+  const [editAgencyWebsite, setEditAgencyWebsite] = useState('');
+  const [isUpdatingAgency, setIsUpdatingAgency] = useState(false);
+  const [updateAgencySuccess, setUpdateAgencySuccess] = useState(false);
+
   useEffect(() => {
-    if (!isAuthenticated || user?.role !== 'AGENCY_ADMIN') {
-      router.replace(`/${lang}/auth/login`);
-      return;
-    }
+    const timer = setTimeout(() => {
+      if (!useAuthStore.getState().isAuthenticated || useAuthStore.getState().user?.role !== 'AGENCY_ADMIN') {
+        router.replace(`/${lang}/auth/login`);
+      }
+    }, 500);
 
     setIsLoading(true);
     Promise.all([
       agencyService.getAnalytics(id).catch(() => null),
-      agencyService.listEmployees(id).catch(() => [])
+      agencyService.listEmployees(id).catch(() => []),
+      agencyService.getAgency(id).catch(() => null)
     ])
-      .then(([analyticsRes, employeesRes]) => {
+      .then(([analyticsRes, employeesRes, agencyRes]) => {
         setAnalytics(analyticsRes);
         setEmployees(employeesRes as AgencyEmployee[]);
+        setAgency(agencyRes);
+        if (agencyRes) { const a = agencyRes as any;
+          setEditAgencyName(a.name || '');
+          setEditAgencyDesc(a.description_en || '');
+          setEditAgencyPhone(a.phone_number || '');
+          setEditAgencyWebsite(a.website || '');
+        }
       })
       .catch(() => setError('Failed to load dashboard data.'))
       .finally(() => setIsLoading(false));
-  }, [id, isAuthenticated, user, lang, router]);
+  }, [id, isAuthenticated, user?.role, lang, router]);
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +90,27 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
     }
   };
 
+  const handleUpdateAgency = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUpdatingAgency(true);
+    setUpdateAgencySuccess(false);
+    try {
+      const updated = await agencyService.updateAgency(id, {
+        name: editAgencyName,
+        description: editAgencyDesc,
+        phone_number: editAgencyPhone,
+        website: editAgencyWebsite
+      } as any);
+      setAgency(updated);
+      setUpdateAgencySuccess(true);
+      setTimeout(() => setUpdateAgencySuccess(false), 3000);
+    } catch (err: any) {
+      alert(err?.message || 'Failed to update agency profile.');
+    } finally {
+      setIsUpdatingAgency(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="py-32 flex justify-center">
@@ -91,7 +129,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <div>
           <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Agency Admin</p>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">Agency Dashboard</h1>
+          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">{lang === 'am' ? 'የኤጀንሲ ማጠቃለያ' : 'Agency Dashboard'}</h1>
         </div>
         <Link href={`/${lang}/agencies/${id}`} className="text-sm font-bold text-red-600 hover:underline">
           View Public Profile ↗
@@ -124,10 +162,10 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Employee List */}
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Team Members</h2>
+          <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የቡድን አባላት' : 'Team Members'}</h2>
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
             {employees.length === 0 ? (
-              <p className="p-8 text-center text-sm text-neutral-500">No team members found.</p>
+              <p className="p-8 text-center text-sm text-neutral-500">{lang === 'am' ? 'ምንም የቡድን አባል አልተገኘም።' : 'No team members found.'}</p>
             ) : (
               <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
                 {employees.map(emp => (
@@ -166,7 +204,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
 
         {/* Invite Form */}
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-neutral-900 dark:text-white">Invite Agent</h2>
+          <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ወኪል ጋብዝ' : 'Invite Agent'}</h2>
           <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm">
             <form onSubmit={handleInvite} className="space-y-4">
               <div>
@@ -196,6 +234,71 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
           </div>
         </div>
       </div>
+      {/* {lang === 'am' ? 'የኤጀንሲ መገለጫ' : 'Agency Profile'} Settings */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የኤጀንሲ መገለጫ' : 'Agency Profile'}</h2>
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-sm">
+          <form onSubmit={handleUpdateAgency} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-1">Agency Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editAgencyName}
+                  onChange={e => setEditAgencyName(e.target.value)}
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  value={editAgencyPhone}
+                  onChange={e => setEditAgencyPhone(e.target.value)}
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-1">Website</label>
+              <input
+                type="url"
+                value={editAgencyWebsite}
+                onChange={e => setEditAgencyWebsite(e.target.value)}
+                placeholder="https://"
+                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-bold text-neutral-700 dark:text-neutral-300 mb-1">Description</label>
+              <textarea
+                rows={4}
+                value={editAgencyDesc}
+                onChange={e => setEditAgencyDesc(e.target.value)}
+                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition resize-none"
+              />
+            </div>
+
+            <div className="flex items-center gap-4 pt-2">
+              <button
+                type="submit"
+                disabled={isUpdatingAgency}
+                className="px-6 py-2 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm disabled:opacity-50 transition"
+              >
+                {isUpdatingAgency ? 'Saving...' : 'Save Profile'}
+              </button>
+              {updateAgencySuccess && (
+                <span className="text-sm font-bold text-emerald-600">Profile updated successfully.</span>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
+
+

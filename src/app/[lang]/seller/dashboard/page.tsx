@@ -87,7 +87,7 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
             {lang === 'am' ? 'የሻጭ ዳሽቦርድ' : 'Seller Dashboard'}
           </h1>
           <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
-            Manage your property listings, 3D virtual tours, and buyer inquiries.
+            {lang === 'am' ? '????? ??????????? 3D ????? ??????? ?? ??? ?????? ???????' : 'Manage your property listings, 3D virtual tours, and buyer inquiries.'}
           </p>
         </div>
         <Link
@@ -171,7 +171,7 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                       </p>
                       <div className="text-[11px] text-neutral-500 flex items-center justify-between pt-1">
                         <span>Reviewed by: <strong className="text-neutral-700 dark:text-neutral-300">{prop.rejection_info.rejected_by}</strong></span>
-                        <span className="text-red-600 dark:text-red-400 font-semibold">Please fix the requested changes and re-submit.</span>
+                        <span className="text-red-600 dark:text-red-400 font-semibold">{lang === 'am' ? '???? ??????? ???????? ????? ???? ????' : 'Please fix the requested changes and re-submit.'}</span>
                       </div>
                     </div>
                   )}
@@ -191,10 +191,10 @@ export default function SellerDashboardPage({ params }: { params: Promise<{ lang
                     href={`/${lang}/seller/listings/${(prop as any).pending_draft_id || prop.id}`}
                     className="px-3 py-1.5 rounded-lg bg-neutral-900 dark:bg-white hover:bg-neutral-700 dark:hover:bg-neutral-100 text-white dark:text-neutral-900 text-xs font-bold border border-neutral-900 dark:border-white transition flex items-center gap-1.5"
                   >
-                    <span>✏️</span> Manage Listing
+                    <span>✏️</span> {lang === 'am' ? '???????? ??????' : 'Manage Listing'}
                   </Link>
                   <Link
-                    href={`/${lang}/seller/promotions`}
+                    href={`/${lang}/seller/promotions?propertyId=${prop.id}`}
                     className="px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 dark:text-amber-400 text-xs font-semibold border border-amber-500/30 transition"
                   >
                     ⭐ Promote

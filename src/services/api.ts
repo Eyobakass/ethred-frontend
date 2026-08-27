@@ -78,8 +78,9 @@ apiClient.interceptors.response.use(
         if (newToken) {
           const { useAuthStore } = await import('@/store/useAuthStore');
           const { user } = useAuthStore.getState();
-          if (user) {
-            useAuthStore.getState().setAuth(user, newToken);
+          const newUser = (refreshResponse.data as any)?.user || user;
+          if (newUser) {
+            useAuthStore.getState().setAuth(newUser, newToken);
           }
           processRefreshQueue(newToken);
           if (originalRequest.headers) {
@@ -91,6 +92,13 @@ apiClient.interceptors.response.use(
       } catch (err) {
         processRefreshQueue(null);
         isRefreshing = false;
+        import('@/store/useAuthStore').then(({ useAuthStore }) => {
+          useAuthStore.getState().logout();
+        });
+        if (typeof window !== 'undefined') {
+          const lang = window.location.pathname.split('/')[1] || 'en';
+          window.location.href = `/${lang}/auth/login`;
+        }
       }
 
       const { useAuthStore } = await import('@/store/useAuthStore');

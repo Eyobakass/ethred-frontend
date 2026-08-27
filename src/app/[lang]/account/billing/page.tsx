@@ -38,7 +38,7 @@ export default function BillingHistoryPage({ params }: { params: Promise<{ lang:
   if (!isAuthenticated) {
     return (
       <div className="py-20 text-center">
-        <p className="text-neutral-500 mb-4">Please log in to view your billing history.</p>
+        <p className="text-neutral-500 mb-4">{lang === 'am' ? 'የክፍያ ታሪክዎን ለማየት እባክዎ ይግቡ።' : 'Please log in to view your billing history.'}</p>
         <Link href={`/${lang}/auth/login`} className="text-red-600 font-bold hover:underline">Sign In</Link>
       </div>
     );
@@ -59,8 +59,8 @@ export default function BillingHistoryPage({ params }: { params: Promise<{ lang:
       {/* Header */}
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <div>
-          <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Account Details</p>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">Billing History</h1>
+          <p className="text-xs font-bold text-red-500 uppercase tracking-widest">{lang === 'am' ? 'የመለያ ዝርዝሮች' : 'Account Details'}</p>
+          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">{lang === 'am' ? 'የክፍያ ታሪክ' : 'Billing History'}</h1>
         </div>
         <Link href={`/${lang}/account/settings`} className="text-xs font-semibold text-neutral-500 hover:text-red-600 transition">
           Go to Settings →
@@ -80,7 +80,7 @@ export default function BillingHistoryPage({ params }: { params: Promise<{ lang:
         ) : invoices.length === 0 ? (
           <div className="py-20 text-center">
             <p className="text-4xl mb-3">🧾</p>
-            <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">No payment history yet.</p>
+            <p className="text-sm font-semibold text-neutral-600 dark:text-neutral-400">{lang === 'am' ? 'እስካሁን ምንም የክፍያ ታሪክ የለም።' : 'No payment history yet.'}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

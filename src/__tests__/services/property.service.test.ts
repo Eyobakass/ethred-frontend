@@ -111,7 +111,7 @@ describe('propertyService — draft management', () => {
 
   it('getExistingDraft — returns draft object when one exists', async () => {
     const draft = { id: 'draft-1', status: 'DRAFT', parent_id: 'p1' };
-    mockGet.mockResolvedValueOnce(draft);
+    mockGet.mockResolvedValueOnce({ data: draft });
     const result = await propertyService.getExistingDraft('p1');
     expect(mockGet).toHaveBeenCalledWith('/properties/p1/draft');
     expect(result).toEqual(draft);
@@ -126,7 +126,7 @@ describe('propertyService — draft management', () => {
 
   it('getExistingDraft — returns PENDING_UPDATE draft correctly', async () => {
     const draft = { id: 'draft-2', status: 'PENDING_UPDATE', parent_id: 'p1' };
-    mockGet.mockResolvedValueOnce(draft);
+    mockGet.mockResolvedValueOnce({ data: draft });
     const result = await propertyService.getExistingDraft('p1');
     expect(result?.status).toBe('PENDING_UPDATE');
   });
@@ -152,7 +152,7 @@ describe('propertyService — favorites', () => {
   });
 
   it('getFavorites — calls GET /favorites', async () => {
-    mockGet.mockResolvedValueOnce([{ id: 'p1' }, { id: 'p2' }]);
+    mockGet.mockResolvedValueOnce({ results: [{ property: { id: 'p1' } }, { property: { id: 'p2' } }] });
     const result = await propertyService.getFavorites();
     expect(mockGet).toHaveBeenCalledWith('/favorites');
     expect(result).toHaveLength(2);

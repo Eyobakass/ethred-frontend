@@ -67,13 +67,13 @@ export default function BuyerFavoritesPage({
       {loading ? (
         <div className="py-20 text-center">
           <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-neutral-600 dark:text-neutral-400 text-sm">Loading your saved properties...</p>
+          <p className="text-neutral-600 dark:text-neutral-400 text-sm">{lang === 'am' ? 'የተቀመጡ ቤቶችዎን በማምጣት ላይ...' : 'Loading your saved properties...'}</p>
         </div>
       ) : !isAuthenticated ? (
         <div className="py-20 text-center space-y-4">
           <span className="text-5xl block">🔐</span>
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Sign In Required</h2>
-          <p className="text-sm text-neutral-600 dark:text-neutral-400">You need to be logged in to view saved favorites.</p>
+          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'መግባት ያስፈልጋል' : 'Sign In Required'}</h2>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">{lang === 'am' ? 'የተቀመጡ ቤቶችን ለማየት ወደ ሲስተም መግባት አለብዎት።' : 'You need to be logged in to view saved favorites.'}</p>
           <Link
             href={`/${lang}/auth/login`}
             className="inline-flex px-6 py-3 rounded-xl bg-red-600 dark:bg-red-600 text-white font-bold text-sm"

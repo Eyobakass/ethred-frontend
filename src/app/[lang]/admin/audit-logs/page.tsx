@@ -66,7 +66,7 @@ export default function AdminAuditLogsPage({ params }: { params: Promise<{ lang:
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <div>
           <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Admin</p>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">Audit Logs</h1>
+          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">{lang === 'am' ? 'የኦዲት መዝገቦች' : 'Audit Logs'}</h1>
         </div>
         <Link href={`/${lang}/admin/dashboard`}
           className="text-xs font-semibold text-neutral-500 hover:text-red-600 transition">← Dashboard</Link>
@@ -86,7 +86,7 @@ export default function AdminAuditLogsPage({ params }: { params: Promise<{ lang:
           onChange={e => { setFilterTable(e.target.value); setPage(1); }}
           className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-white focus:outline-none focus:border-red-500 transition"
         >
-          <option value="">All Tables</option>
+          <option value="">{lang === 'am' ? 'ሁሉም ሠንጠረዦች' : 'All Tables'}</option>
           {['properties', 'users', 'agencies', 'invoices'].map(t => (
             <option key={t} value={t}>{t}</option>
           ))}
@@ -108,7 +108,7 @@ export default function AdminAuditLogsPage({ params }: { params: Promise<{ lang:
         ) : logs.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-4xl mb-3">📋</p>
-            <p className="text-sm text-neutral-500">No audit log entries found.</p>
+            <p className="text-sm text-neutral-500">{lang === 'am' ? 'ምንም የኦዲት መዝገብ አልተገኘም።' : 'No audit log entries found.'}</p>
           </div>
         ) : (
           <>

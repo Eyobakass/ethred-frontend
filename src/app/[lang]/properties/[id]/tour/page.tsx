@@ -124,14 +124,14 @@ export default function VirtualTourPage({
           <div className="flex items-center justify-center h-[550px]">
             <div className="text-center space-y-3">
               <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-red-600 dark:text-red-400 text-sm font-semibold">Loading 3D Scene Graph...</p>
+              <p className="text-red-600 dark:text-red-400 text-sm font-semibold">{lang === 'am' ? 'የ3D ገጽታውን በማዘጋጀት ላይ...' : 'Loading 3D Scene Graph...'}</p>
             </div>
           </div>
         ) : Object.keys(tourConfig.scenes).length === 0 ? (
           <div className="flex items-center justify-center h-[550px]">
             <div className="text-center space-y-4 max-w-md">
               <div className="text-5xl">❌</div>
-              <p className="text-neutral-600 dark:text-neutral-400 font-semibold">No virtual tour available for this property.</p>
+              <p className="text-neutral-600 dark:text-neutral-400 font-semibold">{lang === 'am' ? 'ለዚህ ንብረት ምንም የ3D ጉብኝት አልተዘጋጀም።' : 'No virtual tour available for this property.'}</p>
               <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
             </div>
           </div>

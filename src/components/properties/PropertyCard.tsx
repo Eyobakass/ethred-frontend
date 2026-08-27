@@ -7,6 +7,22 @@ import { Property } from '@/types/property.types';
 import { formatCurrency } from '@/utils/currency';
 import { getImageUrl } from '@/utils/imageUrl';
 
+
+const translateLocation = (loc: string, lang: string) => {
+  if (lang !== 'am' || !loc) return loc;
+  const map: Record<string, string> = {
+    'Addis Ababa': 'አዲስ አበባ',
+    'Bole': 'ቦሌ',
+    'Yeka': 'የካ',
+    'CMC': 'ሲኤምሲ',
+    'Kazanchis': 'ካዛንቺስ',
+    'Sarbet': 'ሳርቤት',
+    'Hawassa': 'ሀዋሳ'
+  };
+  return map[loc] || loc;
+};
+
+
 interface PropertyCardProps {
   property: Property;
   lang?: 'en' | 'am';
@@ -14,8 +30,6 @@ interface PropertyCardProps {
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en' }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-
-
 
   const standardImages = property.media?.filter((m) => m.media_category === 'IMAGE' && !m.is_tour_scene).map(m => getImageUrl(m.file_url)) || [];
   const allMediaImages = property.media?.map(m => getImageUrl(m.file_url)) || [];
@@ -69,12 +83,12 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en
           )}
           {property.is_featured && (
             <div className="bg-red-600 dark:bg-red-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow-sm tracking-wider uppercase">
-              ⭐ FEATURED
+              ⭐ {lang === 'am' ? 'ልዩ' : 'FEATURED'}
             </div>
           )}
           {(property.external_tour_url || property.media?.some((m) => m.is_tour_scene)) && (
             <div className="bg-[#8b5cf6] dark:bg-[#7c3aed] text-white text-[10px] font-extrabold px-2.5 py-1 rounded-md shadow-sm tracking-wider uppercase">
-              3D WALKTHROUGH
+              {lang === 'am' ? '3D ጉብኝት' : '3D WALKTHROUGH'}
             </div>
           )}
         </div>
@@ -109,13 +123,13 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, lang = 'en
         </div>
 
         <div className="flex items-center gap-3 text-sm font-semibold text-neutral-900 dark:text-white mt-1">
-          <span>{property.bedrooms} beds</span>
-          <span>{property.bathrooms} baths</span>
-          <span>{property.area_sqm} m²</span>
+          <span>{property.bedrooms} {lang === 'am' ? 'መኝታ' : 'beds'}</span>
+          <span>{property.bathrooms} {lang === 'am' ? 'መታጠቢያ' : 'baths'}</span>
+          <span>{property.area_sqm} {lang === 'am' ? 'ካሬ ሜትር' : 'm²'}</span>
         </div>
 
         <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1.5 truncate">
-          {property.sub_city}, {property.city} {property.woreda && `• Woreda ${property.woreda}`}
+          {translateLocation(property.sub_city, lang)}, {translateLocation(property.city, lang)} {property.woreda && `• ${lang === 'am' ? 'ወረዳ' : 'Woreda'} ${property.woreda.replace(/^Woreda\s*/i, '')}`}
         </div>
       </div>
     </Link>

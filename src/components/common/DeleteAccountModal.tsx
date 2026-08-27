@@ -40,16 +40,16 @@ export const DeleteAccountModal: React.FC<Props> = ({ isOpen, onClose, lang }) =
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-neutral-200 dark:border-neutral-800">
         <h3 className="text-xl font-bold text-red-600 dark:text-red-400 mb-2">
-          Delete Account
+          {lang === 'am' ? 'አካውንት ሰርዝ' : 'Delete Account'}
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
-          Permanently delete your account and all associated data. This cannot be undone.
+          {lang === 'am' ? 'በእርግጠኝነት አካውንትዎን መሰረዝ ይፈልጋሉ? ይህ እርምጃ ሊቀለበስ አይችልም። ሁሉም መረጃዎ በቋሚነት ይሰረዛል።' : 'Permanently delete your account and all associated data. This cannot be undone.'}
         </p>
         
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
-              Type <strong>DELETE</strong> to confirm
+              {lang === 'am' ? 'ለማረጋገጥ' : 'Type'} <strong>DELETE</strong> {lang === 'am' ? 'ብለው ይፃፉ' : 'to confirm'}
             </label>
             <input
               type="text"
@@ -70,14 +70,14 @@ export const DeleteAccountModal: React.FC<Props> = ({ isOpen, onClose, lang }) =
               onClick={onClose}
               className="px-5 py-2.5 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
             >
-              Cancel
+              {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
             </button>
             <button
               onClick={handleDeleteAccount}
               disabled={deleteConfirm !== 'DELETE' || isDeleting}
               className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-600/20"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? (lang === 'am' ? 'በመሰረዝ ላይ...' : 'Deleting...') : (lang === 'am' ? 'ሰርዝ' : 'Delete')}
             </button>
           </div>
         </div>

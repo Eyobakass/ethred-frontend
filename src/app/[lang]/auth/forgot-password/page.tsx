@@ -56,13 +56,13 @@ export default function ForgotPasswordPage({ params }: { params: Promise<{ lang:
                 <Mail className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
               </div>
               <p className="text-sm text-center text-neutral-600 dark:text-neutral-400">
-                If an account with that email exists, you will receive a link shortly. Check your spam folder too.
+                {lang === 'am' ? 'በዚህ ኢሜል የተመዘገበ አካውንት ካለ፣ በቅርቡ ሊንክ ይደርስዎታል። የስፓም ማህደርዎንም ያረጋግጡ።' : 'If an account with that email exists, you will receive a link shortly. Check your spam folder too.'}
               </p>
               <button
                 onClick={() => { setSent(false); setEmail(''); }}
                 className="w-full py-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-sm font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition"
               >
-                Send to a different email
+                {lang === 'am' ? 'ወደ ሌላ ኢሜል ላክ' : 'Send to a different email'}
               </button>
             </div>
           ) : (
@@ -105,7 +105,7 @@ export default function ForgotPasswordPage({ params }: { params: Promise<{ lang:
             className="flex items-center justify-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition"
           >
             <ArrowLeft size={13} />
-            Back to Login
+            {lang === 'am' ? 'ወደ መግቢያ ይመለሱ' : 'Back to Login'}
           </Link>
         </div>
       </div>

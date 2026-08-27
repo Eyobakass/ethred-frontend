@@ -102,7 +102,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ lang
   );
 
   if (!user) return (
-    <div className="p-10 text-center text-red-600">User not found.</div>
+    <div className="p-10 text-center text-red-600">{lang === 'am' ? 'ተጠቃሚው አልተገኘም።' : 'User not found.'}</div>
   );
 
   return (
@@ -157,7 +157,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ lang
 
       {/* Actions */}
       <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-sm space-y-3">
-        <h2 className="text-sm font-bold text-neutral-900 dark:text-white mb-4">Admin Actions</h2>
+        <h2 className="text-sm font-bold text-neutral-900 dark:text-white mb-4">{lang === 'am' ? 'የአስተዳዳሪ እርምጃዎች' : 'Admin Actions'}</h2>
 
         <div className="flex flex-wrap gap-3">
           {/* Verify Identity */}
@@ -172,7 +172,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ lang
           <button
             onClick={() => setRoleModal(true)}
             className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition shadow-sm">
-            🔄 Change Role
+            🔄 {lang === 'am' ? 'የኃላፊነት ድርሻ ቀይር' : 'Change Role'}
           </button>
 
           {/* Ban / Unban */}
@@ -187,7 +187,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ lang
             <button
               onClick={() => setBanModal(true)}
               className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition shadow-sm">
-              🚫 Ban User
+              🚫 {lang === 'am' ? 'ተጠቃሚን አግድ' : 'Ban User'}
             </button>
           )}
         </div>
@@ -198,13 +198,13 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ lang
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-neutral-900 dark:text-white">🚫 Ban User</h3>
+              <h3 className="font-bold text-neutral-900 dark:text-white">🚫 {lang === 'am' ? 'ተጠቃሚን አግድ' : 'Ban User'}</h3>
               <button onClick={() => setBanModal(false)} className="text-neutral-400 hover:text-neutral-600 text-xl">×</button>
             </div>
             <p className="text-xs text-neutral-500">This will prevent the user from logging in. Provide a clear reason.</p>
             <textarea
               rows={3} value={banReason} onChange={e => setBanReason(e.target.value)}
-              placeholder="Reason for ban (min. 5 characters)…"
+              placeholder="{lang === 'am' ? 'የማገጃ ምክንያት (ቢያንስ 5 ፊደላት)...' : 'Reason for ban (min. 5 characters)…'}"
               className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-red-500 resize-none transition"
             />
             <div className="flex gap-3 justify-end">
@@ -224,10 +224,10 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ lang
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-neutral-900 dark:text-white">🔄 Change Role</h3>
+              <h3 className="font-bold text-neutral-900 dark:text-white">🔄 {lang === 'am' ? 'የኃላፊነት ድርሻ ቀይር' : 'Change Role'}</h3>
               <button onClick={() => setRoleModal(false)} className="text-neutral-400 hover:text-neutral-600 text-xl">×</button>
             </div>
-            <p className="text-xs text-neutral-500">Current role: <strong>{user.role}</strong></p>
+            <p className="text-xs text-neutral-500">{lang === 'am' ? 'የአሁኑ የኃላፊነት ድርሻ፦' : 'Current role:'} <strong>{user.role}</strong></p>
             <select value={newRole} onChange={e => setNewRole(e.target.value)}
               className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition">
               {ALL_ROLES.map(r => <option key={r} value={r}>{r}</option>)}

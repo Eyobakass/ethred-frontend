@@ -137,29 +137,17 @@ export default function HomePage({
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 dark:bg-red-600/10 border border-red-200 dark:border-red-600/30 text-red-600 dark:text-red-400 text-xs font-bold">
             <span>🏡</span>
             <span>
-              {lang === 'am'
-                ? 'የኢትዮጵያ ቀዳሚ የሪል ስቴት መድረክ'
-                : "Ethiopia's Premier Real Estate Platform"}
+              {lang === 'am' ? 'የኢትዮጵያ ቀዳሚ የሪል ስቴት መድረክ' : "Ethiopia's Premier Real Estate Platform"}
             </span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-[1.1]">
-            {lang === 'am'
-              ? <>
-                  የህልም <span className="text-red-600 dark:text-red-400">ቤትዎን</span><br />
-                  በኢትዮጵያ ያግኙ
-                </>
-              : <>
-                  Find Your Perfect Home<br />
-                  in <span className="text-red-600 dark:text-red-400">Ethiopia</span>
-                </>
+            {lang === 'am' ? <>የህልም ቤትዎን<br />በ<span className="text-red-600 dark:text-red-400">ኢትዮጵያ</span> ያግኙ</> : <>Find Your Perfect Home<br />in <span className="text-red-600 dark:text-red-400">Ethiopia</span></>
             }
           </h1>
 
           <p className="text-sm sm:text-base text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed">
-            {lang === 'am'
-              ? 'የተረጋገጡ አፓርታማዎች፣ ቪላዎች እና የንግድ ቦታዎች በየትኛውም የኢትዮጵያ ክፍል በቀላሉ ያግኙ። ቴሌብር፣ ሲቢኢ ብር እና ቻፓ ክፍያ ዘዴዎች የተካተተ።'
-              : 'Explore verified apartments, villas & commercial spaces across Addis Ababa and major cities. Reliable listings with secure local payment options.'}
+            {lang === 'am' ? 'የተረጋገጡ አፓርታማዎች፣ ቪላዎች እና የንግድ ቦታዎች በኢትዮጵያ ክፍል በሙሉ ያግኙ። ቴሌብር፣ ሲቢኢ ብር እና ጫፓ ክፍያ ዘዴዎች የተካተቱ።' : 'Explore verified apartments, villas & commercial spaces across Addis Ababa and major cities. Reliable listings with secure local payment options.'}
           </p>
 
           {/* Search bar */}
@@ -189,9 +177,7 @@ export default function HomePage({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder={
-                  lang === 'am'
-                    ? 'በቦሌ፣ የካ፣ ሲኤምሲ ወ.ዘ.ተ ይፈልጉ...'
-                    : 'Search Bole, Yeka, CMC, Kazanchis, Hawassa...'
+                  lang === 'am' ? 'ቦሌ፣ የካ፣ ሲኤምሲ፣ ካዛንቺስ፣ ሀዋሳ ፈልግ...' : 'Search Bole, Yeka, CMC, Kazanchis, Hawassa...'
                 }
                 className="w-full bg-transparent px-4 py-2.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none"
               />
@@ -208,17 +194,15 @@ export default function HomePage({
           {/* Quick links */}
           <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-neutral-500">
             <span>{lang === 'am' ? 'ታዋቂ ቦታዎች:' : 'Popular:'}</span>
-            {['Bole', 'Yeka CMC', 'Kazanchis', 'Sarbet', 'Hawassa'].map((loc) => (
+            {[{en: 'Bole', am: 'ቦሌ'}, {en: 'Yeka CMC', am: 'የካ ሲኤምሲ'}, {en: 'Kazanchis', am: 'ካዛንቺስ'}, {en: 'Sarbet', am: 'ሳርቤት'}, {en: 'Hawassa', am: 'ሀዋሳ'}].map((loc) => (
               <button
-                key={loc}
+                key={loc.en}
                 onClick={() => {
-                  setSearchQuery(loc);
-                  router.push(`/${lang}/properties?search_query=${encodeURIComponent(loc)}&transaction_mode=${searchMode}`);
+                  setSearchQuery(loc.en);
+                  router.push(`/${lang}/properties?search_query=${encodeURIComponent(loc.en)}&transaction_mode=${searchMode}`);
                 }}
                 className="px-3 py-1 rounded-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 hover:border-red-600 dark:border-red-600/40 hover:text-red-600 dark:text-red-400 transition"
-              >
-                {loc}
-              </button>
+              >{lang === 'am' ? loc.am : loc.en}</button>
             ))}
           </div>
         </div>

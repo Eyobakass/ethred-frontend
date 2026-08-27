@@ -55,8 +55,8 @@ export default function BuyerInquiriesPage({ params }: { params: Promise<{ lang:
       {/* Header */}
       <div className="border-b border-neutral-200 dark:border-neutral-800 pb-5 mb-6">
         <div className="text-xs font-bold text-red-400 uppercase tracking-widest">💬 My Account</div>
-        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">My Sent Inquiries</h1>
-        <p className="text-xs text-neutral-500 mt-1">Track messages you have sent to property sellers.</p>
+        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">{lang === 'am' ? 'የላክኳቸው ጥያቄዎች' : 'My Sent Inquiries'}</h1>
+        <p className="text-xs text-neutral-500 mt-1">{lang === 'am' ? 'ለሻጮች የላኳቸውን መልዕክቶች ይከታተሉ።' : 'Track messages you have sent to property sellers.'}</p>
       </div>
 
       {isLoading && (
@@ -80,7 +80,7 @@ export default function BuyerInquiriesPage({ params }: { params: Promise<{ lang:
       {!isLoading && !loadError && inquiries.length === 0 && (
         <div className="py-24 text-center">
           <MessageSquare className="w-12 h-12 text-neutral-400 mx-auto mb-3" />
-          <p className="text-base font-semibold text-neutral-600 dark:text-neutral-400">No inquiries sent yet</p>
+          <p className="text-base font-semibold text-neutral-600 dark:text-neutral-400">{lang === 'am' ? 'እስካሁን ምንም ጥያቄ አልተላከም' : 'No inquiries sent yet'}</p>
           <p className="text-sm text-neutral-400 mt-1 mb-5">Browse properties and contact sellers you are interested in.</p>
           <Link
             href={`/${lang}/properties`}

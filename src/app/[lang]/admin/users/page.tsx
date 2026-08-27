@@ -57,7 +57,7 @@ export default function AdminUsersPage({ params }: { params: Promise<{ lang: str
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <div>
           <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Admin</p>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">User Management</h1>
+          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-0.5">{lang === 'am' ? 'የተጠቃሚዎች አስተዳደር' : 'User Management'}</h1>
         </div>
         <Link href={`/${lang}/admin/dashboard`}
           className="text-xs font-semibold text-neutral-500 hover:text-red-600 transition">← Dashboard</Link>
@@ -69,7 +69,7 @@ export default function AdminUsersPage({ params }: { params: Promise<{ lang: str
           type="text"
           value={search}
           onChange={e => { setSearch(e.target.value); setPage(1); }}
-          placeholder="Search by name or email…"
+          placeholder="{lang === 'am' ? 'በስም ወይም በኢሜል ይፈልጉ...' : 'Search by name or email…'}"
           className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-red-500 transition"
         />
         <select
@@ -77,7 +77,7 @@ export default function AdminUsersPage({ params }: { params: Promise<{ lang: str
           onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
           className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl px-4 py-2.5 text-sm text-neutral-900 dark:text-white focus:outline-none focus:border-red-500 transition"
         >
-          <option value="">All Roles</option>
+          <option value="">{lang === 'am' ? 'ሁሉም የኃላፊነት ድርሻዎች' : 'All Roles'}</option>
           {['BUYER', 'SELLER', 'ADMIN', 'AGENCY_ADMIN', 'AGENCY_AGENT'].map(r => (
             <option key={r} value={r}>{r}</option>
           ))}
@@ -97,7 +97,7 @@ export default function AdminUsersPage({ params }: { params: Promise<{ lang: str
         ) : error ? (
           <p className="p-8 text-center text-sm text-red-600">{error}</p>
         ) : users.length === 0 ? (
-          <p className="p-8 text-center text-sm text-neutral-500">No users found.</p>
+          <p className="p-8 text-center text-sm text-neutral-500">{lang === 'am' ? 'ምንም ተጠቃሚ አልተገኘም።' : 'No users found.'}</p>
         ) : (
           <>
             <div className="overflow-x-auto">
@@ -144,7 +144,7 @@ export default function AdminUsersPage({ params }: { params: Promise<{ lang: str
                       <td className="px-4 py-3">
                         <Link href={`/${lang}/admin/users/${user.id}`}
                           className="px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-xs font-bold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition">
-                          👁 View
+                          👁 {lang === 'am' ? 'ተመልከት' : 'View'}
                         </Link>
                       </td>
                     </tr>

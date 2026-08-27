@@ -14,7 +14,7 @@ export const useAuth = () => {
   // Validate session on first mount if token exists but user is not loaded
   // We use useCallback so it's stable across renders
   const validateSession = useCallback(async () => {
-    if (!token || user) return;
+    if (!token) return;
     try {
       const res = await authService.getMe() as any;
       if (res?.user) {
@@ -25,7 +25,7 @@ export const useAuth = () => {
     } catch {
       logout();
     }
-  }, [token, user, setAuth, logout]);
+  }, [token, setAuth, logout]);
 
   // Run session validation once on mount
   // The component using this hook should call validateSession in a useEffect
