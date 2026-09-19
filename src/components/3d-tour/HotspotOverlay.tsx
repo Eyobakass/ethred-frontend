@@ -51,9 +51,9 @@ export const HotspotOverlay: React.FC<HotspotOverlayProps> = ({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onCancel(); }}
     >
-      <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-red-600 dark:border-red-600/40 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+      <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-red-600 dark:border-red-600/40 rounded-lg p-6 shadow-lg animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-red-600 dark:text-red-400">📍 Author 3D Hotspot Pin</h3>
+          <h3 className="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Author 3D Hotspot Pin</h3>
           <button
             onClick={onCancel}
             className="text-neutral-500 hover:text-neutral-900 dark:text-white transition"
@@ -65,7 +65,7 @@ export const HotspotOverlay: React.FC<HotspotOverlayProps> = ({
           </button>
         </div>
 
-        <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700">
+        <div className="flex items-center gap-3 mb-4 p-3 rounded-md bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700">
           <span className="text-xs text-neutral-600 dark:text-neutral-400 font-mono">
             Pitch: <span className="text-red-600 dark:text-red-400">{pitch.toFixed(2)}°</span>
           </span>
@@ -83,24 +83,24 @@ export const HotspotOverlay: React.FC<HotspotOverlayProps> = ({
               <button
                 type="button"
                 onClick={() => setType('NAVIGATION')}
-                className={`py-2.5 text-xs font-bold rounded-xl border transition ${
+                className={`py-2.5 text-xs font-semibold rounded-md border transition flex items-center justify-center gap-1.5 ${
                   type === 'NAVIGATION'
-                    ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600 shadow-lg shadow-red-600 dark:shadow-red-600/20'
-                    : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:border-neutral-600'
+                    ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600 shadow-sm'
+                    : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:border-neutral-400'
                 }`}
               >
-                🚪 Room Doorway
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg> Room Doorway
               </button>
               <button
                 type="button"
                 onClick={() => setType('INFO')}
-                className={`py-2.5 text-xs font-bold rounded-xl border transition ${
+                className={`py-2.5 text-xs font-semibold rounded-md border transition flex items-center justify-center gap-1.5 ${
                   type === 'INFO'
-                    ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600 shadow-lg shadow-red-600 dark:shadow-red-600/20'
-                    : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:border-neutral-600'
+                    ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600 shadow-sm'
+                    : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:border-neutral-400'
                 }`}
               >
-                ℹ️ Info Tag
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> Info Tag
               </button>
             </div>
           </div>
@@ -112,14 +112,14 @@ export const HotspotOverlay: React.FC<HotspotOverlayProps> = ({
                 Target Room Scene
               </label>
               {availableScenes.length === 0 ? (
-                <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 p-3 rounded-xl">
+                <p className="text-xs text-red-400 bg-red-950/50 border border-red-800 p-3 rounded-md">
                   No other scenes available. Add more panoramas first.
                 </p>
               ) : (
                 <select
                   value={targetSceneId}
                   onChange={(e) => setTargetSceneId(e.target.value)}
-                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600 transition"
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600 transition"
                 >
                   {availableScenes.map((scene) => (
                     <option key={scene.id} value={scene.id}>
@@ -143,7 +143,7 @@ export const HotspotOverlay: React.FC<HotspotOverlayProps> = ({
                 onChange={(e) => setLabel(e.target.value)}
                 placeholder="e.g. Italian Marble Floor Finish"
                 maxLength={120}
-                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600 transition"
+                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600 transition"
                 required
               />
             </div>
@@ -153,13 +153,13 @@ export const HotspotOverlay: React.FC<HotspotOverlayProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-semibold hover:bg-neutral-100 dark:bg-neutral-700 transition"
+              className="px-4 py-2 rounded-md bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-semibold hover:bg-neutral-100 dark:hover:bg-neutral-700 transition border border-neutral-200 dark:border-neutral-700"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 rounded-xl bg-red-600 dark:bg-red-600 text-white text-xs font-bold hover:bg-red-500 dark:bg-red-500 transition shadow-lg shadow-red-600 dark:shadow-red-600/20"
+              className="px-5 py-2.5 rounded-md bg-red-600 dark:bg-red-600 text-white text-xs font-semibold hover:bg-red-500 dark:bg-red-500 transition shadow-sm"
             >
               Save Pin
             </button>

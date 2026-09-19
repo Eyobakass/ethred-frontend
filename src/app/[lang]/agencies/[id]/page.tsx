@@ -39,7 +39,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
   if (isLoading) {
     return (
       <div className="py-32 flex justify-center">
-        <div className="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin" />
       </div>
     );
   }
@@ -49,8 +49,8 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
       <div className="py-20 text-center">
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">{lang === 'am' ? 'ኤጀንሲው አልተገኘም' : 'Agency not found'}</h1>
         <p className="text-neutral-500 mb-6">{error || 'The agency you are looking for does not exist or has been removed.'}</p>
-        <Link href={`/${lang}/agencies`} className="text-red-600 font-bold hover:underline">
-          ← Back to Agencies
+        <Link href={`/${lang}/agencies`} className="text-red-600 font-semibold hover:underline flex items-center gap-1 justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg> Back to Agencies
         </Link>
       </div>
     );
@@ -59,26 +59,23 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
       {/* Header Profile */}
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 shadow-sm relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-
-        <div className="w-32 h-32 rounded-2xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-inner border border-neutral-200 dark:border-neutral-700 relative z-10">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-8 flex flex-col md:flex-row items-center gap-8 shadow-sm">
+        <div className="w-32 h-32 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center flex-shrink-0 overflow-hidden border border-neutral-200 dark:border-neutral-700 relative z-10 text-neutral-400">
           {agency.logo_url ? (
             <img src={agency.logo_url} alt={agency.agency_name} className="w-full h-full object-cover" />
           ) : (
-            <span className="text-5xl">🏢</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg>
           )}
         </div>
 
         <div className="flex-1 text-center md:text-left relative z-10">
           <div className="flex flex-col md:flex-row items-center gap-3 mb-2">
-            <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
               {agency.agency_name}
             </h1>
             {agency.is_approved && (
-              <span className="px-3 py-1 bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-                ✅ Verified Agency
+              <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-semibold rounded-md border border-emerald-200 dark:border-emerald-800/50 flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Verified Agency
               </span>
             )}
           </div>
@@ -110,8 +107,8 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ lang: s
         </div>
 
         {listings.length === 0 ? (
-          <div className="bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-2xl py-20 text-center">
-            <p className="text-4xl mb-4">🏠</p>
+          <div className="bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-lg py-20 flex flex-col items-center text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-300 dark:text-neutral-600 mb-4"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{lang === 'am' ? 'ምንም ገቢር ንብረቶች የሉም' : 'No active listings'}</h3>
             <p className="text-neutral-500 text-sm">This agency currently has no properties available for sale or rent.</p>
           </div>

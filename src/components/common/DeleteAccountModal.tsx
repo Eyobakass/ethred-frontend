@@ -37,9 +37,9 @@ export const DeleteAccountModal: React.FC<Props> = ({ isOpen, onClose, lang }) =
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-neutral-200 dark:border-neutral-800">
-        <h3 className="text-xl font-bold text-red-600 dark:text-red-400 mb-2">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4">
+      <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 sm:p-8 max-w-sm w-full shadow-lg border border-neutral-200 dark:border-neutral-800">
+        <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-2">
           {lang === 'am' ? 'አካውንት ሰርዝ' : 'Delete Account'}
         </h3>
         <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
@@ -55,7 +55,7 @@ export const DeleteAccountModal: React.FC<Props> = ({ isOpen, onClose, lang }) =
               type="text"
               value={deleteConfirm}
               onChange={(e) => setDeleteConfirm(e.target.value)}
-              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-red-300 dark:border-red-800/50 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
+              className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-red-300 dark:border-red-800/50 rounded-md focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
             />
           </div>
 
@@ -68,14 +68,14 @@ export const DeleteAccountModal: React.FC<Props> = ({ isOpen, onClose, lang }) =
           <div className="flex items-center gap-3 justify-end pt-2">
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+              className="px-4 py-2 rounded-md font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
             >
               {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
             </button>
             <button
               onClick={handleDeleteAccount}
               disabled={deleteConfirm !== 'DELETE' || isDeleting}
-              className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-600/20"
+              className="px-4 py-2 rounded-md font-semibold text-sm bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isDeleting ? (lang === 'am' ? 'በመሰረዝ ላይ...' : 'Deleting...') : (lang === 'am' ? 'ሰርዝ' : 'Delete')}
             </button>

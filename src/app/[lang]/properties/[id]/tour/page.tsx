@@ -114,29 +114,29 @@ export default function VirtualTourPage({
       <div className="flex-1 w-full max-w-6xl mx-auto px-4 py-6 relative flex flex-col justify-center">
         {tourError ? (
           <div className="flex items-center justify-center h-[550px]">
-            <div className="text-center space-y-4 max-w-md">
-              <div className="text-5xl">⚠️</div>
+            <div className="text-center space-y-4 max-w-md flex flex-col items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               <p className="text-red-600 dark:text-red-400 font-semibold">{tourError}</p>
-              <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
+              <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2.5 rounded-md bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
             </div>
           </div>
         ) : !tourConfig ? (
           <div className="flex items-center justify-center h-[550px]">
-            <div className="text-center space-y-3">
-              <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="text-red-600 dark:text-red-400 text-sm font-semibold">{lang === 'am' ? 'የ3D ገጽታውን በማዘጋጀት ላይ...' : 'Loading 3D Scene Graph...'}</p>
+            <div className="text-center space-y-4">
+              <div className="w-10 h-10 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin mx-auto" />
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm font-semibold">{lang === 'am' ? 'የ3D ገጽታውን በማዘጋጀት ላይ...' : 'Loading 3D Scene Graph...'}</p>
             </div>
           </div>
         ) : Object.keys(tourConfig.scenes).length === 0 ? (
           <div className="flex items-center justify-center h-[550px]">
-            <div className="text-center space-y-4 max-w-md">
-              <div className="text-5xl">❌</div>
+            <div className="text-center space-y-4 max-w-md flex flex-col items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
               <p className="text-neutral-600 dark:text-neutral-400 font-semibold">{lang === 'am' ? 'ለዚህ ንብረት ምንም የ3D ጉብኝት አልተዘጋጀም።' : 'No virtual tour available for this property.'}</p>
-              <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
+              <Link href={`/${lang}/properties/${propertyId}`} className="inline-block mt-4 px-6 py-2.5 rounded-md bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold text-sm hover:bg-neutral-300 dark:hover:bg-neutral-700 transition">Go Back</Link>
             </div>
           </div>
         ) : (
-          <div className="relative rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-2xl">
+          <div className="relative rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-sm">
             {/* Scene selector toolbar */}
             <SceneSelectorToolbar
               scenes={Object.entries(tourConfig.scenes).map(([id, scene]) => ({

@@ -69,19 +69,19 @@ export default function ComparePropertiesPage({
     { label: lang === 'am' ? 'ምድብ' : 'Category', render: (p: Property) => p.category },
     { label: lang === 'am' ? 'ሽያጭ / ኪራይ' : 'Sale / Rent', render: (p: Property) => p.transaction_mode },
     { label: lang === 'am' ? 'ክፍለ ከተማ' : 'Sub-City', render: (p: Property) => `${p.sub_city}, ${p.city}` },
-    { label: lang === 'am' ? 'መኝታ ቤቶች' : 'Bedrooms', render: (p: Property) => `🛏️ ${p.bedrooms}` },
-    { label: lang === 'am' ? 'መታጠቢያ ቤቶች' : 'Bathrooms', render: (p: Property) => `🚿 ${p.bathrooms}` },
+    { label: lang === 'am' ? 'መኝታ ቤቶች' : 'Bedrooms', render: (p: Property) => p.bedrooms.toString() },
+    { label: lang === 'am' ? 'መታጠቢያ ቤቶች' : 'Bathrooms', render: (p: Property) => p.bathrooms.toString() },
     { label: lang === 'am' ? 'ስፋት' : 'Area', render: (p: Property) => `${p.area_sqm} m²` },
-    { label: '3D Tour', render: (p: Property) => p.media?.some((m) => m.is_tour_scene) ? '✅ Yes' : '❌ No' },
+    { label: '3D Tour', render: (p: Property) => p.media?.some((m) => m.is_tour_scene) ? 'Yes' : 'No' },
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <div className="border-b border-neutral-200 dark:border-neutral-800 pb-6">
-        <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
-          ⚖️ Side-by-Side Comparison
+        <div className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1 flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg> Side-by-Side Comparison
         </div>
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'ቤቶችን ያወዳድሩ' : 'Compare Properties'}
         </h1>
         <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
@@ -96,7 +96,7 @@ export default function ComparePropertiesPage({
         {compareSlots.map((prop, i) => (
           <div
             key={i}
-            className={`rounded-2xl border p-4 min-h-[120px] flex flex-col items-center justify-center gap-2 transition cursor-pointer ${
+            className={`rounded-lg border p-4 min-h-[120px] flex flex-col items-center justify-center gap-2 transition cursor-pointer ${
               prop
                 ? 'bg-white dark:bg-neutral-900 border-red-600 dark:border-red-600/40'
                 : activeSlot === i
@@ -110,7 +110,7 @@ export default function ComparePropertiesPage({
                 <img
                   src={getImageUrl(prop.media?.[0]?.file_url ?? 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=400&q=60')}
                   alt={prop.title_en}
-                  className="w-full h-24 object-cover rounded-lg"
+                  className="w-full h-24 object-cover rounded-md"
                 />
                 <p className="text-xs font-bold text-neutral-900 dark:text-white text-center line-clamp-1">{prop.title_en}</p>
                 <button
@@ -122,7 +122,7 @@ export default function ComparePropertiesPage({
               </>
             ) : (
               <>
-                <span className="text-2xl">{activeSlot === i ? '🔍' : '➕'}</span>
+                <span className="text-2xl text-neutral-400">{activeSlot === i ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/></svg> : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>}</span>
                 <p className="text-xs text-neutral-500">
                   {activeSlot === i ? 'Search below and click a result' : `Add Property ${i + 1}`}
                 </p>
@@ -134,7 +134,7 @@ export default function ComparePropertiesPage({
 
       {/* Search panel (shown when a slot is active) */}
       {activeSlot !== null && (
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 space-y-3">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 space-y-3">
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -142,18 +142,18 @@ export default function ComparePropertiesPage({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               placeholder={lang === 'am' ? 'ቤት ፈልግ...' : 'Search for a property...'}
-              className="flex-1 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
+              className="flex-1 bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
             />
             <button
               onClick={handleSearch}
               disabled={searching}
-              className="px-4 py-2 rounded-xl bg-red-600 dark:bg-red-600 text-white text-xs font-bold"
+              className="px-4 py-2 rounded-md bg-red-600 dark:bg-red-600 text-white text-xs font-semibold"
             >
               {searching ? '...' : 'Search'}
             </button>
             <button
               onClick={() => { setActiveSlot(null); setSearchResults([]); }}
-              className="px-3 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs"
+              className="px-3 py-2 rounded-md bg-neutral-50 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs"
             >
               Cancel
             </button>
@@ -164,9 +164,9 @@ export default function ComparePropertiesPage({
                 <button
                   key={p.id}
                   onClick={() => assignToSlot(p)}
-                  className="w-full flex items-center gap-3 p-3 text-left hover:bg-neutral-50 dark:bg-neutral-800 transition rounded-lg"
+                  className="w-full flex items-center gap-3 p-3 text-left hover:bg-neutral-50 dark:hover:bg-neutral-800 transition rounded-md"
                 >
-                  <img src={getImageUrl(p.media?.[0]?.file_url ?? '')} alt="" className="w-12 h-10 object-cover rounded-lg" />
+                  <img src={getImageUrl(p.media?.[0]?.file_url ?? '')} alt="" className="w-12 h-10 object-cover rounded-md" />
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-neutral-900 dark:text-white truncate">{p.title_en}</p>
                     <p className="text-[10px] text-neutral-600 dark:text-neutral-400">{p.sub_city} · {formatCurrency(Number(p.price_etb), 'ETB', lang)}</p>
@@ -180,7 +180,7 @@ export default function ComparePropertiesPage({
 
       {/* Comparison table */}
       {filledSlots.length >= 2 && (
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-x-auto">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-x-auto shadow-sm">
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-neutral-200 dark:border-neutral-800">
@@ -201,7 +201,7 @@ export default function ComparePropertiesPage({
             </thead>
             <tbody>
               {rowDef.map((row) => (
-                <tr key={row.label} className="border-b border-neutral-200 dark:border-neutral-800/50 hover:bg-neutral-50 dark:bg-neutral-800/30 transition">
+                <tr key={row.label} className="border-b border-neutral-200 dark:border-neutral-800/50 hover:bg-neutral-50 hover:dark:bg-neutral-800/30 transition">
                   <td className="p-4 text-neutral-600 dark:text-neutral-400 font-semibold">{row.label}</td>
                   {compareSlots.map((prop, i) => (
                     <td key={i} className="p-4 text-center text-neutral-900 dark:text-white font-medium">
@@ -217,9 +217,10 @@ export default function ComparePropertiesPage({
                     {prop && (
                       <Link
                         href={`/${lang}/properties/${prop.id}/tour`}
-                        className="inline-flex px-3 py-1.5 rounded-lg bg-red-600 dark:bg-red-600 text-white text-xs font-bold"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-600 dark:bg-red-600 text-white text-xs font-semibold hover:bg-red-500 transition"
                       >
-                        🥽 3D Tour
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"/><path d="M7 3.34V5a3 3 0 0 0 3 3v0a2 2 0 0 1 2 2v0a2 2 0 0 1 2-2v0a3 3 0 0 0 3-3V3.34"/><path d="M11 20.68V19a2 2 0 0 1 2-2v0a2 2 0 0 1 2 2v1.68"/><path d="M2.46 9H7a2 2 0 0 1 2 2v0a2 2 0 0 0 2 2v0a2 2 0 0 0 2-2v0a2 2 0 0 1 2-2h4.54"/><path d="M17 19.66V21a2 2 0 0 1-2 2v0a2 2 0 0 1-2-2v-1.34"/><path d="M21.54 9H17a2 2 0 0 0-2 2v0a2 2 0 0 1-2-2v0a2 2 0 0 1 2-2v0a2 2 0 0 0-2-2h4.54"/></svg>
+                        3D Tour
                       </Link>
                     )}
                   </td>

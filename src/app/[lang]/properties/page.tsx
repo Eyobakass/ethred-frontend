@@ -6,6 +6,7 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { Property } from '@/types/property.types';
 import { propertyService } from '@/services/property.service';
 import { PropertyGrid } from '@/components/properties/PropertyGrid';
+import { PropertyMap } from '@/components/properties/PropertyMap';
 import { FilterSidebar } from '@/components/properties/FilterSidebar';
 import { useFilterStore } from '@/store/useFilterStore';
 
@@ -17,6 +18,7 @@ function PropertiesSearchContent({ lang }: { lang: 'en' | 'am' }) {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
   // Hydrate from URL on mount
   useEffect(() => {
@@ -134,15 +136,55 @@ function PropertiesSearchContent({ lang }: { lang: 'en' | 'am' }) {
       <div className="lg:col-span-3">
         {loading ? (
           <div className="py-20 text-center text-neutral-600 dark:text-neutral-400">
-            <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <div className="w-10 h-10 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin mx-auto mb-3" />
             <span className="text-sm">Searching listings...</span>
           </div>
         ) : (
           <>
-            <div className="text-xs text-neutral-500 mb-4">
-              {properties.length} {lang === 'am' ? 'ቤቶች ተገኙ' : 'properties found'}
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-xs text-neutral-500">
+                {properties.length} {lang === 'am' ? 'ቤቶች ተገኙ' : 'properties found'}
+              </div>
+
+              {/* View Toggle (Grid vs Interactive Map - SRS REQ-SRCH-02) */}
+              <div className="flex items-center bg-neutral-100 dark:bg-neutral-800 p-1 rounded-lg border border-neutral-200 dark:border-neutral-700 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('grid')}
+                  className={`px-3 py-1 rounded-md font-semibold transition flex items-center gap-1.5 ${
+                    viewMode === 'grid'
+                      ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white shadow-xs'
+                      : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                  <span>{lang === 'am' ? 'ዝርዝር' : 'Grid'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('map')}
+                  className={`px-3 py-1 rounded-md font-semibold transition flex items-center gap-1.5 ${
+                    viewMode === 'map'
+                      ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white shadow-xs'
+                      : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-white'
+                  }`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="18" y2="22"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+                  <span>{lang === 'am' ? 'ካርታ' : 'Map'}</span>
+                </button>
+              </div>
             </div>
-            <PropertyGrid properties={properties} lang={lang} />
+
+            {viewMode === 'map' ? (
+              <PropertyMap
+                properties={properties}
+                lang={lang}
+                selectedSubCity={filters.sub_city}
+                onSelectSubCity={(subCity) => filters.setFilter('sub_city', subCity)}
+              />
+            ) : (
+              <PropertyGrid properties={properties} lang={lang} />
+            )}
           </>
         )}
       </div>
@@ -157,7 +199,7 @@ export default function PropertiesSearchPage({ params }: { params: Promise<{ lan
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       <div className="border-b border-neutral-200 dark:border-neutral-800 pb-4">
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'የሚሸጡ እና የሚከራዩ ቤቶች' : 'Property Discovery & Search'}
         </h1>
         <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">
@@ -169,7 +211,7 @@ export default function PropertiesSearchPage({ params }: { params: Promise<{ lan
 
       <Suspense fallback={
         <div className="py-20 text-center text-neutral-600 dark:text-neutral-400">
-          <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+          <div className="w-10 h-10 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin mx-auto mb-3" />
           <span className="text-sm">Loading search...</span>
         </div>
       }>

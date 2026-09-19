@@ -27,7 +27,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
       <div className="py-20 text-center">
         <p className="text-sm font-semibold text-neutral-600 mb-4">{lang === 'am' ? 'ኤጀንሲ ለመመዝገብ እባክዎ ይግቡ።' : 'Please log in to register an agency.'}</p>
         <Link href={`/${lang}/auth/login?returnUrl=/${lang}/agencies/apply`}
-          className="px-6 py-2.5 rounded-xl bg-red-600 text-white font-bold text-sm">
+          className="px-6 py-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition">
           Log In
         </Link>
       </div>
@@ -63,14 +63,14 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
     return (
       <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-6">
         <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
-          ✓
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
         </div>
-        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">{lang === 'am' ? 'ማመልከቻው ገብቷል!' : 'Application Submitted!'}</h1>
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ማመልከቻው ገብቷል!' : 'Application Submitted!'}</h1>
         <p className="text-neutral-500 text-sm">
           Thank you for registering <strong>{agencyName}</strong>. Our administrative team will review your application and business license within 2–3 business days. You will be notified via email once approved.
         </p>
         <div className="pt-4">
-          <Link href={`/${lang}/`} className="px-6 py-3 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white font-bold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700 transition">
+          <Link href={`/${lang}/`} className="px-6 py-3 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700 transition">
             Return to Homepage
           </Link>
         </div>
@@ -82,8 +82,8 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
     <div className="max-w-2xl mx-auto px-4 py-12 space-y-8">
       {/* Header */}
       <div className="text-center space-y-2">
-        <p className="text-xs font-bold text-red-500 uppercase tracking-widest">For Businesses</p>
-        <h1 className="text-3xl font-extrabold text-neutral-900 dark:text-white">{lang === 'am' ? 'ኤጀንሲዎን ይመዝገቡ' : 'Register Your Agency'}</h1>
+        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">For Businesses</p>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ኤጀንሲዎን ይመዝገቡ' : 'Register Your Agency'}</h1>
         <p className="text-neutral-500 text-sm">Join the platform to manage multiple agents and listings under one company brand.</p>
       </div>
 
@@ -101,10 +101,10 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
         ))}
       </div>
 
-      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 md:p-8 shadow-sm">
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-6 md:p-8 shadow-sm">
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm font-semibold border border-red-100 dark:border-red-900/50">
-            ⚠ {error}
+          <div className="mb-6 p-4 rounded-md bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm font-semibold border border-red-100 dark:border-red-900/50 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg> {error}
           </div>
         )}
 
@@ -119,14 +119,14 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
                 value={agencyName}
                 onChange={(e) => setAgencyName(e.target.value)}
                 placeholder="e.g. Addis Premier Real Estate"
-                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition"
+                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-red-500 transition"
               />
             </div>
             <div className="flex justify-end pt-4">
               <button
                 onClick={() => setStep(2)}
                 disabled={agencyName.trim().length < 3}
-                className="px-6 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm disabled:opacity-50 transition">
+                className="px-6 py-2.5 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50 transition">
                 Next Step →
               </button>
             </div>
@@ -141,7 +141,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
             
             <div 
               onClick={() => licenseInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition ${
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition flex flex-col items-center justify-center ${
                 licenseFile ? 'border-red-500 bg-red-50/50 dark:bg-red-950/20' : 'border-neutral-300 dark:border-neutral-700 hover:border-red-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
               }`}>
               <input
@@ -151,8 +151,14 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
                 onChange={handleFileChange}
                 className="hidden"
               />
-              <div className="text-4xl mb-3">{licenseFile ? '📄' : '📁'}</div>
-              <p className="text-sm font-bold text-neutral-900 dark:text-white">
+              <div className="text-neutral-400 dark:text-neutral-500 mb-3">
+                {licenseFile ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                )}
+              </div>
+              <p className="text-sm font-semibold text-neutral-900 dark:text-white">
                 {licenseFile ? licenseFile.name : 'Click to upload business license'}
               </p>
               {licenseFile && (
@@ -163,13 +169,13 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
             <div className="flex justify-between pt-4">
               <button
                 onClick={() => setStep(1)}
-                className="px-6 py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold text-sm hover:bg-neutral-200 transition">
+                className="px-6 py-2.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-200 transition">
                 ← Back
               </button>
               <button
                 onClick={() => setStep(3)}
                 disabled={!licenseFile}
-                className="px-6 py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm disabled:opacity-50 transition">
+                className="px-6 py-2.5 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50 transition">
                 Review →
               </button>
             </div>
@@ -181,7 +187,7 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
           <div className="space-y-6">
             <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ገምግም እና ላክ' : 'Review & Submit'}</h2>
             
-            <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-2xl p-5 space-y-4 border border-neutral-100 dark:border-neutral-800">
+            <div className="bg-neutral-50 dark:bg-neutral-800/50 rounded-lg p-5 space-y-4 border border-neutral-100 dark:border-neutral-800">
               <div>
                 <p className="text-xs font-bold text-neutral-500 uppercase">Agency Name</p>
                 <p className="font-semibold text-neutral-900 dark:text-white mt-1">{agencyName}</p>
@@ -189,7 +195,8 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
               <div>
                 <p className="text-xs font-bold text-neutral-500 uppercase">Attached Document</p>
                 <p className="font-semibold text-neutral-900 dark:text-white mt-1 flex items-center gap-2">
-                  📄 {licenseFile?.name}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  {licenseFile?.name}
                 </p>
               </div>
               <div>
@@ -207,13 +214,13 @@ export default function AgencyApplyPage({ params }: { params: Promise<{ lang: st
               <button
                 onClick={() => setStep(2)}
                 disabled={isSubmitting}
-                className="px-6 py-2.5 rounded-xl bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold text-sm hover:bg-neutral-200 transition">
+                className="px-6 py-2.5 rounded-md bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-semibold text-sm hover:bg-neutral-200 transition">
                 ← Edit
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="px-8 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-sm disabled:opacity-50 transition shadow-lg shadow-red-600/20">
+                className="px-8 py-2.5 rounded-md bg-red-600 hover:bg-red-500 text-white font-semibold text-sm disabled:opacity-50 transition shadow-sm">
                 {isSubmitting ? 'Submitting...' : 'Submit Application'}
               </button>
             </div>

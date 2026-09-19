@@ -49,12 +49,12 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-2xl shadow-2xl space-y-6">
+      <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-xl shadow-lg space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
             {lang === 'am' ? 'አካውንት ይፍጠሩ' : 'Create an Account'}
           </h1>
-          <p className="text-xs text-neutral-600 dark:text-neutral-400">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {lang === 'am' 
               ? 'ንብረቶችን ለማየት ወይም ለማስተዋወቅ በኢሜልዎ ይመዝገቡ።' 
               : 'Sign up with your email to start browsing or listing properties.'}
@@ -62,14 +62,14 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
         </div>
 
         {error && (
-          <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl text-center">
+          <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-sm rounded-md text-center">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {lang === 'am' ? 'የአካውንት አይነት' : 'Account Type'}
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -78,9 +78,9 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
                   key={r}
                   type="button"
                   onClick={() => setRole(r)}
-                  className={`py-2 text-xs font-bold rounded-lg border transition ${
+                  className={`py-2 text-xs font-semibold rounded-md border transition ${
                     role === r
-                      ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600 shadow-lg shadow-red-600 dark:shadow-red-600/20'
+                      ? 'bg-red-600 text-white border-red-600'
                       : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:border-neutral-500'
                   }`}
                 >
@@ -93,7 +93,7 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {lang === 'am' ? 'ሙሉ ስም' : 'Full Name'}
             </label>
             <input
@@ -101,13 +101,13 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder={lang === 'am' ? 'አበበ በሶበላ' : 'John Doe'}
-              className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
+              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {lang === 'am' ? 'የኢሜል አድራሻ' : 'Email Address'}
             </label>
             <input
@@ -115,13 +115,13 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
+              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {lang === 'am' ? 'የይለፍ ቃል' : 'Password'}
             </label>
             <input
@@ -130,7 +130,7 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               minLength={8}
-              className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
+              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
               required
             />
           </div>
@@ -138,7 +138,7 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600 dark:shadow-red-600/20 transition disabled:opacity-50"
+            className="w-full py-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition disabled:opacity-50"
           >
             {loading 
               ? (lang === 'am' ? 'በመመዝገብ ላይ...' : 'Creating account...') 
@@ -146,7 +146,7 @@ export default function RegisterPage({ params }: { params: Promise<{ lang: strin
           </button>
         </form>
 
-        <div className="text-center text-xs text-neutral-600 dark:text-neutral-400">
+        <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
           {lang === 'am' ? 'አካውንት አለዎት? ' : 'Already have an account? '}
           <Link href={`/${lang}/auth/login`} className="text-red-600 dark:text-red-400 font-semibold hover:underline">
             {lang === 'am' ? 'ይግቡ' : 'Sign In'}

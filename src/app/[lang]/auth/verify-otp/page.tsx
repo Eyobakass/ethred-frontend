@@ -5,6 +5,7 @@ import React, { useState, use, useRef, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authService } from '@/services/auth.service';
 import { useAuthStore } from '@/store/useAuthStore';
+import { MailCheck, CheckCircle2 } from 'lucide-react';
 
 function VerifyOtpContent({ lang }: { lang: 'en' | 'am' }) {
   const router = useRouter();
@@ -93,15 +94,15 @@ function VerifyOtpContent({ lang }: { lang: 'en' | 'am' }) {
   };
 
   return (
-    <div className="w-full max-w-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-2xl shadow-2xl space-y-6">
+    <div className="w-full max-w-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-xl shadow-lg space-y-6">
       <div className="text-center space-y-2">
-        <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-red-700 to-red-500 flex items-center justify-center shadow-lg shadow-red-600 dark:shadow-red-600/20 mb-3">
-          <span className="text-2xl">✉️</span>
+        <div className="mx-auto w-12 h-12 bg-red-50 dark:bg-red-950/30 rounded-full flex items-center justify-center mb-4">
+          <MailCheck className="text-red-600 dark:text-red-400 w-6 h-6" />
         </div>
-        <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">
+        <h1 className="text-xl font-bold text-neutral-900 dark:text-white">
           {lang === 'am' ? 'የኢሜል ኮድ ያስገቡ' : 'Enter Verification Code'}
         </h1>
-        <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed">
           {lang === 'am'
             ? 'ወደ ኢሜልዎ የተላከ 6-አሃዝ ኮድ ያስገቡ'
             : 'Enter the 6-digit code sent to your email address.'}
@@ -109,13 +110,13 @@ function VerifyOtpContent({ lang }: { lang: 'en' | 'am' }) {
       </div>
 
       {error && (
-        <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl text-center">
+        <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-sm rounded-md text-center">
           {error}
         </div>
       )}
       {resent && (
-        <div className="p-3 bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs rounded-xl text-center">
-          ✅ A new code has been sent (demo mode).
+        <div className="flex items-center gap-2 justify-center p-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400 text-sm rounded-md text-center">
+          <CheckCircle2 size={16} /> A new code has been sent (demo mode).
         </div>
       )}
 
@@ -132,10 +133,10 @@ function VerifyOtpContent({ lang }: { lang: 'en' | 'am' }) {
             onChange={(e) => handleDigitChange(index, e.target.value)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             disabled={loading}
-            className={`w-11 h-12 text-center text-lg font-bold rounded-xl border transition-all focus:outline-none ${
+            className={`w-11 h-12 text-center text-lg font-bold rounded-md border transition-all focus:outline-none focus:ring-2 focus:ring-red-600 ${
               digit
-                ? 'border-red-600 dark:border-red-600 bg-red-600 dark:bg-red-600/10 text-red-600 dark:text-red-400'
-                : 'border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-white focus:border-red-600 dark:border-red-600'
+                ? 'border-red-600 dark:border-red-600/50 bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400'
+                : 'border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-white'
             } disabled:opacity-50`}
           />
         ))}
@@ -144,12 +145,12 @@ function VerifyOtpContent({ lang }: { lang: 'en' | 'am' }) {
       <button
         onClick={() => handleVerify(code)}
         disabled={loading || code.length !== 6}
-        className="w-full py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600 dark:shadow-red-600/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {loading ? (lang === 'am' ? 'በማረጋገጥ ላይ...' : 'Verifying...') : (lang === 'am' ? 'ያረጋግጡ እና ይቀጥሉ' : 'Verify & Continue')}
       </button>
 
-      <div className="text-center text-xs text-neutral-500">
+      <div className="text-center text-sm text-neutral-500">
         {lang === 'am' ? 'ኮድ አልደረሰዎትም?' : "Didn't receive the code?"}{' '}
         <button
           onClick={handleResend}
@@ -173,7 +174,7 @@ export default function VerifyOtpPage({
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <Suspense fallback={
-        <div className="w-full max-w-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-2xl shadow-2xl space-y-6 text-center">
+        <div className="w-full max-w-sm bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-xl shadow-lg space-y-6 text-center">
            <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
            <p className="text-sm text-neutral-600 dark:text-neutral-400">
              {lang === 'am' ? 'በመጫን ላይ...' : 'Loading...'}

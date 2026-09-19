@@ -7,12 +7,15 @@ import { useRouter } from 'next/navigation';
 import { agencyService } from '@/services/agency.service';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AgencyEmployee } from '@/types/index';
+import { useConfirm } from '@/hooks/useConfirm';
+import { ConfirmModal } from '@/components/common/ConfirmModal';
 
 export default function AgencyDashboardPage({ params }: { params: Promise<{ lang: string; id: string }> }) {
   const { lang: rawLang, id } = use(params);
   const lang = rawLang === 'am' ? 'am' : 'en';
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
+  const { confirm, ConfirmProps } = useConfirm();
 
   const [analytics, setAnalytics] = useState<any | null>(null);
   const [employees, setEmployees] = useState<AgencyEmployee[]>([]);
@@ -78,7 +81,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
   };
 
   const handleRemoveEmployee = async (userId: string) => {
-    if (!window.confirm('Are you sure you want to remove this employee?')) return;
+    if (!(await confirm({ message: 'Are you sure you want to remove this employee?', confirmLabel: 'Remove' }))) return;
     setActionLoadingId(userId);
     try {
       await agencyService.removeEmployee(id, userId);
@@ -114,7 +117,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
   if (isLoading) {
     return (
       <div className="py-32 flex justify-center">
-        <div className="w-10 h-10 border-4 border-red-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin" />
       </div>
     );
   }
@@ -128,31 +131,31 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
       {/* Header */}
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <div>
-          <p className="text-xs font-bold text-red-500 uppercase tracking-widest">Agency Admin</p>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white mt-1">{lang === 'am' ? 'የኤጀንሲ ማጠቃለያ' : 'Agency Dashboard'}</h1>
+          <p className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Agency Admin</p>
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mt-1">{lang === 'am' ? 'የኤጀንሲ ማጠቃለያ' : 'Agency Dashboard'}</h1>
         </div>
-        <Link href={`/${lang}/agencies/${id}`} className="text-sm font-bold text-red-600 hover:underline">
-          View Public Profile ↗
+        <Link href={`/${lang}/agencies/${id}`} className="text-sm font-semibold text-red-600 hover:underline flex items-center gap-1">
+          View Public Profile <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
         </Link>
       </div>
 
       {/* Analytics Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-5 shadow-sm">
           <p className="text-xs font-bold text-neutral-500 uppercase">Total Listings</p>
-          <p className="text-3xl font-extrabold text-neutral-900 dark:text-white mt-1">
+          <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
             {analytics?.total_listings ?? 0}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-5 shadow-sm">
           <p className="text-xs font-bold text-neutral-500 uppercase">Total Views</p>
-          <p className="text-3xl font-extrabold text-neutral-900 dark:text-white mt-1">
+          <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
             {analytics?.total_views ?? 0}
           </p>
         </div>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-5 shadow-sm">
           <p className="text-xs font-bold text-neutral-500 uppercase">Total Inquiries</p>
-          <p className="text-3xl font-extrabold text-neutral-900 dark:text-white mt-1">
+          <p className="text-3xl font-bold text-neutral-900 dark:text-white mt-1">
             {analytics?.total_inquiries ?? 0}
           </p>
         </div>
@@ -163,7 +166,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
         {/* Employee List */}
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የቡድን አባላት' : 'Team Members'}</h2>
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden shadow-sm">
             {employees.length === 0 ? (
               <p className="p-8 text-center text-sm text-neutral-500">{lang === 'am' ? 'ምንም የቡድን አባል አልተገኘም።' : 'No team members found.'}</p>
             ) : (
@@ -191,7 +194,8 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
                       <button
                         onClick={() => handleRemoveEmployee(emp.user_id)}
                         disabled={actionLoadingId === emp.user_id}
-                        className="px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/50 transition disabled:opacity-50">
+                        className="px-3 py-1.5 rounded-md text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/50 transition disabled:opacity-50 flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
                         {actionLoadingId === emp.user_id ? 'Removing…' : 'Remove'}
                       </button>
                     )}
@@ -205,7 +209,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
         {/* Invite Form */}
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'ወኪል ጋብዝ' : 'Invite Agent'}</h2>
-          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-sm">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-5 shadow-sm">
             <form onSubmit={handleInvite} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">User Email Address</label>
@@ -215,17 +219,17 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
                   value={inviteEmail}
                   onChange={e => setInviteEmail(e.target.value)}
                   placeholder="agent@example.com"
-                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-red-500 transition"
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md px-4 py-2.5 text-sm focus:outline-none focus:border-red-500 transition"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isInviting || !inviteEmail}
-                className="w-full py-2.5 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm disabled:opacity-50 transition">
+                className="w-full py-2.5 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50 transition">
                 {isInviting ? 'Sending Invite...' : 'Send Invite'}
               </button>
               {inviteSuccess && (
-                <p className="text-xs font-bold text-emerald-600 text-center mt-2">✅ Invite sent successfully!</p>
+                <p className="text-xs font-semibold text-emerald-600 text-center mt-2 flex items-center justify-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg> Invite sent successfully!</p>
               )}
             </form>
             <p className="text-xs text-neutral-500 mt-4 text-center">
@@ -237,7 +241,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
       {/* {lang === 'am' ? 'የኤጀንሲ መገለጫ' : 'Agency Profile'} Settings */}
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የኤጀንሲ መገለጫ' : 'Agency Profile'}</h2>
-        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-6 shadow-sm">
           <form onSubmit={handleUpdateAgency} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
@@ -247,7 +251,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
                   required
                   value={editAgencyName}
                   onChange={e => setEditAgencyName(e.target.value)}
-                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
                 />
               </div>
               <div>
@@ -256,7 +260,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
                   type="tel"
                   value={editAgencyPhone}
                   onChange={e => setEditAgencyPhone(e.target.value)}
-                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
+                  className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
                 />
               </div>
             </div>
@@ -268,7 +272,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
                 value={editAgencyWebsite}
                 onChange={e => setEditAgencyWebsite(e.target.value)}
                 placeholder="https://"
-                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
+                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition"
               />
             </div>
             
@@ -278,7 +282,7 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
                 rows={4}
                 value={editAgencyDesc}
                 onChange={e => setEditAgencyDesc(e.target.value)}
-                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition resize-none"
+                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-md px-4 py-2 text-sm focus:outline-none focus:border-red-500 transition resize-none"
               />
             </div>
 
@@ -286,12 +290,12 @@ export default function AgencyDashboardPage({ params }: { params: Promise<{ lang
               <button
                 type="submit"
                 disabled={isUpdatingAgency}
-                className="px-6 py-2 rounded-xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-bold text-sm disabled:opacity-50 transition"
+                className="px-6 py-2 rounded-md bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 font-semibold text-sm disabled:opacity-50 transition"
               >
                 {isUpdatingAgency ? 'Saving...' : 'Save Profile'}
               </button>
               {updateAgencySuccess && (
-                <span className="text-sm font-bold text-emerald-600">Profile updated successfully.</span>
+                <span className="text-sm font-semibold text-emerald-600">Profile updated successfully.</span>
               )}
             </div>
           </form>

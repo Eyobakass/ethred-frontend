@@ -8,6 +8,7 @@ import { Property } from '@/types/property.types';
 import { propertyService } from '@/services/property.service';
 import { PropertyCard } from '@/components/properties/PropertyCard';
 import { formatCurrency } from '@/utils/currency';
+import { Search } from 'lucide-react';
 
 const FALLBACK_PROPERTIES: Property[] = [
   {
@@ -123,25 +124,23 @@ export default function HomePage({
         {/* Background gradient + subtle grid */}
         <div className="absolute inset-0 bg-gradient-to-b from-neutral-50 dark:from-neutral-950 via-white dark:via-neutral-900/70 to-neutral-50 dark:to-neutral-950" />
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage:
               'linear-gradient(to right, #d4af37 1px, transparent 1px), linear-gradient(to bottom, #d4af37 1px, transparent 1px)',
             backgroundSize: '60px 60px',
           }}
         />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-red-600/10 dark:bg-red-600/5 blur-3xl rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-7 px-4">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 dark:bg-red-600/10 border border-red-200 dark:border-red-600/30 text-red-600 dark:text-red-400 text-xs font-bold">
-            <span>🏡</span>
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 text-xs font-semibold">
             <span>
               {lang === 'am' ? 'የኢትዮጵያ ቀዳሚ የሪል ስቴት መድረክ' : "Ethiopia's Premier Real Estate Platform"}
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-white leading-[1.1]">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-neutral-900 dark:text-white leading-[1.1]">
             {lang === 'am' ? <>የህልም ቤትዎን<br />በ<span className="text-red-600 dark:text-red-400">ኢትዮጵያ</span> ያግኙ</> : <>Find Your Perfect Home<br />in <span className="text-red-600 dark:text-red-400">Ethiopia</span></>
             }
           </h1>
@@ -151,22 +150,22 @@ export default function HomePage({
           </p>
 
           {/* Search bar */}
-          <div className="max-w-2xl mx-auto bg-white dark:bg-neutral-900/90 backdrop-blur-md border border-neutral-300 dark:border-neutral-700 p-2 rounded-2xl shadow-2xl">
+          <div className="max-w-2xl mx-auto bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-2 rounded-xl shadow-md">
             {/* Sale / Rent toggle */}
             <div className="flex gap-1 mb-2 px-1">
               {(['SALE', 'RENT'] as const).map((mode) => (
                 <button
                   key={mode}
                   onClick={() => setSearchMode(mode)}
-                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition ${
+                  className={`px-4 py-1.5 rounded-md text-xs font-semibold transition ${
                     searchMode === mode
-                      ? 'bg-red-600 dark:bg-red-600 text-white'
-                      : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:text-white'
+                      ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
                   }`}
                 >
                   {mode === 'SALE'
-                    ? lang === 'am' ? '🏷️ ሽያጭ' : '🏷️ For Sale'
-                    : lang === 'am' ? '🔑 ኪራይ' : '🔑 For Rent'}
+                    ? lang === 'am' ? 'ሽያጭ' : 'For Sale'
+                    : lang === 'am' ? 'ኪራይ' : 'For Rent'}
                 </button>
               ))}
             </div>
@@ -179,13 +178,13 @@ export default function HomePage({
                 placeholder={
                   lang === 'am' ? 'ቦሌ፣ የካ፣ ሲኤምሲ፣ ካዛንቺስ፣ ሀዋሳ ፈልግ...' : 'Search Bole, Yeka, CMC, Kazanchis, Hawassa...'
                 }
-                className="w-full bg-transparent px-4 py-2.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none"
+                className="w-full bg-transparent px-4 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none"
               />
               <button
                 onClick={handleSearch}
-                className="w-full sm:w-auto flex-shrink-0 px-6 py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-extrabold text-xs transition shadow-lg shadow-red-600 dark:shadow-red-600/20 whitespace-nowrap flex items-center justify-center gap-2"
+                className="w-full sm:w-auto flex-shrink-0 px-6 py-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition whitespace-nowrap flex items-center justify-center gap-2"
               >
-                <span>🔍</span>
+                <Search size={16} />
                 <span>{lang === 'am' ? 'ፈልግ' : 'Search'}</span>
               </button>
             </div>
@@ -201,7 +200,7 @@ export default function HomePage({
                   setSearchQuery(loc.en);
                   router.push(`/${lang}/properties?search_query=${encodeURIComponent(loc.en)}&transaction_mode=${searchMode}`);
                 }}
-                className="px-3 py-1 rounded-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 hover:border-red-600 dark:border-red-600/40 hover:text-red-600 dark:text-red-400 transition"
+                className="px-3 py-1.5 rounded-md bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 hover:border-red-600 dark:hover:border-red-600/40 hover:text-red-600 dark:hover:text-red-400 transition"
               >{lang === 'am' ? loc.am : loc.en}</button>
             ))}
           </div>
@@ -212,9 +211,9 @@ export default function HomePage({
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {STATS.map((stat) => (
-            <div key={stat.value} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 text-center">
-              <div className="text-2xl sm:text-3xl font-extrabold text-red-600 dark:text-red-400">{stat.value}</div>
-              <div className="text-[11px] text-neutral-600 dark:text-neutral-400 mt-1">
+            <div key={stat.value} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-lg p-4 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white tabular-nums">{stat.value}</div>
+              <div className="text-xs text-neutral-500 mt-1">
                 {lang === 'am' ? stat.labelAm : stat.labelEn}
               </div>
             </div>
@@ -226,8 +225,8 @@ export default function HomePage({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="flex items-end justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
           <div>
-            <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-1">
-              ⭐ Handpicked Listings
+            <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wide mb-1">
+              {lang === 'am' ? 'የተመረጡ' : 'Handpicked Listings'}
             </div>
             <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
               {lang === 'am' ? 'የተመረጡ 3D ቱር ቤቶች' : 'Featured 3D Virtual Tour Properties'}
@@ -235,7 +234,7 @@ export default function HomePage({
           </div>
           <Link
             href={`/${lang}/properties`}
-            className="text-xs font-semibold text-red-600 dark:text-red-400 hover:text-red-500 dark:text-red-300 flex items-center gap-1 transition"
+            className="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-1 transition"
           >
             {lang === 'am' ? 'ሁሉንም ይመልከቱ' : 'View All'}
             <span>→</span>
@@ -250,7 +249,7 @@ export default function HomePage({
           </div>
         ) : (
           <div className="py-16 text-center text-neutral-500">
-            <div className="w-10 h-10 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="w-8 h-8 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin mx-auto mb-4" />
           </div>
         )}
       </section>
@@ -258,8 +257,8 @@ export default function HomePage({
       {/* ══ How It Works ═══════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center">
-          <div className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest mb-2">
-            🔄 Platform Workflow
+          <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wide mb-2">
+            {lang === 'am' ? 'የአሰራር ሂደት' : 'Platform Workflow'}
           </div>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
             {lang === 'am' ? 'እንዴት ይሰራል?' : 'How Ethred Works'}
@@ -269,7 +268,6 @@ export default function HomePage({
           {[
             {
               step: '01',
-              iconEn: '🔍',
               titleEn: 'Search & Filter',
               titleAm: 'ፈልግ እና አጣራ',
               descEn: 'Browse verified listings by location, price range, bedrooms, and amenities.',
@@ -277,7 +275,6 @@ export default function HomePage({
             },
             {
               step: '02',
-              iconEn: '🥽',
               titleEn: 'Take a Virtual Tour',
               titleAm: 'በቨርቹዋል ይጎብኙ',
               descEn: 'Explore properties remotely with our immersive 3D virtual tours before you visit.',
@@ -285,7 +282,6 @@ export default function HomePage({
             },
             {
               step: '03',
-              iconEn: '💳',
               titleEn: 'Pay with Local Methods',
               titleAm: 'በኢትዮጵያ ክፍያ ዘዴ ክፈል',
               descEn: 'Use Telebirr, CBE Birr, or Chapa to pay for listing promotions — no foreign cards required.',
@@ -294,20 +290,19 @@ export default function HomePage({
           ].map((step) => (
             <div
               key={step.step}
-              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-3 hover:border-red-600 dark:border-red-600/30 transition"
+              className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-lg space-y-4 hover:border-neutral-300 dark:hover:border-neutral-700 transition"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-red-600 dark:bg-red-600/10 border border-red-600 dark:border-red-600/20 flex items-center justify-center text-xs font-extrabold text-red-600 dark:text-red-400">
-                  {step.step}
-                </div>
-                <span className="text-2xl">{step.iconEn}</span>
+              <div className="w-10 h-10 rounded-md bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-sm font-bold text-neutral-900 dark:text-white">
+                {step.step}
               </div>
-              <h3 className="text-sm font-bold text-neutral-900 dark:text-white">
-                {lang === 'am' ? step.titleAm : step.titleEn}
-              </h3>
-              <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                {lang === 'am' ? step.descAm : step.descEn}
-              </p>
+              <div>
+                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-2">
+                  {lang === 'am' ? step.titleAm : step.titleEn}
+                </h3>
+                <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                  {lang === 'am' ? step.descAm : step.descEn}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -315,11 +310,10 @@ export default function HomePage({
 
       {/* ══ Seller CTA ═════════════════════════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative bg-gradient-to-r from-white dark:from-neutral-900 to-neutral-50 dark:to-neutral-800 border border-red-600 dark:border-red-600/20 rounded-2xl p-8 sm:p-12 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-600/5 dark:from-red-600/5 to-transparent pointer-events-none" />
+        <div className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-8 sm:p-12 overflow-hidden">
           <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div>
-              <h2 className="text-2xl font-extrabold text-neutral-900 dark:text-white mb-2">
+              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
                 {lang === 'am' ? 'ቤትዎን ለሽያጭ ወይም ኪራይ ያስመዝግቡ' : 'List Your Property on Ethred'}
               </h2>
               <p className="text-sm text-neutral-600 dark:text-neutral-400 max-w-md">
@@ -331,13 +325,13 @@ export default function HomePage({
             <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
               <Link
                 href={`/${lang}/auth/register`}
-                className="px-6 py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-extrabold text-sm shadow-lg shadow-red-600 dark:shadow-red-600/20 transition text-center"
+                className="px-6 py-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition text-center"
               >
                 {lang === 'am' ? 'በነፃ ይጀምሩ' : 'Start Listing — Free'}
               </Link>
               <Link
                 href={`/${lang}/agencies`}
-                className="px-6 py-3 rounded-xl bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-600 text-neutral-900 dark:text-white font-bold text-sm transition text-center"
+                className="px-6 py-2.5 rounded-md bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 font-medium text-sm transition text-center"
               >
                 {lang === 'am' ? 'እንደ ኤጀንሲ ይቀላቀሉ' : 'Join as Agency'}
               </Link>

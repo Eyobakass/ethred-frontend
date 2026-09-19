@@ -21,7 +21,7 @@ export const useSocket = () => {
     const socket = socketRef.current;
 
     socket.on('connect', () => {
-      console.log('✅ Socket.IO connected');
+      console.log('[Socket.IO] connected');
     });
 
     socket.on('message:received', (message) => {

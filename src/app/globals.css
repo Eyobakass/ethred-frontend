@@ -3,7 +3,7 @@
    IMPORTANT: @import must be first in file
    ===================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
@@ -12,8 +12,19 @@
    Ethred Design System — Custom CSS Variables & Theme
    ===================================================== */
 @theme {
-  /* Font */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  /* Font stack: Inter for Latin, Noto Sans Ethiopic for Ethiopic script */
+  --font-sans: 'Inter', 'Noto Sans Ethiopic', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* =====================================================
+   Ethred Radius Tokens
+   ===================================================== */
+:root {
+  --radius-control: 6px;   /* buttons, inputs, selects, badges */
+  --radius-card:    8px;   /* cards, panels, sidebars */
+  --radius-modal:   10px;  /* modals, large overlays */
+  --radius-image:   6px;   /* image containers */
+  --radius-avatar:  9999px;
 }
 
 *, *::before, *::after {
@@ -27,7 +38,7 @@ html, body {
 body {
   background-color: theme('colors.neutral.50');
   color: theme('colors.neutral.900');
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Inter', 'Noto Sans Ethiopic', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -60,7 +71,7 @@ html {
 
 /* Pannellum viewer border-radius override */
 .pnlm-container {
-  border-radius: 1rem;
+  border-radius: 0.5rem; /* 8px — matches --radius-card */
 }
 
 /* Hide scrollbar for scene toolbar */
@@ -72,26 +83,26 @@ html {
   display: none;
 }
 
-/* Focus ring override — use gold */
+/* Focus ring — brand red, consistent across the product */
 :focus-visible {
-  outline: 2px solid oklch(65% 0.18 85);
+  outline: 2px solid #DC2626;
   outline-offset: 2px;
 }
 
-/* Text selection */
+/* Text selection — subtle red tint */
 ::selection {
-  background-color: oklch(65% 0.18 85 / 0.3);
-  color: #fff;
+  background-color: rgba(220, 38, 38, 0.15);
+  color: inherit;
 }
 
 /* Animation utilities */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .animate-in {
-  animation: fade-in 0.2s ease-out;
+  animation: fade-in 0.15s ease-out;
 }
 /* Custom Hotspot Styles */
 .tour-nav-hotspot, .tour-info-hotspot {
@@ -111,9 +122,9 @@ html {
 }
 
 .tour-nav-hotspot:hover, .tour-info-hotspot:hover {
-  transform: scale(1.25);
+  transform: scale(1.2);
   background-color: rgba(220, 38, 38, 1);
-  box-shadow: 0 0 16px rgba(220, 38, 38, 0.8);
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.6);
   z-index: 10;
 }
 
@@ -138,38 +149,49 @@ html {
   font-size: 14px;
 }
 
-/* ── Sleek Glassmorphic Pannellum UI Controls Overrides ───────────────────── */
+/* ── Pannellum UI Controls Overrides ───────────────────── */
 
-/* 1. Hide the redundant bottom-left title box ("Salon1") */
+/* 1. Hide the redundant bottom-left title box */
 .pnm-title-box, .pennellum-title-box, div[class*="title-box"] {
   display: none !important;
 }
 
-/* 2. Sleek Dark Glass Zoom Controls & Fullscreen Button Containers */
+/* 2. Dark Zoom Controls & Fullscreen Button */
 .pnm-zoom-controls, .pennellum-zoom-controls,
 .pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button {
-  background: rgba(18, 18, 18, 0.85) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  border-radius: 10px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6) !important;
+  background: rgba(18, 18, 18, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
   overflow: hidden !important;
   margin: 12px !important;
 }
 
-/* 3. Make + / - / [ ] Icons Crisp White on Dark Background */
+/* 3. Make icons white on dark background */
 .pnm-zoom-in, .pnm-zoom-out, .pennellum-zoom-in, .pennellum-zoom-out,
 .pnm-fullscreen-toggle-button, .pennellum-fullscreen-toggle-button {
   filter: invert(1) !important;
 }
 
-/* 4. Crisp Glassmorphic Compass */
+/* 4. Compass */
 .pnm-compass, .pennellum-compass, div[class*="compass"] {
   background-color: rgba(255, 255, 255, 0.95) !important;
   border: 2px solid rgba(0, 0, 0, 0.15) !important;
   border-radius: 50% !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
   margin: 12px !important;
 }
 
+/* =====================================================
+   Accessibility — Reduced Motion
+   ===================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

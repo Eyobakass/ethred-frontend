@@ -4,6 +4,7 @@
 import React from 'react';
 import { useFilterStore } from '@/store/useFilterStore';
 import { ETHIOPIAN_LOCATIONS } from '@/utils/location';
+import { Filter, Box } from 'lucide-react';
 
 interface FilterSidebarProps {
   lang?: 'en' | 'am';
@@ -25,10 +26,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
   const selectedRegionData = ETHIOPIAN_LOCATIONS[region || 'Addis Ababa'];
 
   return (
-    <aside className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-6 rounded-2xl space-y-6">
+    <aside className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-5 sm:p-6 rounded-xl space-y-6">
       <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
         <h3 className="text-base font-bold text-neutral-900 dark:text-white flex items-center gap-2">
-          <span>🎯</span> {lang === 'am' ? 'ማጣሪያ' : 'Filter Properties'}
+          <Filter size={18} /> {lang === 'am' ? 'ማጣሪያ' : 'Filter Properties'}
         </h3>
         <button
           onClick={resetFilters}
@@ -48,7 +49,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
             setFilter('region', e.target.value);
             setFilter('sub_city', '');
           }}
-          className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
+          className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
         >
           <option value="">{lang === 'am' ? 'ሁሉም ክልሎች' : 'All Regions'}</option>
           {Object.keys(ETHIOPIAN_LOCATIONS).map((reg) => (
@@ -67,7 +68,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
           <select
             value={sub_city}
             onChange={(e) => setFilter('sub_city', e.target.value)}
-            className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
+            className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
           >
             <option value="">{lang === 'am' ? 'ሁሉም ክፍለ ከተሞች' : 'All Sub-Cities'}</option>
             {selectedRegionData.subCities.map((sc) => (
@@ -86,7 +87,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
         <select
           value={category}
           onChange={(e) => setFilter('category', e.target.value)}
-          className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
+          className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
         >
           <option value="">{lang === 'am' ? 'ሁሉም ምድቦች' : 'All Categories'}</option>
           <option value="APARTMENT">{lang === 'am' ? 'አፓርታማ' : 'Apartment'}</option>
@@ -108,14 +109,14 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
             placeholder={lang === 'am' ? 'ዝቅተኛ ብር' : 'Min ETB'}
             value={price_min}
             onChange={(e) => setFilter('price_min', e.target.value)}
-            className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
+            className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
           />
           <input
             type="number"
             placeholder={lang === 'am' ? 'ከፍተኛ ብር' : 'Max ETB'}
             value={price_max}
             onChange={(e) => setFilter('price_max', e.target.value)}
-            className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
+            className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-red-600 dark:border-red-600"
           />
         </div>
       </div>
@@ -129,10 +130,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
             <button
               key={num}
               onClick={() => setFilter('bedrooms', bedrooms === num ? '' : num)}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold border transition ${
+              className={`flex-1 py-1.5 rounded-md text-xs font-semibold border transition ${
                 bedrooms === num
-                  ? 'bg-red-600 dark:bg-red-600 text-white border-red-600 dark:border-red-600'
-                  : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:bg-neutral-700'
+                  ? 'bg-red-600 text-white border-red-600'
+                  : 'bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-700'
               }`}
             >
               {num}+
@@ -142,18 +143,20 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ lang = 'en' }) => 
       </div>
 
       <div className="pt-2 border-t border-neutral-200 dark:border-neutral-800">
-        <label className="flex items-center gap-3 cursor-pointer">
+        <label className="flex items-center gap-2.5 cursor-pointer group">
           <input
             type="checkbox"
             checked={has_virtual_tour}
             onChange={(e) => setFilter('has_virtual_tour', e.target.checked)}
             className="w-4 h-4 rounded text-red-600 dark:text-red-500 focus:ring-red-600 accent-red-600"
           />
-          <span className="text-xs font-semibold text-red-600 dark:text-red-400">
-            🥽 {lang === 'am' ? '3D ቨርቹዋል ጉብኝት ያላቸው ብቻ' : '3D Virtual Tour Only'}
+          <span className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-900 dark:group-hover:text-white flex items-center gap-1.5 transition">
+            <Box size={14} className="text-red-600" />
+            {lang === 'am' ? '3D ቨርቹዋል ጉብኝት ያላቸው ብቻ' : '3D Virtual Tour Only'}
           </span>
         </label>
       </div>
     </aside>
   );
 };
+

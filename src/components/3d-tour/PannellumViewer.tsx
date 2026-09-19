@@ -227,9 +227,9 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
 
   if (error) {
     return (
-      <div className="w-full h-[400px] md:h-[500px] rounded-2xl border border-red-800 bg-red-950/30 flex items-center justify-center">
-        <div className="text-center text-red-400 space-y-2">
-          <span className="text-3xl block">⚠️</span>
+      <div className="w-full h-[400px] md:h-[500px] rounded-lg border border-red-800 bg-red-950/30 flex items-center justify-center">
+        <div className="text-center text-red-400 space-y-2 flex flex-col items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
           <p className="text-sm font-semibold">3D Tour Unavailable</p>
           <p className="text-xs text-red-500">{error}</p>
         </div>
@@ -238,11 +238,11 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
   }
 
   return (
-    <div className="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden bg-black shadow-2xl border border-red-600 dark:border-red-600/20">
+    <div className="relative w-full h-[400px] md:h-[500px] rounded-lg overflow-hidden bg-black shadow-sm border border-red-600 dark:border-red-600/20">
       {!isLoaded && (
         <div className="absolute inset-0 flex items-center justify-center bg-neutral-50 dark:bg-neutral-950 z-10">
-          <div className="flex flex-col items-center gap-3 text-red-600 dark:text-red-400">
-            <div className="w-12 h-12 border-4 border-red-600 dark:border-red-600 border-t-transparent rounded-full animate-spin" />
+          <div className="flex flex-col items-center gap-3 text-neutral-600 dark:text-neutral-400">
+            <div className="w-10 h-10 border-4 border-neutral-300 dark:border-neutral-600 border-t-neutral-900 dark:border-t-white rounded-full animate-spin" />
             <span className="text-sm font-semibold">Loading 3D Virtual Tour...</span>
             <span className="text-xs text-neutral-500">Initializing WebGL renderer</span>
           </div>

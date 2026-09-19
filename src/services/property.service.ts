@@ -105,4 +105,20 @@ export const propertyService = {
     });
     return res.data || res;
   },
+
+  async generateAiCopy(params: {
+    category: string;
+    transaction_mode: string;
+    region: string;
+    sub_city?: string;
+    woreda?: string;
+    nearest_landmark?: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    area_sqm?: number;
+    price_etb?: number;
+  }): Promise<{ title_en: string; title_am: string; description_en: string; description_am: string }> {
+    const res = await apiClient.post<any, any>('/properties/ai-generate', params);
+    return res.data || res;
+  },
 };

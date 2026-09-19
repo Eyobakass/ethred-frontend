@@ -5,7 +5,7 @@ import React, { useState, use, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authService } from '@/services/auth.service';
-import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Lock, Eye, EyeOff, ArrowLeft, KeyRound, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
   const router = useRouter();
@@ -29,13 +29,15 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
 
   if (!token) {
     return (
-      <div className="text-center space-y-3">
-        <span className="text-4xl">⚠️</span>
-        <p className="text-base font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የተሳሳተ ወይም ጊዜው ያለፈበት ሊንክ' : 'Invalid or expired link'}</p>
-        <p className="text-xs text-neutral-500">This password reset link is invalid or has expired.</p>
+      <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-lg p-8 space-y-6 text-center">
+        <div className="mx-auto w-12 h-12 bg-red-50 dark:bg-red-950/30 rounded-full flex items-center justify-center mb-4">
+          <AlertTriangle className="text-red-600 dark:text-red-400 w-6 h-6" />
+        </div>
+        <p className="text-lg font-bold text-neutral-900 dark:text-white">{lang === 'am' ? 'የተሳሳተ ወይም ጊዜው ያለፈበት ሊንክ' : 'Invalid or expired link'}</p>
+        <p className="text-sm text-neutral-500">This password reset link is invalid or has expired.</p>
         <Link
           href={`/${lang}/auth/forgot-password`}
-          className="inline-block mt-3 px-5 py-2.5 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-500 transition"
+          className="inline-block mt-3 px-5 py-2.5 rounded-md bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition"
         >
           {lang === 'am' ? 'አዲስ ሊንክ ይጠይቁ' : 'Request a new link'}
         </Link>
@@ -66,18 +68,20 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
   };
 
   return (
-    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-xl p-8 space-y-6">
-      <div className="text-center space-y-1">
-        <div className="text-3xl font-extrabold text-neutral-900 dark:text-white">🔑 Ethred</div>
-        <h1 className="text-lg font-bold text-neutral-900 dark:text-white">
-          {success ? 'Password reset!' : 'Set a new password'}
+    <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-lg p-8 space-y-6">
+      <div className="text-center space-y-2">
+        <div className="mx-auto w-12 h-12 bg-red-50 dark:bg-red-950/30 rounded-full flex items-center justify-center mb-4">
+          <KeyRound className="text-red-600 dark:text-red-400 w-6 h-6" />
+        </div>
+        <h1 className="text-xl font-bold text-neutral-900 dark:text-white">
+          {success ? (lang === 'am' ? 'የይለፍ ቃል ተቀይሯል!' : 'Password reset!') : (lang === 'am' ? 'አዲስ የይለፍ ቃል ያስገቡ' : 'Set a new password')}
         </h1>
       </div>
 
       {success ? (
         <div className="text-center space-y-3 py-4">
           <div className="flex items-center justify-center w-16 h-16 mx-auto rounded-full bg-emerald-100 dark:bg-emerald-950">
-            <span className="text-2xl">✅</span>
+            <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {lang === 'am' ? 'የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል። ወደ መግቢያ በመመለስ ላይ...' : 'Your password has been reset successfully. Redirecting to login…'}
@@ -87,8 +91,8 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* New password */}
           <div>
-            <label htmlFor="new-password" className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 block mb-1.5">
-              New Password
+            <label htmlFor="new-password" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 block mb-1.5">
+              {lang === 'am' ? 'አዲስ የይለፍ ቃል' : 'New Password'}
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
@@ -100,12 +104,12 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
                 placeholder="Min. 8 characters"
                 required
                 autoFocus
-                className="w-full pl-10 pr-10 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-red-500 transition"
+                className="w-full pl-10 pr-10 py-2 rounded-md bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
               />
               <button
                 type="button"
                 onClick={() => setShowNew(!showNew)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition"
               >
                 {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -114,8 +118,8 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
 
           {/* Confirm password */}
           <div>
-            <label htmlFor="confirm-password" className="text-xs font-semibold text-neutral-700 dark:text-neutral-300 block mb-1.5">
-              Confirm New Password
+            <label htmlFor="confirm-password" className="text-sm font-medium text-neutral-700 dark:text-neutral-300 block mb-1.5">
+              {lang === 'am' ? 'የይለፍ ቃሉን ያረጋግጡ' : 'Confirm New Password'}
             </label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
@@ -126,12 +130,12 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Repeat your new password"
                 required
-                className="w-full pl-10 pr-10 py-3 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-red-500 transition"
+                className="w-full pl-10 pr-10 py-2 rounded-md bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent transition"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition"
               >
                 {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -139,15 +143,15 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
           </div>
 
           {error && (
-            <p className="text-xs font-semibold text-red-600 dark:text-red-400">⚠️ {error}</p>
+            <p className="text-sm font-medium text-red-600 dark:text-red-400 text-center">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-500 disabled:opacity-60 text-white font-bold text-sm transition shadow-lg shadow-red-600/20"
+            className="w-full py-2.5 rounded-md bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-semibold text-sm transition"
           >
-            {isLoading ? 'Resetting…' : 'Reset Password'}
+            {isLoading ? (lang === 'am' ? 'በመቀየር ላይ...' : 'Resetting…') : (lang === 'am' ? 'የይለፍ ቃል ቀይር' : 'Reset Password')}
           </button>
         </form>
       )}
@@ -155,10 +159,10 @@ function ResetPasswordContent({ lang }: { lang: 'en' | 'am' }) {
       {!success && (
         <Link
           href={`/${lang}/auth/forgot-password`}
-          className="flex items-center justify-center gap-1.5 text-xs text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 transition"
+          className="flex items-center justify-center gap-1.5 text-sm font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition"
         >
-          <ArrowLeft size={13} />
-          Request a different link
+          <ArrowLeft size={16} />
+          {lang === 'am' ? 'ሌላ ሊንክ ይጠይቁ' : 'Request a different link'}
         </Link>
       )}
     </div>
@@ -170,7 +174,7 @@ export default function ResetPasswordPage({ params }: { params: Promise<{ lang: 
   const lang = rawLang === 'am' ? 'am' : 'en';
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-16 bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-neutral-50 dark:bg-neutral-950">
       <div className="w-full max-w-md">
         <Suspense fallback={
           <div className="text-center py-10">

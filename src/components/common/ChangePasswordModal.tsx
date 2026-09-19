@@ -38,9 +38,9 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-neutral-200 dark:border-neutral-800">
-        <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 p-4">
+      <div className="bg-white dark:bg-neutral-900 rounded-xl p-6 sm:p-8 max-w-sm w-full shadow-lg border border-neutral-200 dark:border-neutral-800">
+        <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-4">
           {lang === 'am' ? 'የይለፍ ቃል ቀይር' : 'Change Password'}
         </h3>
         
@@ -54,7 +54,7 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
+              className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
             />
           </div>
           <div>
@@ -67,7 +67,7 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
               onChange={(e) => setNewPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-xl focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
+              className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md focus:ring-2 focus:ring-red-600 outline-none text-neutral-900 dark:text-white"
             />
           </div>
 
@@ -81,14 +81,14 @@ export const ChangePasswordModal: React.FC<Props> = ({ isOpen, onClose }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+              className="px-4 py-2 rounded-md font-medium text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
             >
               {lang === 'am' ? 'ሰርዝ' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2.5 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50 shadow-lg shadow-red-600/20"
+              className="px-4 py-2 rounded-md font-semibold text-sm bg-red-600 text-white hover:bg-red-700 transition disabled:opacity-50"
             >
               {isLoading ? (lang === 'am' ? 'በመቀየር ላይ...' : 'Changing...') : (lang === 'am' ? 'ቀይር' : 'Change')}
             </button>

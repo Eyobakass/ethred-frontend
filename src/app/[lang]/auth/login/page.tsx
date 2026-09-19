@@ -49,15 +49,12 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-2xl shadow-2xl space-y-6">
+      <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-8 rounded-xl shadow-lg space-y-6">
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-red-700 to-red-500 flex items-center justify-center shadow-lg shadow-red-600 dark:shadow-red-600/20 mb-3">
-            <span className="text-2xl">🔒</span>
-          </div>
-          <h1 className="text-2xl font-extrabold text-neutral-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
             {lang === 'am' ? 'እንኳን ደህና መጡ!' : 'Welcome Back'}
           </h1>
-          <p className="text-xs text-neutral-600 dark:text-neutral-400">
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
             {lang === 'am'
               ? 'ወደ ኢትሬድ ለመግባት የኢሜል አድራሻዎን እና የይለፍ ቃልዎን ያስገቡ።'
               : 'Sign in with your email and password to access your account.'}
@@ -65,14 +62,14 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
         </div>
 
         {error && (
-          <div className="p-3 bg-red-950/80 border border-red-800 text-red-300 text-xs rounded-xl text-center">
+          <div className="p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-sm rounded-md text-center">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
               {lang === 'am' ? 'የኢሜል አድራሻ' : 'Email Address'}
             </label>
             <input
@@ -80,19 +77,19 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
+              className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
               required
             />
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300">
                 {lang === 'am' ? 'የይለፍ ቃል' : 'Password'}
               </label>
               <Link
                 href={`/${lang}/auth/forgot-password`}
-                className="text-xs text-neutral-500 hover:text-red-600 dark:hover:text-red-400 transition"
+                className="text-sm font-medium text-red-600 dark:text-red-400 hover:underline transition"
               >
                 {lang === 'am' ? 'የይለፍ ቃል ረስተዋል?' : 'Forgot password?'}
               </Link>
@@ -103,7 +100,7 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-xl px-4 py-2.5 pr-10 text-xs text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:border-red-600 dark:border-red-600"
+                className="w-full bg-neutral-50 dark:bg-neutral-950 border border-neutral-300 dark:border-neutral-700 rounded-md px-3 py-2 pr-10 text-sm text-neutral-900 dark:text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent"
                 required
               />
               <button
@@ -128,13 +125,13 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-red-600 dark:bg-red-600 hover:bg-red-500 dark:bg-red-500 text-white font-bold text-xs shadow-lg shadow-red-600 dark:shadow-red-600/20 transition disabled:opacity-50"
+            className="w-full py-2.5 rounded-md bg-red-600 hover:bg-red-700 text-white font-semibold text-sm transition disabled:opacity-50"
           >
             {loading ? (lang === 'am' ? 'በመግባት ላይ...' : 'Signing In...') : lang === 'am' ? 'ይግቡ' : 'Sign In'}
           </button>
         </form>
 
-        <div className="text-center text-xs text-neutral-600 dark:text-neutral-400">
+        <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
           {lang === 'am' ? 'አካውንት የለዎትም? ' : "Don't have an account? "}
           <Link href={`/${lang}/auth/register`} className="text-red-600 dark:text-red-400 font-semibold hover:underline">
             {lang === 'am' ? 'እዚህ ይመዝገቡ' : 'Register Here'}
