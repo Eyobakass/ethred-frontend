@@ -27,7 +27,7 @@ interface PannellumViewerInstance {
   off: (event: string, handler: (id: string) => void) => void;
   destroy: () => void;
   mouseEventToCoords: (e: MouseEvent) => [number, number] | null;
-  loadScene: (sceneId: string) => void;
+  loadScene: (sceneId: string, pitch?: number | 'same', yaw?: number | 'same', hfov?: number | 'same') => void;
   getScene: () => string;
 }
 
