@@ -158,12 +158,13 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
             panorama: scene.panorama ? getImageUrl(scene.panorama) : scene.panorama,
             hotSpots: scene.hotSpots?.map((hs: any) => ({
               ...hs,
-              cssClass: hs.cssClass || 'redfin-hotspot',
+              cssClass: 'redfin-hotspot', // Force override database value
+              targetYaw: 'same',          // Force Pannellum native 'same' handling
+              targetPitch: 'same',        // Force Pannellum native 'same' handling
               clickHandlerFunc: (event: any, args: any) => {
                 if (isEditMode && onDeleteHotspotRef.current) {
                   onDeleteHotspotRef.current(args.id);
                 } else if (hs.type === 'scene' && hs.sceneId && !isEditMode) {
-                  // Pass 'same' to preserve yaw and pitch orientation during transition
                   viewerRef.current?.loadScene(hs.sceneId, 'same', 'same');
                 }
               },
@@ -176,7 +177,7 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
       const viewer = window.pannellum.viewer(containerRef.current, {
         default: {
           firstScene: tourConfig.default.firstScene,
-          sceneFadeDuration: tourConfig.default.sceneFadeDuration ?? 400,
+          sceneFadeDuration: 400, // Force override database value (which returns 1000)
           autoLoad: true,
           compass: true,
           showZoomCtrl: true,
