@@ -158,11 +158,13 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
             panorama: scene.panorama ? getImageUrl(scene.panorama) : scene.panorama,
             hotSpots: scene.hotSpots?.map((hs: any) => ({
               ...hs,
+              cssClass: hs.cssClass || 'redfin-hotspot',
               clickHandlerFunc: (event: any, args: any) => {
                 if (isEditMode && onDeleteHotspotRef.current) {
                   onDeleteHotspotRef.current(args.id);
                 } else if (hs.type === 'scene' && hs.sceneId && !isEditMode) {
-                  viewerRef.current?.loadScene(hs.sceneId);
+                  // Pass 'same' to preserve yaw and pitch orientation during transition
+                  viewerRef.current?.loadScene(hs.sceneId, 'same', 'same');
                 }
               },
               clickHandlerArgs: { id: hs.id },
@@ -174,7 +176,7 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
       const viewer = window.pannellum.viewer(containerRef.current, {
         default: {
           firstScene: tourConfig.default.firstScene,
-          sceneFadeDuration: tourConfig.default.sceneFadeDuration ?? 1000,
+          sceneFadeDuration: tourConfig.default.sceneFadeDuration ?? 400,
           autoLoad: true,
           compass: true,
           showZoomCtrl: true,
@@ -261,6 +263,31 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
           display: none !important;
           opacity: 0 !important;
           visibility: hidden !important;
+        }
+
+        /* Redfin-style Hotspot Custom CSS */
+        .redfin-hotspot {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          border: 4px solid rgba(255, 255, 255, 0.95);
+          background-color: rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          transform-origin: center center;
+          position: relative;
+        }
+        
+        .redfin-hotspot:hover {
+          background-color: rgba(255, 255, 255, 0.45);
+          box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 4px 12px rgba(0, 0, 0, 0.5);
+          transform: scale(1.15);
+        }
+
+        /* Hide the default hover tooltip if we want a clean look */
+        .redfin-hotspot .pnlm-tooltip {
+          display: none !important;
         }
       `}</style>
     </div>
