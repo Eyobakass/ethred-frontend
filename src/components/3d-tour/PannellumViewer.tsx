@@ -270,6 +270,8 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
         .redfin-hotspot {
           width: 34px;
           height: 34px;
+          margin-left: -17px;
+          margin-top: -17px;
           border-radius: 50%;
           border: 4px solid rgba(255, 255, 255, 0.95);
           background-color: rgba(0, 0, 0, 0.3);
@@ -277,7 +279,9 @@ export const PannellumViewer: React.FC<PannellumViewerProps> = ({
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
           transform-origin: center center;
-          position: relative;
+          position: absolute;
+          z-index: 2;
+          pointer-events: auto;
         }
         
         .redfin-hotspot:hover {
